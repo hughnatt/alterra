@@ -33,4 +33,4 @@ Repository pour le projet de programmation mobile !
 - Voir les lieux que l'on a déjà visité
 - Consulter notre propre profil (voir nos photos ainsi que le score)
 - Consulter le profil des autres utilisateurs (voir les derniers lieux visités)
-(- Système d'amis)
+- (Système d'amis)
