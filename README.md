@@ -15,3 +15,22 @@ Repository pour le projet de programmation mobile !
 ## Interface
 ### Ebauche 1
 <img height=640 width=360 alt="Ebauche d'Interface" src="https://github.com/hughnatt/application-mobile-sans-nom/blob/master/AppliSansNomEbauche.png">
+
+
+## Fonctionnalités
+- Login / Register
+- Afficher des points d'intêrets
+- Géolocalisation
+- Calcul de l'itinéraire jusqu'au point d'intérêt sélectionné
+- Aperçu d'une ou plusieurs photos d'un lieu
+- Recherche de lieu dans une zone ou d'un lieu précis
+- Afficher des informations sur un lieu
+- Prendre une photo 
+- Poster une photo
+- Sytème de vote sur les photos
+- Mode map / mode liste
+- Système de point par utilisateur (leaderboard des utilisateurs les plus actifs)
+- Voir les lieux que l'on a déjà visité
+- Consulter notre propre profil (voir nos photos ainsi que le score)
+- Consulter le profil des autres utilisateurs (voir les derniers lieux visités)
+(- Système d'amis)
