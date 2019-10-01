@@ -1,4 +1,4 @@
-# application-mobile-sans-nom
+# Alterra
 Repository pour le projet de programmation mobile !
 
 ## Concepts Clés
