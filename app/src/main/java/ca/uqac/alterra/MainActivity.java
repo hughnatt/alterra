@@ -3,11 +3,9 @@ package ca.uqac.alterra;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends FragmentActivity {
 

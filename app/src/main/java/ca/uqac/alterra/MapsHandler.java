@@ -2,7 +2,6 @@ package ca.uqac.alterra;
 
 import android.app.Activity;
 
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
