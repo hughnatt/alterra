@@ -1,5 +1,9 @@
 package ca.uqac.alterra;
 
+import android.app.Activity;
+
+import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -10,6 +14,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
+    private Activity mActivity;
+
+    public MapsHandler(Activity activity){
+        mActivity = activity;
+    }
 
     /**
      * Manipulates the map once available.

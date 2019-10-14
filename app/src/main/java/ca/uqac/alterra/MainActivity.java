@@ -19,8 +19,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mMapsHandler = new MapsHandler();
-        mBottomSheetHandler = new BottomSheetHandler((FloatingActionButton) findViewById(R.id.cameraButton));
+        mMapsHandler = new MapsHandler(this);
+        mBottomSheetHandler = new BottomSheetHandler(this);
 
         //Monitoring the bottom panel movements
         BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomPanel));

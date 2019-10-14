@@ -1,5 +1,6 @@
 package ca.uqac.alterra;
 
+import android.app.Activity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -16,8 +17,8 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     private FloatingActionButton mCameraButton;
 
-    public BottomSheetHandler(FloatingActionButton cameraButton){
-        mCameraButton = cameraButton;
+    public BottomSheetHandler(Activity activity){
+        mCameraButton = activity.findViewById(R.id.cameraButton);
     }
 
     @Override
