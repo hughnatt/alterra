@@ -10,14 +10,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     private Activity mActivity;
+    private BottomSheetBehavior mBottomPanel;
 
     public MapsHandler(Activity activity){
         mActivity = activity;
+        mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
     }
 
     /**
@@ -38,12 +41,24 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnCameraMoveListener(this);
+        mMap.setOnMapClickListener(this);
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         System.out.println(marker.toString());
+        mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
         return true; //Consume event to prevent the default Google Maps behavior
     }
 
+    @Override
+    public void onCameraMove() {
+        mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
 }
