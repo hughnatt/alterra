@@ -40,7 +40,7 @@ public class LoginFragment extends Fragment {
     private String email;
     private String password;
 
-    private static LoginListener mListener;
+    private LoginListener mListener;
 
     private FirebaseAuth mAuth;
 
@@ -86,7 +86,7 @@ public class LoginFragment extends Fragment {
        }
     }
 
-    public static void setLoginListener(LoginListener listener) { LoginFragment.mListener = listener; }
+    public void setLoginListener(LoginListener listener) { mListener = listener; }
 
     private boolean isValidEmail(String email){
         if(email.length() == 0){

@@ -14,7 +14,7 @@ import ca.uqac.alterra.R;
 
 public class LogoFragment extends Fragment {
 
-    private static LogoListener mListener;
+    private LogoListener mListener;
 
     public LogoFragment() {
         // Required empty public constructor
@@ -34,8 +34,8 @@ public class LogoFragment extends Fragment {
         return v ;
     }
 
-    public static void setLogoListener(LogoListener listener) {
-        LogoFragment.mListener = listener;
+    public void setLogoListener(LogoListener listener) {
+        mListener = listener;
     }
 
     @Override

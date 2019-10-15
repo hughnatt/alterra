@@ -48,25 +48,28 @@ public class WorkflowFragment extends Fragment implements LogoFragment.LogoListe
         FragmentTransaction ft;
         switch (current){
             case LOGO_TAG :
-                LogoFragment.setLogoListener(this);
+                LogoFragment logoFragment = new LogoFragment();
+                logoFragment.setLogoListener(this);
                 ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.setCustomAnimations(R.anim.faded_in,
                         R.anim.faded_out);
-                ft.replace(R.id.container, new LogoFragment());
+                ft.replace(R.id.container, logoFragment);
                 ft.commit();
                 break;
             case LOGIN_TAG :
-                LoginFragment.setLoginListener(this);
+                LoginFragment loginFragment = new LoginFragment();
+                loginFragment.setLoginListener(this);
                 ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.setCustomAnimations(R.anim.faded_in,
                         R.anim.faded_out);
-                ft.add(R.id.container, new LoginFragment());
+                ft.add(R.id.container, loginFragment);
                 ft.commit();
                 break;
             case REGISTER_TAG :
-                RegisterFragment.setRegisterListener(this);
+                RegisterFragment registerFragment = new RegisterFragment();
+                registerFragment.setRegisterListener(this);
                 ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.add(R.id.container, new RegisterFragment());
+                ft.add(R.id.container, registerFragment);
                 ft.commit();
                 break;
             case HOME_TAG :

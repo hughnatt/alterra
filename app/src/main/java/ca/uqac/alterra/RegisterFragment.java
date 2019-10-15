@@ -42,7 +42,7 @@ public class RegisterFragment extends Fragment {
     private String password;
     private String confirmPassword;
 
-    private static RegisterListener mListener;
+    private RegisterListener mListener;
 
 
     private FirebaseAuth mAuth;
@@ -81,7 +81,7 @@ public class RegisterFragment extends Fragment {
         return view;
     }
 
-    public static void setRegisterListener(RegisterFragment.RegisterListener listener) { RegisterFragment.mListener = listener; }
+    public void setRegisterListener(RegisterFragment.RegisterListener listener) {mListener = listener; }
 
     private boolean isValidEmail(String email){
         if(email.length() == 0){
