@@ -5,8 +5,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 
-import ca.uqac.alterra.R;
-
 public class WorkflowActivity extends FragmentActivity {
 
     @Override

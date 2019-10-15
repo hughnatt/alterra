@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import ca.uqac.alterra.R;
-
 
 public class BlankFragment extends Fragment {
 
