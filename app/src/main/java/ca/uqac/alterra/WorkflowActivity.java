@@ -50,8 +50,11 @@ public class WorkflowActivity extends FragmentActivity implements LogoFragment.L
                 ft.commit();
                 break;
             case HOME_TAG :
+                HomeFragment homeFragment = new HomeFragment();
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.add(R.id.emptyContainer, new BlankFragment());
+                ft.setCustomAnimations(R.anim.faded_in,
+                        R.anim.faded_out);
+                ft.add(R.id.emptyContainer, homeFragment);
                 ft.commit();
                 break;
         }
