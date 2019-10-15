@@ -79,8 +79,13 @@ public class LoginFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        //DEBUG: For testing purposes, signOut User on application startup
+        mAuth.signOut();
+
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
        if(currentUser!=null){
            mListener.home();
        }
