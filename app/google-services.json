@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "220122298758",
+    "firebase_url": "https://alterra-1569341283377.firebaseio.com",
+    "project_id": "alterra-1569341283377",
+    "storage_bucket": "alterra-1569341283377.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220122298758:android:a41fba58e5c2641a3a5407",
+        "android_client_info": {
+          "package_name": "ca.uqac.alterra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220122298758-jqfna7rmdppjo9tgaoqnngdn2e9afjj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrTkBOWbG6Jo1zmONj9sct4hZsdQtG6AY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220122298758-jqfna7rmdppjo9tgaoqnngdn2e9afjj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
