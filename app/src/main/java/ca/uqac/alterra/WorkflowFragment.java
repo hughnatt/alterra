@@ -85,22 +85,27 @@ public class WorkflowFragment extends Fragment implements LogoFragment.LogoListe
 
 
     @Override
-    public void next() {
+    public void onLogoAnimationFinished() {
         current++;
         updateWorkflow();
     }
 
     @Override
-    public void home() {
+    public void onLoginSuccessful() {
         current = HOME_TAG;
         Log.d("zzz", "home");
         updateWorkflow();
     }
 
     @Override
-    public void register() {
+    public void onRegisterRequested() {
         current = REGISTER_TAG;
         updateWorkflow();
     }
 
+    @Override
+    public void onRegisterSuccessful() {
+        current = HOME_TAG;
+        updateWorkflow();
+    }
 }

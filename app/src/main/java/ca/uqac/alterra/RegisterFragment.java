@@ -185,7 +185,7 @@ public class RegisterFragment extends Fragment {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null)
-            mListener.home();
+            mListener.onRegisterSuccessful();
     }
 
     private void register(){
@@ -198,7 +198,7 @@ public class RegisterFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            mListener.home();
+                            mListener.onRegisterSuccessful();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d(TAG, "createUserWithEmail:failure", task.getException());
@@ -211,7 +211,7 @@ public class RegisterFragment extends Fragment {
 
     public interface RegisterListener {
         // TODO: Update argument type and name
-        void home();
+        void onRegisterSuccessful();
     }
 
 }

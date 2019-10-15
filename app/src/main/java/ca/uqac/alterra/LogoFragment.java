@@ -45,7 +45,7 @@ public class LogoFragment extends Fragment {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mListener.next();
+                mListener.onLogoAnimationFinished();
             }
         };
 
@@ -53,6 +53,6 @@ public class LogoFragment extends Fragment {
     }
 
     public interface LogoListener {
-        void next();
+        void onLogoAnimationFinished();
     }
 }

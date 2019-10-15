@@ -87,7 +87,7 @@ public class LoginFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
        if(currentUser!=null){
-           mListener.home();
+           mListener.onLoginSuccessful();
        }
     }
 
@@ -131,7 +131,7 @@ public class LoginFragment extends Fragment {
     private void setRegisterButtonListener(){
         registerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mListener.register();
+                mListener.onRegisterRequested();
             }
         });
     }
@@ -188,7 +188,7 @@ public class LoginFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            mListener.home();
+                            mListener.onLoginSuccessful();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -204,8 +204,8 @@ public class LoginFragment extends Fragment {
 
     public interface LoginListener {
         // TODO: Update argument type and name
-        void home();
-        void register();
+        void onLoginSuccessful();
+        void onRegisterRequested();
     }
 
 }
