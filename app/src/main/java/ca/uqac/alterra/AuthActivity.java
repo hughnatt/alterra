@@ -3,6 +3,7 @@ package ca.uqac.alterra;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -50,7 +51,9 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 ft.commit();
                 break;
             case HOME_TAG :
-                //TODO send intent to start HomeActivity
+                Intent startHomeActivityIntent = new Intent(this,ca.uqac.alterra.HomeActivity.class);
+                startActivity(startHomeActivityIntent);
+                finish();
                 break;
         }
     }
