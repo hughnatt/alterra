@@ -33,7 +33,7 @@
 
 
         <activity
-            android:name=".WorkflowActivity"
+            android:name=".AuthActivity"
             android:label="@string/app_title">
 
             <intent-filter>
@@ -42,6 +42,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".HomeActivity"
+            android:label="@string/app_title">
+        </activity>
+
     </application>
 
 </manifest>
