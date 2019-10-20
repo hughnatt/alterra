@@ -3,10 +3,11 @@ package ca.uqac.alterra;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-public class WorkflowActivity extends FragmentActivity implements LogoFragment.LogoListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
+public class AuthActivity extends FragmentActivity implements LogoFragment.LogoListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
 
     private static final int LOGO_TAG = 0;
     private static final int LOGIN_TAG = 1;
@@ -50,12 +51,9 @@ public class WorkflowActivity extends FragmentActivity implements LogoFragment.L
                 ft.commit();
                 break;
             case HOME_TAG :
-                HomeFragment homeFragment = new HomeFragment();
-                ft = getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.faded_in,
-                        R.anim.faded_out);
-                ft.add(R.id.emptyContainer, homeFragment);
-                ft.commit();
+                Intent startHomeActivityIntent = new Intent(this,HomeActivity.class);
+                startActivity(startHomeActivityIntent);
+                finish();
                 break;
         }
     }
