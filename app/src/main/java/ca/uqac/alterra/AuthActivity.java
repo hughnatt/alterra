@@ -51,7 +51,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 ft.commit();
                 break;
             case HOME_TAG :
-                Intent startHomeActivityIntent = new Intent(this,ca.uqac.alterra.HomeActivity.class);
+                Intent startHomeActivityIntent = new Intent(this,HomeActivity.class);
                 startActivity(startHomeActivityIntent);
                 finish();
                 break;
