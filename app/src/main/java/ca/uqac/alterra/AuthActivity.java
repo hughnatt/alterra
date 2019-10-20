@@ -9,11 +9,8 @@ import android.util.Log;
 
 public class AuthActivity extends FragmentActivity implements LogoFragment.LogoListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
 
-    private static final int LOGO_TAG = 0;
-    private static final int LOGIN_TAG = 1;
-    private static final int REGISTER_TAG = 2;
-    private static final int HOME_TAG = 3;
-    private int current = 0;
+    private enum FLOW {LOGO,LOGIN,REGISTER,HOME};
+    private FLOW mCurrentFlow = FLOW.LOGO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +21,8 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     private void updateWorkflow(){
         FragmentTransaction ft;
-        switch (current){
-            case LOGO_TAG :
+        switch (mCurrentFlow){
+            case LOGO :
                 LogoFragment logoFragment = new LogoFragment();
                 logoFragment.setLogoListener(this);
                 ft = getSupportFragmentManager().beginTransaction();
@@ -34,7 +31,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 ft.replace(R.id.emptyContainer, logoFragment);
                 ft.commit();
                 break;
-            case LOGIN_TAG :
+            case LOGIN :
                 LoginFragment loginFragment = new LoginFragment();
                 loginFragment.setLoginListener(this);
                 ft = getSupportFragmentManager().beginTransaction();
@@ -43,14 +40,15 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 ft.add(R.id.emptyContainer, loginFragment);
                 ft.commit();
                 break;
-            case REGISTER_TAG :
+            case REGISTER :
                 RegisterFragment registerFragment = new RegisterFragment();
                 registerFragment.setRegisterListener(this);
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.add(R.id.emptyContainer, registerFragment);
                 ft.commit();
                 break;
-            case HOME_TAG :
+            case HOME :
+                Log.d("DEBUG", "Passing to HomeActivity");
                 Intent startHomeActivityIntent = new Intent(this,HomeActivity.class);
                 startActivity(startHomeActivityIntent);
                 finish();
@@ -61,26 +59,25 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     @Override
     public void onLogoAnimationFinished() {
-        current++;
+        mCurrentFlow = FLOW.LOGIN;
         updateWorkflow();
     }
 
     @Override
     public void onLoginSuccessful() {
-        current = HOME_TAG;
-        Log.d("zzz", "home");
+        mCurrentFlow = FLOW.HOME;
         updateWorkflow();
     }
 
     @Override
     public void onRegisterRequested() {
-        current = REGISTER_TAG;
+        mCurrentFlow = FLOW.REGISTER;
         updateWorkflow();
     }
 
     @Override
     public void onRegisterSuccessful() {
-        current = HOME_TAG;
+        mCurrentFlow = FLOW.HOME;
         updateWorkflow();
     }
 }
