@@ -48,7 +48,19 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     @Override
     public boolean onMarkerClick(Marker marker) {
         System.out.println(marker.toString());
-        mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()),200, new GoogleMap.CancelableCallback(){
+            @Override
+            public void onFinish() {
+                mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+            @Override
+            public void onCancel() {
+                //Do Nothing
+            }
+        });
+
+
         return true; //Consume event to prevent the default Google Maps behavior
     }
 
@@ -56,6 +68,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     public void onCameraMove() {
         mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
+
 
     @Override
     public void onMapClick(LatLng latLng) {
