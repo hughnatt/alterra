@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Alterra.iml" filepath="$PROJECT_DIR$/Alterra.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/Cours S9/mobile/alterra/Alterra.iml" filepath="$USER_HOME$/Documents/Cours S9/mobile/alterra/Alterra.iml" />
+      <module fileurl="file://$USER_HOME$/Documents/Cours S9/mobile/alterra/app/app.iml" filepath="$USER_HOME$/Documents/Cours S9/mobile/alterra/app/app.iml" />
     </modules>
   </component>
 </project>
