@@ -1,8 +1,11 @@
 package ca.uqac.alterra;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -48,6 +51,13 @@ public class HomeActivity extends AppCompatActivity {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mMapsHandler);
+
+        DrawerLayout navDrawer = findViewById(R.id.navDrawer);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        navDrawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
 
