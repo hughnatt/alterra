@@ -110,7 +110,7 @@ public class PhotoUploader {
                 .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
                 .setContentText("0%")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setProgress(100,0,false);
+                .setProgress(100,0,true); //Progress is indeterminate at first
 
 
         // notificationId is a unique int for each notification
