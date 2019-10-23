@@ -5,4 +5,6 @@
     <string name="app_title">Alterra</string>
     <string name="channel_name">Alterra Notification</string>
     <string name="channel_description">Channel for handling notifications from the Alterra app</string>
+    <string name="notification_upload_inprogress">Uploading</string>
+    <string name="notification_upload_success">Upload successful</string>
 </resources>

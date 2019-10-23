@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.ArrayMap;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -15,6 +16,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PhotoUploader {
 
@@ -31,9 +33,11 @@ public class PhotoUploader {
         }
     }
 
+
     private FirebaseStorage mStorage;
-    private List<UploadTask> mUploadTasks;
+    private Map<UploadTask,Integer> mUploadTasks;
     private Context mContext;
+    private NotificationManagerCompat mNotificationManager;
     private static int notificationId;
 
     /**
@@ -42,8 +46,9 @@ public class PhotoUploader {
      */
     public PhotoUploader(String bucket, Context context){
         mStorage = FirebaseStorage.getInstance(bucket);
-        mUploadTasks = new ArrayList<>();
+        mUploadTasks = new ArrayMap<>();
         mContext = context;
+        mNotificationManager = NotificationManagerCompat.from(mContext);
     }
 
     public void uploadPhoto(String path){
@@ -51,30 +56,78 @@ public class PhotoUploader {
         StorageReference riversRef = mStorage.getReference().child("images/"+file.getLastPathSegment());
         UploadTask uploadTask = riversRef.putFile(file);
 
+
+        int id = showProgressNotification();
+
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener((exception) -> {
             //TODO Handle unsuccessful uploads
         }).addOnSuccessListener((taskSnapshot) -> {
-            showSuccessNotification();
+            showSuccessNotification(id);
         }).addOnProgressListener((taskSnapshot) -> {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             System.out.println("Upload is " + progress + "% done");
+            updateProgressNotification(id ,(int) progress);
         });
 
-        mUploadTasks.add(uploadTask);
+
+        //Save the UploadTask and the corresponding notification id
+        mUploadTasks.put(uploadTask,id);
     }
 
-    private void showSuccessNotification(){
+    /**
+     * @param progressNotificationId The id of the progress notification related to this success
+     * @return the id of the notification
+     */
+    private int showSuccessNotification(int progressNotificationId){
+
+        //Stop showing the progress bar notification
+        mNotificationManager.cancel(progressNotificationId);
+
+        //Create a new notification for success
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
                 .setSmallIcon(R.drawable.alterra_logo_round)
-                .setContentTitle("Upload Successful")
+                .setContentTitle(mContext.getString(R.string.notification_upload_success))
                 .setContentText("")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
 
         // notificationId is a unique int for each notification
-        notificationManager.notify(notificationId++, builder.build());
+        int id = notificationId++;
+        mNotificationManager.notify(id, builder.build());
+
+        return id;
     }
 
+    /**
+
+     * @return the id of the notification
+     */
+    private int showProgressNotification(){
+        //Create a progress bar notification with 0% progress
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
+                .setSmallIcon(R.drawable.alterra_logo_round)
+                .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
+                .setContentText("0%")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setProgress(100,0,false);
+
+
+        // notificationId is a unique int for each notification
+        int id = notificationId++;
+        mNotificationManager.notify(id, builder.build());
+
+        return id;
+    }
+
+    private void updateProgressNotification(int notificationId, int progressionPercentage){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
+                .setSmallIcon(R.drawable.alterra_logo_round)
+                .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
+                .setContentText(progressionPercentage + "%")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setProgress(100,progressionPercentage,false);
+
+        mNotificationManager.notify(notificationId, builder.build());
+    }
 }
