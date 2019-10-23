@@ -109,7 +109,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode){
             case REQUEST_TAKE_PHOTO:
-                Toast.makeText(this,"Saved",Toast.LENGTH_LONG).show();
                 if (resultCode == RESULT_OK){
                     mPhotoUploader.uploadPhoto(mCurrentImagePath);
                 }
