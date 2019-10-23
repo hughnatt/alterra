@@ -30,14 +30,16 @@ public class PhotoUploader {
 
     private FirebaseStorage mStorage;
     private List<UploadTask> mUploadTasks;
+    private Context mContext;
 
     /**
      * Instantiates a new PhotoUploader
      * @param bucket Firebase Cloud Storage bucket URI e.g gs://app-0123456789.appspot.com
      */
-    public PhotoUploader(String bucket){
+    public PhotoUploader(String bucket, Context context){
         mStorage = FirebaseStorage.getInstance(bucket);
         mUploadTasks = new ArrayList<>();
+        mContext = context;
     }
 
     public void uploadPhoto(String path){
