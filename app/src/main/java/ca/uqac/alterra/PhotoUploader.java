@@ -1,5 +1,8 @@
 package ca.uqac.alterra;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -9,6 +12,14 @@ import com.google.firebase.storage.UploadTask;
 import java.io.File;
 
 public class PhotoUploader {
+
+    public static class UploadControlReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    }
 
     private FirebaseStorage mStorage;
 

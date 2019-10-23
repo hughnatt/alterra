@@ -67,6 +67,8 @@
             android:label="@string/app_title">
         </activity>
 
+        <receiver android:name=".PhotoUploader$UploadControlReceiver"></receiver>
+
     </application>
 
 </manifest>
