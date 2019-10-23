@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,6 +34,7 @@ public class PhotoUploader {
     private FirebaseStorage mStorage;
     private List<UploadTask> mUploadTasks;
     private Context mContext;
+    private static int notificationId;
 
     /**
      * Instantiates a new PhotoUploader
@@ -51,13 +55,26 @@ public class PhotoUploader {
         uploadTask.addOnFailureListener((exception) -> {
             //TODO Handle unsuccessful uploads
         }).addOnSuccessListener((taskSnapshot) -> {
-            //TODO Display upload successful message
+            showSuccessNotification();
         }).addOnProgressListener((taskSnapshot) -> {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             System.out.println("Upload is " + progress + "% done");
         });
 
         mUploadTasks.add(uploadTask);
+    }
+
+    private void showSuccessNotification(){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
+                .setSmallIcon(R.drawable.alterra_logo_round)
+                .setContentTitle("Upload Successful")
+                .setContentText("")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
+
+        // notificationId is a unique int for each notification
+        notificationManager.notify(notificationId++, builder.build());
     }
 
 }
