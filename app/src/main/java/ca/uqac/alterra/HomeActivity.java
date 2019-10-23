@@ -28,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     private MapsHandler mMapsHandler;
     private BottomSheetHandler mBottomSheetHandler;
     private FloatingActionButton mCameraButton;
+    private String mCurrentImagePath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                System.out.println(photoFile.getAbsolutePath());
+                System.out.println("Photo saved as" + mCurrentImagePath);
             }
         }
     }
@@ -96,6 +97,7 @@ public class HomeActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+        mCurrentImagePath = image.getAbsolutePath();
         return image;
     }
 
