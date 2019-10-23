@@ -10,18 +10,26 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PhotoUploader {
 
+
     public static class UploadControlReceiver extends BroadcastReceiver {
+
+        private static final String UPLOAD_PAUSE = "UPLOAD_PAUSE";
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() == UPLOAD_PAUSE){
 
+            }
         }
     }
 
     private FirebaseStorage mStorage;
+    private List<UploadTask> mUploadTasks;
 
     /**
      * Instantiates a new PhotoUploader
@@ -29,6 +37,7 @@ public class PhotoUploader {
      */
     public PhotoUploader(String bucket){
         mStorage = FirebaseStorage.getInstance(bucket);
+        mUploadTasks = new ArrayList<>();
     }
 
     public void uploadPhoto(String path){
@@ -45,6 +54,8 @@ public class PhotoUploader {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             System.out.println("Upload is " + progress + "% done");
         });
+
+        mUploadTasks.add(uploadTask);
     }
 
 }
