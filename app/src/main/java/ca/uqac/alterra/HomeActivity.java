@@ -28,6 +28,7 @@ public class HomeActivity extends AppCompatActivity {
     private MapsHandler mMapsHandler;
     private BottomSheetHandler mBottomSheetHandler;
     private FloatingActionButton mCameraButton;
+    private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
 
     @Override
@@ -42,6 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onStart();
         mMapsHandler = new MapsHandler(this);
         mBottomSheetHandler = new BottomSheetHandler(this);
+        mPhotoUploader = new PhotoUploader(getResources().getString(R.string.firebaseBucket));
         mCameraButton = findViewById(R.id.cameraButton);
         mCameraButton.setOnClickListener((view) -> dispatchTakePictureIntent());
 
@@ -108,6 +110,9 @@ public class HomeActivity extends AppCompatActivity {
         switch(requestCode){
             case REQUEST_TAKE_PHOTO:
                 Toast.makeText(this,"Saved",Toast.LENGTH_LONG).show();
+                if (resultCode == RESULT_OK){
+                    mPhotoUploader.uploadPhoto(mCurrentImagePath);
+                }
                 break;
         }
 
