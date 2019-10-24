@@ -1,5 +1,6 @@
 package ca.uqac.alterra;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,22 +21,37 @@ import java.util.Map;
 
 public class PhotoUploader {
 
+    private static final String ACTION_UPLOAD_PAUSE = "ACTION_UPLOAD_PAUSE";
+    private static final String ACTION_UPLOAD_RESUME = "ACTION_UPLOAD_RESUME";
+    private static final String EXTRA_NOTIFICATION_ID = "EXTRA_NOTIFICATION_ID";
 
     public static class UploadControlReceiver extends BroadcastReceiver {
 
-        private static final String UPLOAD_PAUSE = "UPLOAD_PAUSE";
+
+        public UploadControlReceiver(){
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction() == UPLOAD_PAUSE){
-
-            }
+            System.out.println(context);
+           /* int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID,-1);
+            UploadTask task = mUploadTasks.get(notificationId);
+            if (intent.getAction() == ACTION_UPLOAD_PAUSE){
+                if (task != null){
+                    task.pause();
+                    updateProgressNotification(notificationId,getTaskProgression(task.getSnapshot()),true);
+                }
+            } else if (intent.getAction() == ACTION_UPLOAD_RESUME){
+                if (task != null){
+                    task.resume();
+                    updateProgressNotification(notificationId,getTaskProgression(task.getSnapshot()),false);
+                }
+            }*/
         }
     }
 
-
     private FirebaseStorage mStorage;
-    private Map<UploadTask,Integer> mUploadTasks;
+    private Map<Integer,UploadTask> mUploadTasks;
     private Context mContext;
     private NotificationManagerCompat mNotificationManager;
     private static int notificationId;
@@ -65,14 +81,19 @@ public class PhotoUploader {
         }).addOnSuccessListener((taskSnapshot) -> {
             showSuccessNotification(id);
         }).addOnProgressListener((taskSnapshot) -> {
-            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            int progress = getTaskProgression(taskSnapshot);
             System.out.println("Upload is " + progress + "% done");
-            updateProgressNotification(id ,(int) progress);
+            updateProgressNotification(id , progress, false);
         });
 
 
         //Save the UploadTask and the corresponding notification id
-        mUploadTasks.put(uploadTask,id);
+        mUploadTasks.put(id,uploadTask);
+    }
+
+    private int getTaskProgression(UploadTask.TaskSnapshot taskSnapshot){
+        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+        return (int) progress;
     }
 
     /**
@@ -104,30 +125,57 @@ public class PhotoUploader {
      * @return the id of the notification
      */
     private int showProgressNotification(){
+        // notificationId is a unique int for each notification
+        int id = notificationId++;
+
         //Create a progress bar notification with 0% progress
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
                 .setSmallIcon(R.drawable.alterra_logo_round)
                 .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
                 .setContentText("0%")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setProgress(100,0,true); //Progress is indeterminate at first
+                .setProgress(100,0,true) //Progress is indeterminate at first
+                .addAction(R.drawable.alterra_logo_round,mContext.getString(R.string.notification_upload_button_pause),getPausePendingIntent(id));
 
 
-        // notificationId is a unique int for each notification
-        int id = notificationId++;
         mNotificationManager.notify(id, builder.build());
 
         return id;
     }
 
-    private void updateProgressNotification(int notificationId, int progressionPercentage){
+    private void updateProgressNotification(int notificationId, int progressionPercentage, boolean isPaused){
+        String pauseStr;
+        if (isPaused){
+            pauseStr = mContext.getString(R.string.notification_upload_button_resume);
+        } else {
+            pauseStr = mContext.getString(R.string.notification_upload_button_pause);
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
                 .setSmallIcon(R.drawable.alterra_logo_round)
                 .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
                 .setContentText(progressionPercentage + "%")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setProgress(100,progressionPercentage,false);
+                .setProgress(100,progressionPercentage,false)
+                .addAction(R.drawable.alterra_logo_round,pauseStr,getPausePendingIntent(notificationId));
 
         mNotificationManager.notify(notificationId, builder.build());
+    }
+
+    private PendingIntent getPausePendingIntent(int notificationId){
+        Intent pauseIntent = new Intent(mContext, PhotoUploader.UploadControlReceiver.class);
+        pauseIntent.putExtra(EXTRA_NOTIFICATION_ID, notificationId);
+
+        UploadTask task = mUploadTasks.get(notificationId);
+        if (task != null){
+            if (task.isPaused()){
+                pauseIntent.setAction(ACTION_UPLOAD_RESUME);
+            } else {
+                pauseIntent.setAction(ACTION_UPLOAD_PAUSE);
+            }
+        }
+
+        PendingIntent pausePendingIntent =
+                PendingIntent.getBroadcast(mContext, 0, pauseIntent, 0);
+        return pausePendingIntent;
     }
 }

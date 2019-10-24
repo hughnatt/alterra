@@ -7,4 +7,6 @@
     <string name="channel_description">Channel for handling notifications from the Alterra app</string>
     <string name="notification_upload_inprogress">Uploading</string>
     <string name="notification_upload_success">Upload successful</string>
+    <string name="notification_upload_button_pause">Pause</string>
+    <string name="notification_upload_button_resume">Pause</string>
 </resources>

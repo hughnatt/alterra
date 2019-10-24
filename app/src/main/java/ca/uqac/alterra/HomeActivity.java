@@ -9,7 +9,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +38,8 @@ public class HomeActivity extends AppCompatActivity {
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
         mMapsHandler = new MapsHandler(this);
         mBottomSheetHandler = new BottomSheetHandler(this);
         mPhotoUploader = new PhotoUploader(getResources().getString(R.string.firebaseBucket), this);
