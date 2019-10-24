@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
@@ -25,7 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginFragment extends Fragment {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
-
 
     TextInputEditText emailEditText;
     TextInputLayout emailTextInput;
@@ -42,7 +42,6 @@ public class LoginFragment extends Fragment {
     private LoginListener mListener;
 
     private FirebaseAuth mAuth;
-
 
     public LoginFragment() {
         // Required empty public constructor
@@ -92,37 +91,27 @@ public class LoginFragment extends Fragment {
 
     public void setLoginListener(LoginListener listener) { mListener = listener; }
 
-    private boolean isValidEmail(String email){
-        if(email.length() == 0){
-            return false;
-        }else if(!email.contains("@")){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    private boolean isPasswordValid(String password){
-        if(password.length() == 0){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
     private void setNextButtonListener(){
        loginButton.setOnClickListener(new View.OnClickListener() {
            public void onClick(View v) {
                email = emailEditText.getText().toString();
                password = passwordEditText.getText().toString();
-               if(!isValidEmail(email) && !isPasswordValid(password)){
-                   Log.d(TAG, "Error email" );
-                   emailTextInput.setError("Please enter a valid address");
-               }else{
-                   login();
+
+               Boolean isValid =true;
+
+               if(email.length() <1){
+                   emailTextInput.setError("Please enter email");
+                   isValid = false;
                }
 
-               Log.d(TAG, email + ":" + password );
+               if(password.length() <1){
+                   passwordTextInput.setError("Please enter password");
+                   isValid = false;
+               }
+
+               if (isValid)
+                   login();
+
            }
        });
     }
@@ -191,18 +180,19 @@ public class LoginFragment extends Fragment {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            emailTextInput.setErrorEnabled(true);
-                            passwordTextInput.setErrorEnabled(true);
+                            if(!task.isSuccessful()) {
+                                new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
+                                        .setTitle("Login Failed")
+                                        .setMessage(task.getException().getMessage())
+                                        .setPositiveButton("OK", null)
+                                        .show();
+                                }
+                            }
                         }
-                    }
                 });
     }
 
-
-
-
     public interface LoginListener {
-        // TODO: Update argument type and name
         void onLoginSuccessful();
         void onRegisterRequested();
     }
