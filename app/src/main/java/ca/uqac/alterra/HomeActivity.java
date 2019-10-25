@@ -183,6 +183,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_item_pictures :
                 Toast toastPictures = Toast.makeText(getApplicationContext(), "Pictures", Toast.LENGTH_LONG);
                 toastPictures.show();
+                startActivity(new Intent(this, PicturesActivity.class));
+                finish();
                 return true;
             case R.id.nav_item_places :
                 Toast toastPlaces = Toast.makeText(getApplicationContext(), "Places", Toast.LENGTH_LONG);

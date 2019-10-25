@@ -80,7 +80,7 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         super.onStart();
 
         //DEBUG: For testing purposes, signOut User on application startup
-        mAuth.signOut();
+        //mAuth.signOut();
 
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
