@@ -56,28 +56,29 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
                 if(loginFragment == null){
                     loginFragment = new LoginFragment();
-                    loginFragment.setLoginListener(this);
                 }
+                loginFragment.setLoginListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.emptyContainer, loginFragment, LOGIN_FRAGMENT_TAG);
                 ft.addToBackStack(null);
-                ft.commit();
+                ft.commitAllowingStateLoss();
                 break;
 
             case REGISTER :
                 RegisterFragment registerFragment = (RegisterFragment) getSupportFragmentManager().findFragmentByTag(REGISTER_FRAGMENT_TAG);
 
-                if(registerFragment == null){
-                    registerFragment = new RegisterFragment();
-                    registerFragment.setRegisterListener(this);
-                }
 
+                if(registerFragment == null)
+                    registerFragment = new RegisterFragment();
+
+                registerFragment.setRegisterListener(this);
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.emptyContainer, registerFragment);
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
+
             case HOME :
                 Log.d("DEBUG", "Passing to HomeActivity");
                 Intent startHomeActivityIntent = new Intent(this,HomeActivity.class);

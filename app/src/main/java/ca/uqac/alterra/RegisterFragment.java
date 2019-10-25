@@ -31,17 +31,21 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     public static final String TAG = RegisterFragment.class.getSimpleName();
 
-    TextInputEditText emailEditText;
-    TextInputLayout emailTextInput;
+    private TextInputEditText nameEditText;
+    private TextInputLayout nameTextInput;
 
-    TextInputEditText passwordEditText;
-    TextInputLayout passwordTextInput;
+    private TextInputEditText emailEditText;
+    private TextInputLayout emailTextInput;
 
-    TextInputEditText confirmPasswordEditText;
-    TextInputLayout confirmPasswordTextInput;
+    private TextInputEditText passwordEditText;
+    private TextInputLayout passwordTextInput;
 
-    MaterialButton registerButton;
+    private TextInputEditText confirmPasswordEditText;
+    private TextInputLayout confirmPasswordTextInput;
 
+    private MaterialButton registerButton;
+
+    private String name;
     private String email;
     private String password;
     private String confirmPassword;
@@ -72,8 +76,12 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         confirmPasswordTextInput = view.findViewById(R.id.confirmPasswordTextInput);
         confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText);
 
+        nameTextInput = view.findViewById(R.id.nameTextInput);
+        nameEditText = view.findViewById(R.id.nameEditText);
+
         emailTextInput = view.findViewById(R.id.emailTextInput);
         emailEditText = view.findViewById(R.id.emailEditText);
+
         registerButton = view.findViewById(R.id.registerButton);
 
 
@@ -84,57 +92,68 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         return view;
     }
 
-    public void setRegisterListener(RegisterFragment.RegisterListener listener) {mListener = listener; }
+    public void setRegisterListener(RegisterFragment.RegisterListener listener) {
+        mListener = listener;
+    }
 
 
-    public boolean isSamePassword(String password, String confirmPassword){
+    public boolean isSamePassword(String password, String confirmPassword) {
         return password.equals(confirmPassword);
     }
 
 
-    private void setRegisterButtonListener(){
+    private void setRegisterButtonListener() {
         registerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
-                verifyFields(); }});
+            public void onClick(View v) {
+                verifyFields();
+            }
+        });
     }
 
-    private void verifyFields(){
-            email = emailEditText.getText().toString();
-            password = passwordEditText.getText().toString();
-            confirmPassword = confirmPasswordEditText.getText().toString();
+    private void verifyFields() {
+        name = nameEditText.getText().toString();
+        email = emailEditText.getText().toString();
+        password = passwordEditText.getText().toString();
+        confirmPassword = confirmPasswordEditText.getText().toString();
 
-            boolean isValid = true;
+        boolean isValid = true;
 
-            if(email.length() <1){
-                emailTextInput.setError("Please enter email");
-                isValid = false;
-            }
+        if (name.length() < 1) {
+            nameTextInput.setError("Please enter your name");
+            isValid = false;
+        }
 
-            if(password.length() <1){
-                passwordTextInput.setError("Please enter password");
-                isValid = false;
-            }
+        if (email.length() < 1) {
+            emailTextInput.setError("Please enter email");
+            isValid = false;
+        }
 
-            if(confirmPassword.length() < 1){
-                confirmPasswordTextInput.setError("Please confirm password");
-                isValid = false;
-            }
+        if (password.length() < 1) {
+            passwordTextInput.setError("Please enter password");
+            isValid = false;
+        }
 
-            if (!isSamePassword(password, confirmPassword)){
-                confirmPasswordTextInput.setError("Password are different");
-                isValid = false;
-            }
+        if (confirmPassword.length() < 1) {
+            confirmPasswordTextInput.setError("Please confirm password");
+            isValid = false;
+        }
 
-            if(isValid)
-                register();
+        if (!isSamePassword(password, confirmPassword)) {
+            confirmPasswordTextInput.setError("Password are different");
+            isValid = false;
+        }
+
+        if (isValid)
+            register();
 
     }
 
-    private void setEmailTextListener(){
+    private void setEmailTextListener() {
         emailEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -149,11 +168,12 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         });
     }
 
-    private void setPasswordTextListener(){
+    private void setPasswordTextListener() {
         passwordEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -171,7 +191,8 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         confirmPasswordEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -192,7 +213,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
     public boolean onKey(View view, int keyCode, KeyEvent event) {
 
         if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
             verifyFields();
             return true;
 
@@ -200,16 +221,16 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         return false; // pass on to other listeners.
     }
 
-        @Override
+    @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null)
+        if (currentUser != null)
             mListener.onRegisterSuccessful();
     }
 
-    private void register(){
+    private void register() {
         Log.d(TAG, "register");
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -219,22 +240,22 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            if(user!=null)
+                            if (user != null)
                                 mListener.onRegisterSuccessful();
                         } else {
-                            if(!task.isSuccessful()) {
+                            if (!task.isSuccessful()) {
                                 try {
                                     throw task.getException();
-                                } catch(FirebaseAuthWeakPasswordException e) {
+                                } catch (FirebaseAuthWeakPasswordException e) {
                                     passwordTextInput.setError("Password must be at least 6 characters long");
                                     passwordTextInput.requestFocus();
-                                } catch(FirebaseAuthInvalidCredentialsException e) {
+                                } catch (FirebaseAuthInvalidCredentialsException e) {
                                     emailTextInput.setError("Email is incorrect");
                                     emailTextInput.requestFocus();
-                                } catch(FirebaseAuthUserCollisionException e) {
+                                } catch (FirebaseAuthUserCollisionException e) {
                                     emailTextInput.setError("Email already exists");
                                     emailTextInput.requestFocus();
-                                } catch(Exception e) {
+                                } catch (Exception e) {
                                     Log.e(TAG, e.getMessage());
                                 }
 

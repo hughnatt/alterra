@@ -10,19 +10,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/alterra_logo_round">
-        </ImageView>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -32,8 +19,36 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1"
-            android:layout_margin="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginRight="36dp"
+            android:layout_marginTop="10dp"
+
             android:gravity="left">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/name_hint"
+                app:endIconMode="clear_text"
+                android:textColorHint="@color/colorPrimary"
+                app:errorTextColor="@color/colorPrimaryDark"
+                app:endIconTint="@color/colorPrimaryDark"
+                app:boxStrokeColor="@color/colorPrimaryDark"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/colorPrimaryDark"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/emailTextInput"
@@ -91,6 +106,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/confirm_password_hint"
                 app:endIconMode="password_toggle"
+                android:layout_weight="1"
                 app:endIconTint="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimary"
                 app:boxStrokeColor="@color/colorPrimaryDark"
@@ -114,14 +130,33 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1"
-            android:gravity="center"
+            android:layout_marginTop="36dp"
             >
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="top|center"
+                android:src="@drawable/alterra_logo_round">
+            </ImageView>
+
+            <TextView
+                android:id="@+id/logoTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_title"
+                android:textAlignment="center"
+                android:textColor="#242B2F"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/registerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
             android:text="@string/register_button"
+            android:layout_gravity="center"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@android:color/white"/>
@@ -131,7 +166,6 @@
     </LinearLayout>
 
 
-    </LinearLayout>
 
 
 

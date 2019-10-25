@@ -19,6 +19,16 @@
             android:src="@drawable/alterra_logo_round">
         </ImageView>
 
+        <TextView
+            android:id="@+id/logoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            android:textAlignment="center"
+            android:textColor="#242B2F"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -92,7 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="50dp">
+            android:layout_marginBottom="35dp">
 
             <View
                 android:layout_width="100dp"
@@ -107,9 +117,9 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="15dp"
                 android:layout_marginLeft="15dp"
-
-                android:text="New here ?"
-                android:textColor="@color/colorPrimary"></TextView>
+                android:text="@string/text_new_here"
+                android:textColor="@color/colorPrimary">
+            </TextView>
 
             <View
                 android:layout_width="100dp"
