@@ -10,12 +10,15 @@ import android.util.ArrayMap;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +59,9 @@ public class PhotoUploader {
     private NotificationManagerCompat mNotificationManager;
     private static int notificationId;
 
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
+
     /**
      * Instantiates a new PhotoUploader
      * @param bucket Firebase Cloud Storage bucket URI e.g gs://app-0123456789.appspot.com
@@ -65,11 +71,14 @@ public class PhotoUploader {
         mUploadTasks = new ArrayMap<>();
         mContext = context;
         mNotificationManager = NotificationManagerCompat.from(mContext);
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
     }
 
     public void uploadPhoto(String path){
         Uri file = Uri.fromFile(new File(path));
-        StorageReference riversRef = mStorage.getReference().child("images/"+file.getLastPathSegment());
+        String remotePath = "images/"+file.getLastPathSegment();
+        StorageReference riversRef = mStorage.getReference().child(remotePath);
         UploadTask uploadTask = riversRef.putFile(file);
 
 
@@ -80,6 +89,7 @@ public class PhotoUploader {
             //TODO Handle unsuccessful uploads
         }).addOnSuccessListener((taskSnapshot) -> {
             showSuccessNotification(id);
+            updateDatabase(remotePath);
         }).addOnProgressListener((taskSnapshot) -> {
             int progress = getTaskProgression(taskSnapshot);
             System.out.println("Upload is " + progress + "% done");
@@ -89,6 +99,19 @@ public class PhotoUploader {
 
         //Save the UploadTask and the corresponding notification id
         mUploadTasks.put(id,uploadTask);
+    }
+
+    /**
+     * Upload photo informations on Firestore
+     * @param remotePath The path of the photo in Firebase Storage
+     */
+    private void updateDatabase(String remotePath){
+        String userid = auth.getCurrentUser().getUid();
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("link", remotePath);
+        data.put("owner", userid);
+
+        db.collection("photos").add(data);
     }
 
     private int getTaskProgression(UploadTask.TaskSnapshot taskSnapshot){
