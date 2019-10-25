@@ -219,7 +219,8 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            mListener.onRegisterSuccessful();
+                            if(user!=null)
+                                mListener.onRegisterSuccessful();
                         } else {
                             if(!task.isSuccessful()) {
                                 try {
