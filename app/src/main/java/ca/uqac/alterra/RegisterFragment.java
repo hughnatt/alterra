@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     public static final String TAG = RegisterFragment.class.getSimpleName();
 
@@ -93,39 +94,41 @@ public class RegisterFragment extends Fragment {
 
     private void setRegisterButtonListener(){
         registerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                email = emailEditText.getText().toString();
-                password = passwordEditText.getText().toString();
-                confirmPassword = confirmPasswordEditText.getText().toString();
-
-                boolean isValid = true;
-
-                if(email.length() <1){
-                    emailTextInput.setError("Please enter email");
-                    isValid = false;
-                }
-
-                if(password.length() <1){
-                    passwordTextInput.setError("Please enter password");
-                    isValid = false;
-                }
-
-                if(confirmPassword.length() < 1){
-                    confirmPasswordTextInput.setError("Please confirm password");
-                    isValid = false;
-                }
-
-                if (!isSamePassword(password, confirmPassword)){
-                    confirmPasswordTextInput.setError("Password are different");
-                    isValid = false;
-                }
-
-                if(isValid)
-                    register();
-            }
-        });
+            public void onClick(View v){
+                verifyFields(); }});
     }
 
+    private void verifyFields(){
+            email = emailEditText.getText().toString();
+            password = passwordEditText.getText().toString();
+            confirmPassword = confirmPasswordEditText.getText().toString();
+
+            boolean isValid = true;
+
+            if(email.length() <1){
+                emailTextInput.setError("Please enter email");
+                isValid = false;
+            }
+
+            if(password.length() <1){
+                passwordTextInput.setError("Please enter password");
+                isValid = false;
+            }
+
+            if(confirmPassword.length() < 1){
+                confirmPasswordTextInput.setError("Please confirm password");
+                isValid = false;
+            }
+
+            if (!isSamePassword(password, confirmPassword)){
+                confirmPasswordTextInput.setError("Password are different");
+                isValid = false;
+            }
+
+            if(isValid)
+                register();
+
+    }
 
     private void setEmailTextListener(){
         emailEditText.addTextChangedListener(new TextWatcher() {
@@ -181,9 +184,23 @@ public class RegisterFragment extends Fragment {
                 confirmPasswordTextInput.setError(null);
             }
         });
+
+        confirmPasswordEditText.setOnKeyListener(this);
     }
 
     @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+
+        if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                        event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            verifyFields();
+            return true;
+
+        }
+        return false; // pass on to other listeners.
+    }
+
+        @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.

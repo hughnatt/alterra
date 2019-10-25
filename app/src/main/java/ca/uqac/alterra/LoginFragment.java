@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends Fragment implements View.OnKeyListener {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
 
@@ -94,26 +95,29 @@ public class LoginFragment extends Fragment {
     private void setNextButtonListener(){
        loginButton.setOnClickListener(new View.OnClickListener() {
            public void onClick(View v) {
-               email = emailEditText.getText().toString();
-               password = passwordEditText.getText().toString();
-
-               Boolean isValid =true;
-
-               if(email.length() <1){
-                   emailTextInput.setError("Please enter email");
-                   isValid = false;
-               }
-
-               if(password.length() <1){
-                   passwordTextInput.setError("Please enter password");
-                   isValid = false;
-               }
-
-               if (isValid)
-                   login();
-
+               verifyFields();
            }
        });
+    }
+
+    private void verifyFields(){
+        email = emailEditText.getText().toString();
+        password = passwordEditText.getText().toString();
+
+        Boolean isValid =true;
+
+        if(email.length() <1){
+            emailTextInput.setError("Please enter email");
+            isValid = false;
+        }
+
+        if(password.length() <1){
+            passwordTextInput.setError("Please enter password");
+            isValid = false;
+        }
+
+        if (isValid)
+            login();
     }
 
     private void setRegisterButtonListener(){
@@ -165,6 +169,21 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
+
+        passwordEditText.setOnKeyListener(this);
+
+    }
+
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+
+        if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            verifyFields();
+            return true;
+
+        }
+        return false; // pass on to other listeners.
     }
 
     private void login(){
