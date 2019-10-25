@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="firebaseBucket">gs://alterra-1569341283377.appspot.com</string>
+</resources>

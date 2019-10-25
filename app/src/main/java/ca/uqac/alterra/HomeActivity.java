@@ -7,8 +7,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -25,9 +30,15 @@ import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
+    public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
+
     private MapsHandler mMapsHandler;
     private BottomSheetHandler mBottomSheetHandler;
     private FloatingActionButton mCameraButton;
+    private PhotoUploader mPhotoUploader;
+    private String mCurrentImagePath;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,10 +50,15 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
         mMapsHandler = new MapsHandler(this);
         mBottomSheetHandler = new BottomSheetHandler(this);
+        mPhotoUploader = new PhotoUploader(getResources().getString(R.string.firebaseBucket), this);
         mCameraButton = findViewById(R.id.cameraButton);
         mCameraButton.setOnClickListener((view) -> dispatchTakePictureIntent());
+
+        //Notification setup
+        createNotificationChannel();
 
         //Monitoring the bottom panel movements
         BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomPanel));
@@ -81,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                System.out.println(photoFile.getAbsolutePath());
+                System.out.println("Photo saved as" + mCurrentImagePath);
             }
         }
     }
@@ -96,6 +112,7 @@ public class HomeActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+        mCurrentImagePath = image.getAbsolutePath();
         return image;
     }
 
@@ -105,9 +122,31 @@ public class HomeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode){
             case REQUEST_TAKE_PHOTO:
-                Toast.makeText(this,"Saved",Toast.LENGTH_LONG).show();
+                if (resultCode == RESULT_OK){
+                    mPhotoUploader.uploadPhoto(mCurrentImagePath);
+                }
                 break;
         }
 
     }
+
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+
 }

@@ -3,4 +3,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="app_title">Alterra</string>
+    <string name="channel_name">Alterra Notification</string>
+    <string name="channel_description">Channel for handling notifications from the Alterra app</string>
+    <string name="notification_upload_inprogress">Uploading</string>
+    <string name="notification_upload_success">Upload successful</string>
+    <string name="notification_upload_button_pause">Pause</string>
+    <string name="notification_upload_button_resume">Pause</string>
 </resources>
