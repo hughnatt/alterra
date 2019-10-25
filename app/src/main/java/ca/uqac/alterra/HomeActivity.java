@@ -1,5 +1,6 @@
 package ca.uqac.alterra;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +35,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
@@ -46,12 +48,15 @@ public class HomeActivity extends AppCompatActivity {
 
 
     private FirebaseAuth mAuth;
+    private NavigationView mNavigationView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
+
     }
 
 
@@ -85,8 +90,7 @@ public class HomeActivity extends AppCompatActivity {
         toggle.syncState();
 
         if (currentUser != null) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
-            View headerView = navigationView.getHeaderView(0);
+            View headerView = mNavigationView.getHeaderView(0);
             TextView navUsername = (TextView) headerView.findViewById(R.id.navUsername);
             navUsername.setText(currentUser.getEmail()); //TODO : change by the login (need to be availible in register)
         } else {
@@ -94,7 +98,6 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
-
 
     static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -149,7 +152,6 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -166,6 +168,38 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    private void setNavigationViewListener() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_item_profile :
+                System.out.println("Profile clicked");
+                Toast toast = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
+                toast.show();
+                return true;
+            case R.id.nav_item_pictures :
+                System.out.println("Pictures clicked");
+                return true;
+            case R.id.nav_item_places :
+                System.out.println("Places clicked");
+                return true;
+            case R.id.nav_item_settings :
+                System.out.println("Settings clicked");
+                return true;
+            case R.id.nav_item_about :
+                System.out.println("About clicked");
+                return true;
+            case R.id.nav_item_logout :
+                System.out.println("Logout clicked");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
 
 
+        }
+    }
 }
