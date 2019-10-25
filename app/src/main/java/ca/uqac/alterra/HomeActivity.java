@@ -194,7 +194,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 System.out.println("About clicked");
                 return true;
             case R.id.nav_item_logout :
-                System.out.println("Logout clicked");
+                mAuth.signOut();
+                startActivity(new Intent(this, AuthActivity.class));
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
