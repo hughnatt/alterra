@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "220122298758-jqguotcuj2h5sl2fmteg4k2ok462p57t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ca.uqac.alterra",
+            "certificate_hash": "e036cd6a675aa62faa8a72076ecd1572fc0a44b1"
+          }
+        },
+        {
           "client_id": "220122298758-jqfna7rmdppjo9tgaoqnngdn2e9afjj5.apps.googleusercontent.com",
           "client_type": 3
         }

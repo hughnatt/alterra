@@ -15,10 +15,14 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 
@@ -76,30 +80,14 @@ public class RegisterFragment extends Fragment {
         setPasswordTextListener();
         setRegisterButtonListener();
 
-
         return view;
     }
 
     public void setRegisterListener(RegisterFragment.RegisterListener listener) {mListener = listener; }
 
-    private boolean isValidEmail(String email){
-        if(email.length() == 0){
-            return false;
-        }else if(!email.contains("@")){
-            return false;
-        }else{
-            return true;
-        }
-    }
 
-    private boolean isPasswordValid(String password, String confirmPassword) {
-        if (password.length() == 0 && confirmPassword.length() == 0) {
-            return false;
-        } else if (!password.equals(confirmPassword)) {
-            confirmPasswordTextInput.setErrorEnabled(true);
-            return false;
-        } else
-            return true;
+    public boolean isSamePassword(String password, String confirmPassword){
+        return password.equals(confirmPassword);
     }
 
 
@@ -109,7 +97,30 @@ public class RegisterFragment extends Fragment {
                 email = emailEditText.getText().toString();
                 password = passwordEditText.getText().toString();
                 confirmPassword = confirmPasswordEditText.getText().toString();
-                if(isPasswordValid(password, confirmPassword) && isValidEmail(email))
+
+                boolean isValid = true;
+
+                if(email.length() <1){
+                    emailTextInput.setError("Please enter email");
+                    isValid = false;
+                }
+
+                if(password.length() <1){
+                    passwordTextInput.setError("Please enter password");
+                    isValid = false;
+                }
+
+                if(confirmPassword.length() < 1){
+                    confirmPasswordTextInput.setError("Please confirm password");
+                    isValid = false;
+                }
+
+                if (!isSamePassword(password, confirmPassword)){
+                    confirmPasswordTextInput.setError("Password are different");
+                    isValid = false;
+                }
+
+                if(isValid)
                     register();
             }
         });
@@ -130,9 +141,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(emailTextInput.isErrorEnabled()){
-                    emailTextInput.setErrorEnabled(false);
-                }
+                emailTextInput.setError(null);
             }
         });
     }
@@ -151,9 +160,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(passwordTextInput.isErrorEnabled()){
-                    passwordTextInput.setErrorEnabled(false);
-                }
+                passwordTextInput.setError(null);
             }
         });
 
@@ -171,9 +178,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(confirmPasswordTextInput.isErrorEnabled()){
-                    confirmPasswordTextInput.setErrorEnabled(false);
-                }
+                confirmPasswordTextInput.setError(null);
             }
         });
     }
@@ -199,17 +204,35 @@ public class RegisterFragment extends Fragment {
                             FirebaseUser user = mAuth.getCurrentUser();
                             mListener.onRegisterSuccessful();
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d(TAG, "createUserWithEmail:failure", task.getException());
-                        }
+                            if(!task.isSuccessful()) {
+                                try {
+                                    throw task.getException();
+                                } catch(FirebaseAuthWeakPasswordException e) {
+                                    passwordTextInput.setError("Password must be at least 6 characters long");
+                                    passwordTextInput.requestFocus();
+                                } catch(FirebaseAuthInvalidCredentialsException e) {
+                                    emailTextInput.setError("Email is incorrect");
+                                    emailTextInput.requestFocus();
+                                } catch(FirebaseAuthUserCollisionException e) {
+                                    emailTextInput.setError("Email already exists");
+                                    emailTextInput.requestFocus();
+                                } catch(Exception e) {
+                                    Log.e(TAG, e.getMessage());
+                                }
 
-                        // ...
+                                new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
+                                        .setTitle("Register Failed")
+                                        .setMessage(task.getException().getMessage())
+                                        .setPositiveButton("OK", null)
+                                        .show();
+
+                            }
+                        }
                     }
                 });
     }
 
     public interface RegisterListener {
-        // TODO: Update argument type and name
         void onRegisterSuccessful();
     }
 

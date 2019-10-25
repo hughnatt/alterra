@@ -19,20 +19,29 @@
             android:src="@drawable/alterra_logo_round">
         </ImageView>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center"
-            android:layout_marginBottom="50dp">
+            android:layout_weight="1"
+            android:layout_margin="36dp"
+            android:gravity="left">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/emailTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:hint="Email address"
                 app:endIconMode="clear_text"
-                android:layout_margin="36dp"
                 android:textColorHint="@color/colorPrimary"
                 app:errorTextColor="@color/colorPrimaryDark"
                 app:endIconTint="@color/colorPrimaryDark"
@@ -57,11 +66,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
+                android:layout_weight="1"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/colorPrimaryDark"
-                android:layout_marginLeft="36dp"
-                android:layout_marginRight="36dp"
-                android:layout_marginBottom="36dp"
                 android:textColorHint="@color/colorPrimary"
                 app:boxStrokeColor="@color/colorPrimaryDark"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -85,8 +92,6 @@
                 android:hint="Confirm Password"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/colorPrimaryDark"
-                android:layout_marginLeft="36dp"
-                android:layout_marginRight="36dp"
                 android:textColorHint="@color/colorPrimary"
                 app:boxStrokeColor="@color/colorPrimaryDark"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -102,20 +107,31 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+        </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/registerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:text="Register"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:backgroundTint="@color/colorPrimaryDark"
-                android:textColor="@android:color/white"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/registerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@android:color/white"/>
+
         </LinearLayout>
 
     </LinearLayout>
 
+
+    </LinearLayout>
 
 
 
