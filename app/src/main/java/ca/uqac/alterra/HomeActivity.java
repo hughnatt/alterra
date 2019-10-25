@@ -177,21 +177,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.nav_item_profile :
-                System.out.println("Profile clicked");
-                Toast toast = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
-                toast.show();
+                Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
+                toastProfile.show();
                 return true;
             case R.id.nav_item_pictures :
-                System.out.println("Pictures clicked");
+                Toast toastPictures = Toast.makeText(getApplicationContext(), "Pictures", Toast.LENGTH_LONG);
+                toastPictures.show();
                 return true;
             case R.id.nav_item_places :
-                System.out.println("Places clicked");
+                Toast toastPlaces = Toast.makeText(getApplicationContext(), "Places", Toast.LENGTH_LONG);
+                toastPlaces.show();
                 return true;
             case R.id.nav_item_settings :
-                System.out.println("Settings clicked");
+                Toast toastSettings = Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG);
+                toastSettings.show();
                 return true;
             case R.id.nav_item_about :
-                System.out.println("About clicked");
+                Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
+                toastAbout.show();
                 return true;
             case R.id.nav_item_logout :
                 mAuth.signOut();
