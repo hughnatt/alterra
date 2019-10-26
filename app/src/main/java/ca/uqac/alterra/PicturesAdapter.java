@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,40 +23,43 @@ import java.util.ArrayList;
 public class PicturesAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
-    private ArrayList<Bitmap> mBitMap;
+    private ArrayList<String> mPhotoList;
 
-    public PicturesAdapter(Context mContext, ArrayList<String> PlaceList) {
+    public PicturesAdapter(Context mContext) {
         this.mContext = mContext;
-        this.mBitMap = new ArrayList<>();
+        this.mPhotoList = new ArrayList<>();
     }
 
     @Override
     public PlaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_pictures_layout,
                 parent, false);
+
         return new PlaceViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
        PlaceViewHolder Pholder =(PlaceViewHolder) holder;
-       Pholder.mPlace.setImageBitmap(mBitMap.get(position));
+       Glide.with(mContext).load(mPhotoList.get(position))
+               .fitCenter().into(((PlaceViewHolder) holder).mPlace);
     }
 
     @Override
     public int getItemCount() {
-        return mBitMap.size();
+        return mPhotoList.size();
     }
 
     public void addPicture(String pictureUrl){
-        try {
+        /*try {
             URL myUrl = new URL(pictureUrl);
             Bitmap bitmap = BitmapFactory.decodeStream(myUrl.openConnection().getInputStream());
             System.out.println("bitmap "+bitmap);
             mBitMap.add(bitmap);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+        mPhotoList.add(pictureUrl);
     }
 
     class PlaceViewHolder extends RecyclerView.ViewHolder {

@@ -43,10 +43,10 @@ public class PicturesActivity extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance();
 
         mRecyclerView = findViewById(R.id.recyclerview);
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 1);
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 3);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
-        PicturesAdapter myAdapter = new PicturesAdapter(getApplicationContext(), null);
+        PicturesAdapter myAdapter = new PicturesAdapter(getApplicationContext());
         mRecyclerView.setAdapter(myAdapter);
 
         mFirestore.collection("photos")
@@ -63,6 +63,8 @@ public class PicturesActivity extends AppCompatActivity {
                                     public void onSuccess(Uri uri) {
                                         System.out.println(uri.toString());
                                         myAdapter.addPicture(uri.toString());
+                                        myAdapter.notifyItemInserted(myAdapter.getItemCount());
+
                                     }
                                 });
 
