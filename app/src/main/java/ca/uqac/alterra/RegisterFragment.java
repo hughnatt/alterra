@@ -26,7 +26,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.HashMap;
 
 public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
@@ -55,6 +58,8 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     private FirebaseAuth mAuth;
 
+    private FirebaseFirestore db;
+
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -64,6 +69,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
     }
 
 
@@ -244,8 +250,14 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null)
+
+                            if (user != null){
                                 mListener.onRegisterSuccessful();
+                                //Add user document in database
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("displayName", user.getEmail());
+                                db.collection("users").document(user.getUid()).set(data);
+                            }
                         } else {
                             if (!task.isSuccessful()) {
                                 try {
