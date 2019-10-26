@@ -1,16 +1,25 @@
 package ca.uqac.alterra;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,12 +28,15 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 
-public class PicturesActivity extends AppCompatActivity {
+public class PicturesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     RecyclerView mRecyclerView;
 
     private FirebaseAuth mAuth;
     private FirebaseStorage mStorage;
     private FirebaseFirestore mFirestore;
+    private FirebaseUser currentUser;
+
+    private NavigationView mNavigationView;
 
 
     @Override
@@ -32,8 +44,10 @@ public class PicturesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pictures);
 
+        setNavigationViewListener();
+
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        currentUser = mAuth.getCurrentUser();
 
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
@@ -74,6 +88,69 @@ public class PicturesActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        DrawerLayout navDrawer = findViewById(R.id.navDrawerPictures);
+        Toolbar toolbar = findViewById(R.id.toolbarPictures);
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
+        navDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        if (currentUser != null) {
+            View headerView = mNavigationView.getHeaderView(0);
+            TextView navUsername = (TextView) headerView.findViewById(R.id.navUsername);
+            navUsername.setText(currentUser.getEmail()); //TODO : change by the login (need to be availible in register)
+        } else {
+            //TODO : how to handle this kind of error ?!
+        }
+    }
+
+
+    private void setNavigationViewListener() {
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view_pictures);
+        mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_item_profile :
+                Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
+                toastProfile.show();
+                return true;
+            case R.id.nav_item_pictures :
+                Toast toastPictures = Toast.makeText(getApplicationContext(), "Pictures", Toast.LENGTH_LONG);
+                toastPictures.show();
+                startActivity(new Intent(this, PicturesActivity.class));
+                finish();
+                return true;
+            case R.id.nav_item_places :
+                Toast toastPlaces = Toast.makeText(getApplicationContext(), "Places", Toast.LENGTH_LONG);
+                toastPlaces.show();
+                return true;
+            case R.id.nav_item_settings :
+                Toast toastSettings = Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG);
+                toastSettings.show();
+                return true;
+            case R.id.nav_item_about :
+                Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
+                toastAbout.show();
+                return true;
+            case R.id.nav_item_logout :
+                mAuth.signOut();
+                startActivity(new Intent(this, AuthActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+
+        }
     }
 
 
