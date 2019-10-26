@@ -3,6 +3,7 @@ package ca.uqac.alterra;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -45,13 +46,12 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     private MaterialButton registerButton;
 
-    private String name;
-    private String email;
-    private String password;
-    private String confirmPassword;
+    private String name =null;
+    private String email=null;
+    private String password=null;
+    private String confirmPassword=null;
 
     private RegisterListener mListener;
-
 
     private FirebaseAuth mAuth;
 
@@ -65,6 +65,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -164,6 +165,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 emailTextInput.setError(null);
+                email = s.toString();
             }
         });
     }
@@ -184,6 +186,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 passwordTextInput.setError(null);
+                password=s.toString();
             }
         });
 
@@ -203,6 +206,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 confirmPasswordTextInput.setError(null);
+                confirmPassword= s.toString();
             }
         });
 
@@ -270,6 +274,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                     }
                 });
     }
+
 
     public interface RegisterListener {
         void onRegisterSuccessful();

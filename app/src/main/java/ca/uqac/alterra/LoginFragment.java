@@ -28,14 +28,14 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
 
-    TextInputEditText emailEditText;
-    TextInputLayout emailTextInput;
+    private TextInputEditText emailEditText;
+    private TextInputLayout emailTextInput;
 
-    TextInputEditText passwordEditText;
-    TextInputLayout passwordTextInput;
+    private TextInputEditText passwordEditText;
+    private TextInputLayout passwordTextInput;
 
-    MaterialButton loginButton;
-    MaterialButton registerButton;
+    private MaterialButton loginButton;
+    private MaterialButton registerButton;
 
     private String email;
     private String password;

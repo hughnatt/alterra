@@ -74,7 +74,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
                 registerFragment.setRegisterListener(this);
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.emptyContainer, registerFragment);
+                ft.replace(R.id.emptyContainer, registerFragment, REGISTER_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
