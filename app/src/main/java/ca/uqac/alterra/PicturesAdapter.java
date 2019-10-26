@@ -51,14 +51,6 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     }
 
     public void addPicture(String pictureUrl){
-        /*try {
-            URL myUrl = new URL(pictureUrl);
-            Bitmap bitmap = BitmapFactory.decodeStream(myUrl.openConnection().getInputStream());
-            System.out.println("bitmap "+bitmap);
-            mBitMap.add(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
         mPhotoList.add(pictureUrl);
     }
 
