@@ -3,11 +3,13 @@ package ca.uqac.alterra;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,27 +31,30 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.HashMap;
 
-public class RegisterFragment extends Fragment {
+public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     public static final String TAG = RegisterFragment.class.getSimpleName();
 
-    TextInputEditText emailEditText;
-    TextInputLayout emailTextInput;
+    private TextInputEditText nameEditText;
+    private TextInputLayout nameTextInput;
 
-    TextInputEditText passwordEditText;
-    TextInputLayout passwordTextInput;
+    private TextInputEditText emailEditText;
+    private TextInputLayout emailTextInput;
 
-    TextInputEditText confirmPasswordEditText;
-    TextInputLayout confirmPasswordTextInput;
+    private TextInputEditText passwordEditText;
+    private TextInputLayout passwordTextInput;
 
-    MaterialButton registerButton;
+    private TextInputEditText confirmPasswordEditText;
+    private TextInputLayout confirmPasswordTextInput;
 
-    private String email;
-    private String password;
-    private String confirmPassword;
+    private MaterialButton registerButton;
+
+    private String name =null;
+    private String email=null;
+    private String password=null;
+    private String confirmPassword=null;
 
     private RegisterListener mListener;
-
 
     private FirebaseAuth mAuth;
 
@@ -67,6 +72,7 @@ public class RegisterFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,8 +83,12 @@ public class RegisterFragment extends Fragment {
         confirmPasswordTextInput = view.findViewById(R.id.confirmPasswordTextInput);
         confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText);
 
+        nameTextInput = view.findViewById(R.id.nameTextInput);
+        nameEditText = view.findViewById(R.id.nameEditText);
+
         emailTextInput = view.findViewById(R.id.emailTextInput);
         emailEditText = view.findViewById(R.id.emailEditText);
+
         registerButton = view.findViewById(R.id.registerButton);
 
 
@@ -89,55 +99,68 @@ public class RegisterFragment extends Fragment {
         return view;
     }
 
-    public void setRegisterListener(RegisterFragment.RegisterListener listener) {mListener = listener; }
+    public void setRegisterListener(RegisterFragment.RegisterListener listener) {
+        mListener = listener;
+    }
 
 
-    public boolean isSamePassword(String password, String confirmPassword){
+    public boolean isSamePassword(String password, String confirmPassword) {
         return password.equals(confirmPassword);
     }
 
 
-    private void setRegisterButtonListener(){
+    private void setRegisterButtonListener() {
         registerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                email = emailEditText.getText().toString();
-                password = passwordEditText.getText().toString();
-                confirmPassword = confirmPasswordEditText.getText().toString();
-
-                boolean isValid = true;
-
-                if(email.length() <1){
-                    emailTextInput.setError("Please enter email");
-                    isValid = false;
-                }
-
-                if(password.length() <1){
-                    passwordTextInput.setError("Please enter password");
-                    isValid = false;
-                }
-
-                if(confirmPassword.length() < 1){
-                    confirmPasswordTextInput.setError("Please confirm password");
-                    isValid = false;
-                }
-
-                if (!isSamePassword(password, confirmPassword)){
-                    confirmPasswordTextInput.setError("Password are different");
-                    isValid = false;
-                }
-
-                if(isValid)
-                    register();
+                verifyFields();
             }
         });
     }
 
+    private void verifyFields() {
+        name = nameEditText.getText().toString();
+        email = emailEditText.getText().toString();
+        password = passwordEditText.getText().toString();
+        confirmPassword = confirmPasswordEditText.getText().toString();
 
-    private void setEmailTextListener(){
+        boolean isValid = true;
+
+        if (name.length() < 1) {
+            nameTextInput.setError("Please enter your name");
+            isValid = false;
+        }
+
+        if (email.length() < 1) {
+            emailTextInput.setError("Please enter email");
+            isValid = false;
+        }
+
+        if (password.length() < 1) {
+            passwordTextInput.setError("Please enter password");
+            isValid = false;
+        }
+
+        if (confirmPassword.length() < 1) {
+            confirmPasswordTextInput.setError("Please confirm password");
+            isValid = false;
+        }
+
+        if (!isSamePassword(password, confirmPassword)) {
+            confirmPasswordTextInput.setError("Password are different");
+            isValid = false;
+        }
+
+        if (isValid)
+            register();
+
+    }
+
+    private void setEmailTextListener() {
         emailEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -148,15 +171,17 @@ public class RegisterFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 emailTextInput.setError(null);
+                email = s.toString();
             }
         });
     }
 
-    private void setPasswordTextListener(){
+    private void setPasswordTextListener() {
         passwordEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -167,6 +192,7 @@ public class RegisterFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 passwordTextInput.setError(null);
+                password=s.toString();
             }
         });
 
@@ -174,7 +200,8 @@ public class RegisterFragment extends Fragment {
         confirmPasswordEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -185,8 +212,23 @@ public class RegisterFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 confirmPasswordTextInput.setError(null);
+                confirmPassword= s.toString();
             }
         });
+
+        confirmPasswordEditText.setOnKeyListener(this);
+    }
+
+    @Override
+    public boolean onKey(View view, int keyCode, KeyEvent event) {
+
+        if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+            verifyFields();
+            return true;
+
+        }
+        return false; // pass on to other listeners.
     }
 
     @Override
@@ -194,11 +236,11 @@ public class RegisterFragment extends Fragment {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null)
+        if (currentUser != null)
             mListener.onRegisterSuccessful();
     }
 
-    private void register(){
+    private void register() {
         Log.d(TAG, "register");
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -208,26 +250,28 @@ public class RegisterFragment extends Fragment {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            mListener.onRegisterSuccessful();
 
-                            //Add user document in database
-                            HashMap<String, Object> data = new HashMap<>();
-                            data.put("displayName", user.getEmail());
-                            db.collection("users").document(user.getUid()).set(data);
+                            if (user != null){
+                                mListener.onRegisterSuccessful();
+                                //Add user document in database
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("displayName", user.getEmail());
+                                db.collection("users").document(user.getUid()).set(data);
+                            }
                         } else {
-                            if(!task.isSuccessful()) {
+                            if (!task.isSuccessful()) {
                                 try {
                                     throw task.getException();
-                                } catch(FirebaseAuthWeakPasswordException e) {
+                                } catch (FirebaseAuthWeakPasswordException e) {
                                     passwordTextInput.setError("Password must be at least 6 characters long");
                                     passwordTextInput.requestFocus();
-                                } catch(FirebaseAuthInvalidCredentialsException e) {
+                                } catch (FirebaseAuthInvalidCredentialsException e) {
                                     emailTextInput.setError("Email is incorrect");
                                     emailTextInput.requestFocus();
-                                } catch(FirebaseAuthUserCollisionException e) {
+                                } catch (FirebaseAuthUserCollisionException e) {
                                     emailTextInput.setError("Email already exists");
                                     emailTextInput.requestFocus();
-                                } catch(Exception e) {
+                                } catch (Exception e) {
                                     Log.e(TAG, e.getMessage());
                                 }
 
@@ -242,6 +286,7 @@ public class RegisterFragment extends Fragment {
                     }
                 });
     }
+
 
     public interface RegisterListener {
         void onRegisterSuccessful();

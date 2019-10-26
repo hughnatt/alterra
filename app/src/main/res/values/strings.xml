@@ -9,6 +9,15 @@
     <string name="notification_upload_success">Upload successful</string>
     <string name="notification_upload_button_pause">Pause</string>
     <string name="notification_upload_button_resume">Pause</string>
+
+    <string name="name_hint">Enter your name</string>
+    <string name="email_address_hint">Email address</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="register_button">Register</string>
+    <string name="login_button">Login</string>
+    <string name="text_new_here">New here ?</string>
+
     <string name="nav_profile">Profile</string>
     <string name="nav_pictures">Pictures</string>
     <string name="nav_places">Places</string>
