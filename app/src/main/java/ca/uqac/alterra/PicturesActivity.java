@@ -98,7 +98,7 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = findViewById(R.id.toolbarPictures);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,mNavDrawer,toolbar,R.string.app_name,R.string.app_name);
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.design_default_color_background));
         mNavDrawer.addDrawerListener(toggle);
         toggle.syncState();
 

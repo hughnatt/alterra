@@ -19,8 +19,8 @@
             android:id="@+id/toolbarPictures"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:titleTextColor="@android:color/transparent"
+            app:title="@string/nav_pictures"
+            android:background="@color/colorPrimaryDark"
             >
         </androidx.appcompat.widget.Toolbar>
 
