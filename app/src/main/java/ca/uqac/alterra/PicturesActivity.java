@@ -37,6 +37,7 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
     private FirebaseUser currentUser;
 
     private NavigationView mNavigationView;
+    private DrawerLayout mNavDrawer;
 
 
     @Override
@@ -93,12 +94,12 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
     @Override
     public void onStart(){
         super.onStart();
-        DrawerLayout navDrawer = findViewById(R.id.navDrawerPictures);
+        mNavDrawer = findViewById(R.id.navDrawerPictures);
         Toolbar toolbar = findViewById(R.id.toolbarPictures);
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,mNavDrawer,toolbar,R.string.app_name,R.string.app_name);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
-        navDrawer.addDrawerListener(toggle);
+        mNavDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
         if (currentUser != null) {
@@ -123,11 +124,8 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
                 Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
                 toastProfile.show();
                 return true;
-            case R.id.nav_item_pictures :
-                Toast toastPictures = Toast.makeText(getApplicationContext(), "Pictures", Toast.LENGTH_LONG);
-                toastPictures.show();
-                startActivity(new Intent(this, PicturesActivity.class));
-                finish();
+            case R.id.nav_item_pictures : //We are already on the pictures activity, nothing else must be do
+                mNavDrawer.closeDrawers();
                 return true;
             case R.id.nav_item_places :
                 Toast toastPlaces = Toast.makeText(getApplicationContext(), "Places", Toast.LENGTH_LONG);
