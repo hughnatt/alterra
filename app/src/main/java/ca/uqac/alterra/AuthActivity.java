@@ -5,7 +5,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 
 public class AuthActivity extends FragmentActivity implements LogoFragment.LogoListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
@@ -39,11 +38,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
                 if(logoFragment == null){
                     logoFragment = new LogoFragment();
-                    logoFragment.setLogoListener(this);
                 }
-
+                logoFragment.setLogoListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
+
                 ft.setCustomAnimations(R.anim.faded_in,
                         R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, logoFragment, LOGO_FRAGMENT_TAG);
@@ -129,4 +128,8 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         else if(mCurrentFlow == FLOW.LOGIN || mCurrentFlow == FLOW.LOGO)
             finish();
     }
+
+
+
 }
+
