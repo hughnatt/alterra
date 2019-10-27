@@ -53,6 +53,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null){
+            mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
+        }
         setContentView(R.layout.activity_home);
         setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
@@ -208,5 +211,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("mCurrentImagePath",mCurrentImagePath);
     }
 }
