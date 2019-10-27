@@ -35,8 +35,10 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
        PlaceViewHolder Pholder =(PlaceViewHolder) holder;
-       Glide.with(mContext).load(mPhotoList.get(position))
-               .fitCenter().into(((PlaceViewHolder) holder).mPlace);
+       Glide.with(mContext)
+            .load(mPhotoList.get(position))
+            .fitCenter()
+            .into(((PlaceViewHolder) holder).mPlace);
     }
 
     @Override

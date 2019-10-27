@@ -54,7 +54,7 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
         mStorage = FirebaseStorage.getInstance();
 
         mRecyclerView = findViewById(R.id.recyclerview);
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 3);
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         PicturesAdapter myAdapter = new PicturesAdapter(getApplicationContext());
