@@ -12,36 +12,57 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:src="@drawable/alterra_logo_round">
-            </ImageView>
-
-            <TextView
-                android:id="@+id/logoTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_title"
-                android:textAlignment="center"
-                android:textColor="#242B2F"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:weightSum="2"
+                android:weightSum="3"
                 >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="2"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="36dp"
+                    android:gravity="center"
+                    >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+
+                        <ImageView
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/alterra_logo_round">
+                        </ImageView>
+
+                        <TextView
+                            android:id="@+id/logoTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_title"
+                            android:textAlignment="center"
+                            android:textColor="#242B2F"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/gardensans"/>
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,135 +71,130 @@
                     android:layout_weight="1"
                     android:weightSum="3"
                     android:gravity="center"
+                    android:layout_marginLeft="36dp"
+                    android:layout_marginRight="36dp"
                     >
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/emailTextInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/email_address_hint"
-                        app:endIconMode="clear_text"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="36dp"
-                        android:layout_marginRight="36dp"
-                        android:textColorHint="@color/colorPrimary"
-                        app:errorTextColor="@color/colorPrimaryDark"
-                        app:endIconTint="@color/colorPrimaryDark"
-                        app:boxStrokeColor="@color/colorPrimaryDark"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-
-                        >
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/emailEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:inputType="textEmailAddress"
-                            />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/passwordTextInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/password_hint"
-                        android:layout_weight="1"
-                        app:endIconMode="password_toggle"
-                        app:endIconTint="@color/colorPrimaryDark"
-                        android:layout_marginLeft="36dp"
-                        android:layout_marginRight="36dp"
-                        android:textColorHint="@color/colorPrimary"
-                        app:boxStrokeColor="@color/colorPrimaryDark"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        >
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/passwordEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:inputType="textPassword"
-                            />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/loginButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="20dp"
-                        android:text="@string/login_button"
-                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                        android:backgroundTint="@color/colorPrimaryDark"
-                        android:textColor="@android:color/white"/>
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:gravity="center">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginBottom="20dp">
+                        android:layout_weight="2">
 
-                        <View
-                            android:layout_width="100dp"
-                            android:layout_height="3dp"
-                            android:background="@color/colorPrimaryDark"
-                            android:layout_gravity="center"
-                            />
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/emailTextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/email_address_hint"
+                            app:endIconMode="clear_text"
+                            android:textColorHint="@color/colorPrimaryDark"
+                            app:errorTextColor="@color/colorPrimaryDark"
+                            app:endIconTint="@color/colorPrimaryDark"
+                            app:boxStrokeColor="@color/colorPrimaryDark"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/emailEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:inputType="textEmailAddress"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/passwordTextInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/password_hint"
+                            app:endIconMode="password_toggle"
+                            app:endIconTint="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDark"
+                            app:boxStrokeColor="@color/colorPrimaryDark"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            >
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/passwordEditText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:inputType="textPassword"
+                                />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/loginButton"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginRight="15dp"
-                            android:layout_marginLeft="15dp"
-
-                            android:text="New here ?"
-                            android:textColor="@color/colorPrimary"></TextView>
-
-                        <View
-                            android:layout_width="100dp"
-                            android:layout_height="3dp"
-                            android:layout_gravity="center"
-                            android:background="@color/colorPrimaryDark" />
-
+                            android:text="@string/login_button"
+                            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                            android:backgroundTint="@color/colorPrimaryDark"
+                            android:textColor="@android:color/white"/>
 
                     </LinearLayout>
 
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/registerButton"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/register_button"
-                        android:textColor="@color/colorPrimaryDark"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        app:strokeColor="@color/colorPrimaryDark"
-                        />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_marginBottom="20dp">
+
+                            <View
+                                android:layout_width="150dp"
+                                android:layout_height="3dp"
+                                android:background="@color/colorPrimaryDark"
+                                android:layout_gravity="center"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginRight="15dp"
+                                android:layout_marginLeft="15dp"
+                                android:text="New here ?"
+                                android:textColor="@color/colorAccent">
+                            </TextView>
+
+                            <View
+                                android:layout_width="150dp"
+                                android:layout_height="3dp"
+                                android:layout_gravity="center"
+                                android:background="@color/colorPrimaryDark" />
+                        </LinearLayout>
+
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/registerButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/register_button"
+                            android:textColor="@color/colorPrimaryDark"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            app:strokeColor="@color/colorPrimaryDark"
+                            />
+                    </LinearLayout>
 
                 </LinearLayout>
 
-
             </LinearLayout>
 
-
         </LinearLayout>
-
 
     </FrameLayout>
 

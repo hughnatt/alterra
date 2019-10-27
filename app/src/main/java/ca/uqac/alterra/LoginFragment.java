@@ -85,19 +85,19 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-       if(currentUser!=null){
-           mListener.onLoginSuccessful();
-       }
+        if(currentUser!=null){
+            mListener.onLoginSuccessful();
+        }
     }
 
     public void setLoginListener(LoginListener listener) { mListener = listener; }
 
     private void setNextButtonListener(){
-       loginButton.setOnClickListener(new View.OnClickListener() {
-           public void onClick(View v) {
-               verifyFields();
-           }
-       });
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                verifyFields();
+            }
+        });
     }
 
     private void verifyFields(){
@@ -205,10 +205,17 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
                                         .setMessage(task.getException().getMessage())
                                         .setPositiveButton("OK", null)
                                         .show();
-                                }
                             }
                         }
+                    }
                 });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        emailTextInput.setError(null);
+        passwordTextInput.setError(null);
     }
 
     public interface LoginListener {

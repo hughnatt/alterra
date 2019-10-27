@@ -16,23 +16,36 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:weightSum="3">
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/alterra_logo_round">
-            </ImageView>
-
-            <TextView
-                android:id="@+id/logoTitle"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_title"
-                android:textAlignment="center"
-                android:textColor="#242B2F"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/alterra_logo_round">
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/logoTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_title"
+                    android:textAlignment="center"
+                    android:textColor="#242B2F"
+                    android:textSize="35sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/gardensans"/>
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,6 +53,7 @@
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_margin="36dp"
+                android:layout_weight="2"
 
                 >
 
@@ -50,12 +64,13 @@
                     android:hint="@string/name_hint"
                     android:layout_weight="1"
                     app:endIconMode="clear_text"
-                    android:textColorHint="@color/colorPrimary"
+                    android:layout_marginBottom="10dp"
+                    android:textColorHint="@color/colorPrimaryDark"
                     app:errorTextColor="@color/colorPrimaryDark"
                     app:endIconTint="@color/colorPrimaryDark"
+                    app:helperTextTextColor="@color/colorAccent"
                     app:boxStrokeColor="@color/colorPrimaryDark"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -64,6 +79,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
                         android:textColor="@color/colorPrimaryDark"
+                        android:textColorHint="@color/colorPrimaryDark"
                         />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -73,9 +89,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email_address_hint"
+                    android:layout_marginBottom="10dp"
+
                     app:endIconMode="clear_text"
                     android:layout_weight="1"
-                    android:textColorHint="@color/colorPrimary"
+                    app:helperTextTextColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDark"
                     app:errorTextColor="@color/colorPrimaryDark"
                     app:endIconTint="@color/colorPrimaryDark"
                     app:boxStrokeColor="@color/colorPrimaryDark"
@@ -100,9 +119,12 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/password_hint"
                     app:endIconMode="password_toggle"
+                    android:layout_marginBottom="10dp"
+
                     app:endIconTint="@color/colorPrimaryDark"
                     android:layout_weight="1"
-                    android:textColorHint="@color/colorPrimary"
+                    app:helperTextTextColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDark"
                     app:boxStrokeColor="@color/colorPrimaryDark"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     >
@@ -125,8 +147,11 @@
                     android:hint="@string/confirm_password_hint"
                     app:endIconMode="password_toggle"
                     app:endIconTint="@color/colorPrimaryDark"
+                    android:layout_marginBottom="10dp"
+
                     android:layout_weight="1"
-                    android:textColorHint="@color/colorPrimary"
+                    app:helperTextTextColor="@color/colorAccent"
+                    android:textColorHint="@color/colorPrimaryDark"
                     app:boxStrokeColor="@color/colorPrimaryDark"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     >
@@ -144,10 +169,10 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/registerButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
                     android:text="@string/register_button"
+                    android:layout_marginTop="35dp"
                     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:backgroundTint="@color/colorPrimaryDark"
                     android:textColor="@android:color/white"/>

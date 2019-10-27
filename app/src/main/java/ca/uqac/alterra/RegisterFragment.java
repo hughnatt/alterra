@@ -3,7 +3,6 @@ package ca.uqac.alterra;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -28,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
 import java.util.HashMap;
 
 public class RegisterFragment extends Fragment implements View.OnKeyListener {
@@ -92,9 +90,11 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         registerButton = view.findViewById(R.id.registerButton);
 
 
+        setNameTextListener();
         setEmailTextListener();
         setPasswordTextListener();
         setRegisterButtonListener();
+
 
         return view;
     }
@@ -126,22 +126,23 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         boolean isValid = true;
 
         if (name.length() < 1) {
-            nameTextInput.setError("Please enter your name");
+            nameTextInput.setError("Enter your name");
             isValid = false;
         }
 
         if (email.length() < 1) {
-            emailTextInput.setError("Please enter email");
+            emailTextInput.setError("Enter your email");
             isValid = false;
         }
 
         if (password.length() < 1) {
-            passwordTextInput.setError("Please enter password");
+            passwordTextInput.setError("Enter your password");
+
             isValid = false;
         }
 
         if (confirmPassword.length() < 1) {
-            confirmPasswordTextInput.setError("Please confirm password");
+            confirmPasswordTextInput.setError("Confirm your password");
             isValid = false;
         }
 
@@ -153,6 +154,27 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         if (isValid)
             register();
 
+    }
+
+    private void setNameTextListener() {
+        nameEditText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                nameTextInput.setError(null);
+                name = s.toString();
+            }
+        });
     }
 
     private void setEmailTextListener() {
@@ -240,6 +262,16 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
             mListener.onRegisterSuccessful();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        nameTextInput.setError(null);
+        emailTextInput.setError(null);
+        passwordTextInput.setError(null);
+        confirmPasswordTextInput.setError(null);
+
+    }
+
     private void register() {
         Log.d(TAG, "register");
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -263,13 +295,13 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                                 try {
                                     throw task.getException();
                                 } catch (FirebaseAuthWeakPasswordException e) {
-                                    passwordTextInput.setError("Password must be at least 6 characters long");
+                                    passwordEditText.setError("Password must be at least 6 characters long");
                                     passwordTextInput.requestFocus();
                                 } catch (FirebaseAuthInvalidCredentialsException e) {
-                                    emailTextInput.setError("Email is incorrect");
+                                    emailEditText.setError("Email is incorrect");
                                     emailTextInput.requestFocus();
                                 } catch (FirebaseAuthUserCollisionException e) {
-                                    emailTextInput.setError("Email already exists");
+                                    emailEditText.setError("Email already exists");
                                     emailTextInput.requestFocus();
                                 } catch (Exception e) {
                                     Log.e(TAG, e.getMessage());
