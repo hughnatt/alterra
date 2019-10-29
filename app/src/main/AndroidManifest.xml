@@ -56,7 +56,8 @@
 
         <activity
             android:name=".AuthActivity"
-            android:label="@string/app_title">
+            android:label="@string/app_title"
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
