@@ -20,28 +20,29 @@
             android:weightSum="3">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="20dp"
+                android:gravity="center"
                 android:layout_weight="1">
 
                 <ImageView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:layout_gravity="center"
                     android:src="@drawable/alterra_logo_round">
                 </ImageView>
 
                 <TextView
                     android:id="@+id/logoTitle"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="@string/app_title"
                     android:textAlignment="center"
                     android:textColor="#242B2F"
                     android:textSize="35sp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/gardensans"/>
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 
