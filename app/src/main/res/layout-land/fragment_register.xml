@@ -59,8 +59,7 @@
                             android:textAlignment="center"
                             android:textColor="#242B2F"
                             android:textSize="30sp"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/gardensans"/>
+                            android:textStyle="bold"/>
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
