@@ -329,5 +329,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mGeolocator = new AlterraGeolocator(this);
         mGeolocator.addOnLocationChangedListener(mMapsHandler);
         mMapsHandler.enableMyLocation();
+        mGeolocator.addOnGPSStatusChangedListener(enabled -> {
+            if (!enabled) {requestGPSActivation();}
+        });
+    }
+
+    /**
+     * Show a cancellable alert dialog to ask the user to enable its GPS system
+     */
+    private void requestGPSActivation(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.gps_alert_title);
+        builder.setMessage(R.string.gps_alert_body);
+        builder.setPositiveButton(R.string.gps_alert_button_positive, null);
+        builder.setCancelable(true);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

@@ -24,16 +24,19 @@ public class AlterraGeolocator extends LocationCallback {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mCurrentLocation;
     private List<OnLocationChangedListener> mOnLocationChangedListeners;
+    private List<OnGPSStatusChangedListener> mOnGPSStatusChangedListeners;
+    private boolean mGpsEnabled;
 
     public AlterraGeolocator(Context context){
         super();
         mOnLocationChangedListeners = new ArrayList<>();
+        mOnGPSStatusChangedListeners = new ArrayList<>();
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
         mFusedLocationProviderClient.requestLocationUpdates(LocationRequest.create()
                         .setInterval(LOCATION_UPDATE_INTERVAL)
                         .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY),
                 new AlterraLocationCallback(),null);
-
+        mGpsEnabled = false;
         /*Task task = mFusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener((OnSuccessListener<Location>) location -> {
 
@@ -46,7 +49,11 @@ public class AlterraGeolocator extends LocationCallback {
     }
 
     public LatLng getCurrentLatLng(){
-        return new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+        if (!mGpsEnabled || mCurrentLocation == null){
+            return null;
+        } else {
+            return new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude());
+        }
     }
 
     /**
@@ -57,14 +64,24 @@ public class AlterraGeolocator extends LocationCallback {
         mOnLocationChangedListeners.add(myListener);
     }
 
+    public void addOnGPSStatusChangedListener(OnGPSStatusChangedListener myListener){
+        mOnGPSStatusChangedListeners.add(myListener);
+    }
+
     private class AlterraLocationCallback extends LocationCallback {
         @Override
         public void onLocationAvailability (LocationAvailability locationAvailability){
             super.onLocationAvailability(locationAvailability);
             if (locationAvailability.isLocationAvailable()){
                 System.out.println("Location on");
+                mGpsEnabled = true;
             } else {
                 System.out.println("Location off");
+                mGpsEnabled = false;
+            }
+            Iterator<OnGPSStatusChangedListener> listenerIterator = mOnGPSStatusChangedListeners.iterator();
+            while (listenerIterator.hasNext()){
+                listenerIterator.next().onGPSStatusChanged(mGpsEnabled);
             }
         }
 
@@ -82,5 +99,9 @@ public class AlterraGeolocator extends LocationCallback {
 
     public interface OnLocationChangedListener {
         void onLocationChanged(Location location);
+    }
+
+    public interface OnGPSStatusChangedListener {
+        void onGPSStatusChanged(boolean enable);
     }
 }

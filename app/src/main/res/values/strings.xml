@@ -30,6 +30,10 @@
     <string name="permission_alert_button_positive">Retry</string>
     <string name="permission_alert_button_negative">Quit</string>
 
+    <string name="gps_alert_title">Enable GPS</string>
+    <string name="gps_alert_body">Your GPS system seems disabled. Enable GPS to enjoy the most of Alterra</string>
+    <string name="gps_alert_button_positive">OK!</string>
+
     <string name="maps_stylesheet">maps_style.json</string>
     <string name="asset_icon">alterra-icon-small.png</string>
 
