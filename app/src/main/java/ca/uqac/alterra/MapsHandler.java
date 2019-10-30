@@ -24,11 +24,13 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private Activity mActivity;
     private BottomSheetBehavior mBottomPanel;
     private LatLng mUserLocation;
+    private boolean mEnableLocation;
     //private Marker mUserMarker;
 
     public MapsHandler(Activity activity){
         mActivity = activity;
         mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
+        mEnableLocation = false; //No location by default, avoid crash if permission is not granted
     }
 
     /**
@@ -54,13 +56,33 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
         String jsonStylesheet = JsonReader.loadJSONFromAsset(mActivity,mActivity.getString(R.string.maps_stylesheet));
         mMap.setMapStyle(new MapStyleOptions(jsonStylesheet));
-        mMap.setMyLocationEnabled(true);
         /*mMap.setOnMyLocationButtonClickListener(() -> {
             System.out.println("Click on geolocate");
             mMap.animateCamera(CameraUpdateFactory.newLatLng(mUserLocation), 200, null);
             return true;
         });*/
         mMap.setPadding(0,100,0,0);
+
+        if (mEnableLocation){
+            mMap.setMyLocationEnabled(true);
+        }
+    }
+
+    /**
+     * Should be called only when we are sure to have the ACCESS_FINE_LOCATION permission
+     */
+    public void enableMyLocation(){
+
+        mEnableLocation = true;
+        if (mMap != null){
+            mMap.setMyLocationEnabled(true);
+        }
+        /* else:
+         * We have the location permission but the maps is not ready
+         * the location service will be enabled when the map becomes ready
+         * thanks to the mEnableLocation boolean value
+         */
+
     }
 
     @Override

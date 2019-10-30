@@ -106,8 +106,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (!checkLocationPermissions()){
             requestLocationPermissions();
         } else {
-            mGeolocator = new AlterraGeolocator(this);
-            mGeolocator.addOnLocationChangedListener(mMapsHandler);
+            locationPermissionGranted();
         }
     }
 
@@ -258,8 +257,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission was granted, yay!
                     // Instantiates the geolocator
-                    mGeolocator = new AlterraGeolocator(this);
-                    mGeolocator.addOnLocationChangedListener(mMapsHandler);
+                    locationPermissionGranted();
                 } else {
                     // Permission denied,
                     // Display a message and request permission again
@@ -271,5 +269,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             // other 'case' lines to check for other
             // permissions Alterra might request.
         }
+    }
+
+    /**
+     * Called when Location Permission are acquired
+     */
+    private void locationPermissionGranted(){
+        mGeolocator = new AlterraGeolocator(this);
+        mGeolocator.addOnLocationChangedListener(mMapsHandler);
+        mMapsHandler.enableMyLocation();
     }
 }
