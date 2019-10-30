@@ -164,6 +164,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     mPhotoUploader.uploadPhoto(mCurrentImagePath);
                 }
                 break;
+            case REQUEST_PERMISSIONS_LOCATION:
+                //Do nothing, if we are back from the settings screen, the onStart method will be called
+                //and the permission check will be done there
+                break;
         }
 
     }
