@@ -5,14 +5,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private FloatingActionButton mCameraButton;
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
+    private AlterraGeolocator mGeolocator;
 
 
 
@@ -100,6 +103,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             //TODO : how to handle this kind of error ?!
         }
 
+        if (!checkLocationPermissions()){
+            requestLocationPermissions();
+        } else {
+            mGeolocator = new AlterraGeolocator(this);
+            mGeolocator.addOnLocationChangedListener(mMapsHandler);
+        }
     }
 
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -218,4 +227,51 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onSaveInstanceState(outState);
         outState.putString("mCurrentImagePath",mCurrentImagePath);
     }
+
+    private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
+
+    private boolean checkLocationPermissions(){
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Requesting Location permissions");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void requestLocationPermissions(){
+        ActivityCompat.requestPermissions(this,
+                new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION},
+                REQUEST_PERMISSIONS_LOCATION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSIONS_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted, yay!
+                    // Instantiates the geolocator
+                    mGeolocator = new AlterraGeolocator(this);
+                    mGeolocator.addOnLocationChangedListener(mMapsHandler);
+                } else {
+                    // Permission denied,
+                    // Display a message and request permission again
+                    requestLocationPermissions();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions Alterra might request.
+        }
+    }
+
+
 }
