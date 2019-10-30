@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -23,7 +24,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private Activity mActivity;
     private BottomSheetBehavior mBottomPanel;
     private LatLng mUserLocation;
-    private Marker mUserMarker;
+    //private Marker mUserMarker;
 
     public MapsHandler(Activity activity){
         mActivity = activity;
@@ -46,13 +47,20 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setOnMarkerClickListener(this);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMapClickListener(this);
 
         String jsonStylesheet = JsonReader.loadJSONFromAsset(mActivity,mActivity.getString(R.string.maps_stylesheet));
         mMap.setMapStyle(new MapStyleOptions(jsonStylesheet));
+        mMap.setMyLocationEnabled(true);
+        /*mMap.setOnMyLocationButtonClickListener(() -> {
+            System.out.println("Click on geolocate");
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(mUserLocation), 200, null);
+            return true;
+        });*/
+        mMap.setPadding(0,100,0,0);
     }
 
     @Override
@@ -90,12 +98,12 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         //Update user location and marker position
         mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
-        if (mUserMarker != null){
+/*        if (mUserMarker != null){
             mUserMarker.remove();
         }
         mUserMarker = mMap.addMarker(new MarkerOptions()
                 .position(mUserLocation)
                 .title("Current user location")
-                .icon(BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon))));
+                .icon(BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon))));*/
     }
 }
