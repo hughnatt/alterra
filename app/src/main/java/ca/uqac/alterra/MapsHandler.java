@@ -1,12 +1,14 @@
 package ca.uqac.alterra;
 
 import android.app.Activity;
+import android.location.Location;
 import android.widget.Toast;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -15,11 +17,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ca.uqac.alterra.utility.JsonReader;
 
-public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener {
+public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener, AlterraGeolocator.OnLocationChangedListener {
 
     private GoogleMap mMap;
     private Activity mActivity;
     private BottomSheetBehavior mBottomPanel;
+    private LatLng mUserLocation;
+    private Marker mUserMarker;
 
     public MapsHandler(Activity activity){
         mActivity = activity;
@@ -79,5 +83,19 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     @Override
     public void onMapClick(LatLng latLng) {
         mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        //Update user location and marker position
+        mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
+
+        if (mUserMarker != null){
+            mUserMarker.remove();
+        }
+        mUserMarker = mMap.addMarker(new MarkerOptions()
+                .position(mUserLocation)
+                .title("Current user location")
+                .icon(BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon))));
     }
 }
