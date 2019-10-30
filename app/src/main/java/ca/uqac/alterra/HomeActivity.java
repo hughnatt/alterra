@@ -9,17 +9,22 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -104,7 +109,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if (!checkLocationPermissions()){
-            requestLocationPermissions();
+            requestLocationPermissions(false);
         } else {
             locationPermissionGranted();
         }
@@ -239,12 +244,28 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void requestLocationPermissions(){
-        ActivityCompat.requestPermissions(this,
-                new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION},
-                REQUEST_PERMISSIONS_LOCATION);
+    private static final int REQUEST_PERMISSION_SETTING = 0x0a;
+
+    /**
+     * Ask for location permission
+     * By default, open an in-app permission request message
+     * @param openSettings Open the app settings so the user can
+     *                     enable the permission from there
+     */
+    private void requestLocationPermissions(boolean openSettings){
+        if (!openSettings){ //in-app permission request message
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_PERMISSIONS_LOCATION);
+        } else { //request permission from settings
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+        }
+
     }
 
     @Override
@@ -259,9 +280,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     // Instantiates the geolocator
                     locationPermissionGranted();
                 } else {
-                    // Permission denied,
-                    // Display a message and request permission again
-                    requestLocationPermissions();
+                    boolean showRationale = true;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION);
+                        // if showRationale = false
+                        // user also CHECKED "never ask again"
+                        // We need to open settings screen
+                        // Permission denied,
+                        // Display a message and request permission again
+                        showLocationPermissionDeniedAlert(!showRationale);
+                    }
+
                 }
                 return;
             }
@@ -269,6 +298,28 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             // other 'case' lines to check for other
             // permissions Alterra might request.
         }
+    }
+
+    /**
+     *
+     * @param neverAskAgain true if user checked the never ask again popup (API > M)
+     *                      in that case, we redirect to the app settings rather than
+     *                      showing the popup again
+     */
+    private void showLocationPermissionDeniedAlert(boolean neverAskAgain){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.permission_alert_title);
+        builder.setMessage(R.string.permission_alert_body_location);
+        builder.setPositiveButton(R.string.permission_alert_button_positive, (dialog, which) -> {
+            //User wants to retry, request permission again
+            requestLocationPermissions(neverAskAgain);
+        });
+        builder.setNegativeButton(R.string.permission_alert_button_negative, (dialog, which) -> {
+            finish(); //User doesn't want to give location permission, exit application
+        });
+        builder.setCancelable(false);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     /**
