@@ -256,8 +256,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (!openSettings){ //in-app permission request message
             ActivityCompat.requestPermissions(this,
                     new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                            Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_LOCATION);
         } else { //request permission from settings
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
