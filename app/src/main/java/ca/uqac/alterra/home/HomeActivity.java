@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -48,7 +49,7 @@ import ca.uqac.alterra.auth.LoginFragment;
 import ca.uqac.alterra.auth.LogoFragment;
 import ca.uqac.alterra.auth.RegisterFragment;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends FragmentActivity {
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
@@ -126,7 +127,7 @@ public class HomeActivity extends AppCompatActivity{
             case FRAGMENT_MAP:
 
                 if(mHomeMapFragment == null){
-                    mHomeMapFragment = new HomeMapFragment(mLocationEnabled);
+                    mHomeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
