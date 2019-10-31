@@ -25,7 +25,8 @@
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/alterra_logo_round"></ImageView>
+                android:src="@drawable/alterra_logo_round"
+                android:contentDescription="@string/content_description_alterra_logo" />
 
             <TextView
                 android:id="@+id/logoTitle"
@@ -136,7 +137,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
                     android:text="@string/text_new_here"
-                    android:textColor="@color/colorAccent"></TextView>
+                    android:textColor="@color/colorAccent" />
 
                 <View
                     android:layout_width="100dp"

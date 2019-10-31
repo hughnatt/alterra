@@ -37,4 +37,7 @@
     <string name="maps_stylesheet">maps_style.json</string>
     <string name="asset_icon">alterra-icon-small.png</string>
 
+    <!-- Image Content Description -->
+    <string name="content_description_profile_picture">Profile picture</string>
+    <string name="content_description_alterra_logo">Alterra Logo</string>
 </resources>
