@@ -22,10 +22,14 @@ public class HomeMapFragment extends Fragment {
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
     private FloatingActionButton mCameraButton;
+    private static String enableLocationArgument = "enableLocation";
 
-
-    HomeMapFragment(boolean enableLocation){
-        mEnableLocation = enableLocation;
+    public static HomeMapFragment newInstance(boolean enableLocation){
+        Bundle args = new Bundle();
+        args.putBoolean(enableLocationArgument, enableLocation);
+        HomeMapFragment homeMapFragment = new HomeMapFragment();
+        homeMapFragment.setArguments(args);
+        return homeMapFragment;
     }
 
     @Override
@@ -37,6 +41,7 @@ public class HomeMapFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+        mEnableLocation = getArguments().getBoolean(enableLocationArgument);
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation);
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
         mCameraButton = getView().findViewById(R.id.cameraButton);
