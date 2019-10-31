@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -370,19 +371,18 @@ public class HomeActivity extends AppCompatActivity {
      *                      showing the popup again
      */
     private void showLocationPermissionDeniedAlert(boolean neverAskAgain){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.permission_alert_title);
-        builder.setMessage(R.string.permission_alert_body_location);
-        builder.setPositiveButton(R.string.permission_alert_button_positive, (dialog, which) -> {
-            //User wants to retry, request permission again
-            requestLocationPermissions(neverAskAgain);
-        });
-        builder.setNegativeButton(R.string.permission_alert_button_negative, (dialog, which) -> {
-            finish(); //User doesn't want to give location permission, exit application
-        });
-        builder.setCancelable(false);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
+                .setTitle(R.string.permission_alert_title)
+                .setMessage(R.string.permission_alert_body_location)
+                .setPositiveButton(R.string.permission_alert_button_positive, (dialog, which) -> {
+                    //User wants to retry, request permission again
+                    requestLocationPermissions(neverAskAgain);
+                })
+                .setNegativeButton(R.string.permission_alert_button_negative, (dialog, which) -> {
+                    finish(); //User doesn't want to give location permission, exit application
+                })
+                .setCancelable(false)
+                .show();
     }
 
     /**
@@ -404,12 +404,11 @@ public class HomeActivity extends AppCompatActivity {
      * Show a cancellable alert dialog to ask the user to enable its GPS system
      */
     private void requestGPSActivation(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.gps_alert_title);
-        builder.setMessage(R.string.gps_alert_body);
-        builder.setPositiveButton(R.string.gps_alert_button_positive, null);
-        builder.setCancelable(true);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
+                .setTitle(R.string.gps_alert_title)
+                .setMessage(R.string.gps_alert_body)
+                .setPositiveButton(R.string.gps_alert_button_positive, null)
+                .setCancelable(true)
+                .show();
     }
 }
