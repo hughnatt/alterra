@@ -16,8 +16,14 @@ import ca.uqac.alterra.R;
 public class HomeMapFragment extends Fragment {
 
     private MapsHandler mMapsHandler;
+    private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
     private FloatingActionButton mCameraButton;
+
+
+    HomeMapFragment(boolean enableLocation){
+        mEnableLocation = enableLocation;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,10 +34,10 @@ public class HomeMapFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        mMapsHandler = new MapsHandler(getActivity());
+        mMapsHandler = new MapsHandler(getActivity(),mEnableLocation);
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
         mCameraButton = getView().findViewById(R.id.cameraButton);
-        //mCameraButton.setOnClickListener((view) -> dispatchTakePictureIntent());
+        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
 
         //Monitoring the bottom panel movements
         BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(getView().findViewById(R.id.bottomPanel));
@@ -40,5 +46,11 @@ public class HomeMapFragment extends Fragment {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mMapsHandler);
+    }
+
+    public void enableGoogleMapsLocation(){
+        if(mMapsHandler != null){
+            mMapsHandler.enableMyLocation();
+        }
     }
 }

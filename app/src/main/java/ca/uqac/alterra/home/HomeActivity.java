@@ -24,6 +24,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -52,7 +53,7 @@ public class HomeActivity extends AppCompatActivity{
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
-    private FRAGMENT_ID mCurrentFragment = FRAGMENT_ID.FRAGMENT_MAP;
+    private FRAGMENT_ID mCurrentFragment;
 
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
@@ -64,6 +65,8 @@ public class HomeActivity extends AppCompatActivity{
     private HomeListFragment mHomeListFragment;
     private HomeProfileFragment mHomeProfileFragment;
 
+    private boolean mLocationEnabled = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +77,7 @@ public class HomeActivity extends AppCompatActivity{
         setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
 
-        updateWorkflow();
+        updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
 
     }
 
@@ -113,13 +116,17 @@ public class HomeActivity extends AppCompatActivity{
         }
     }
 
-    private void updateWorkflow(){
+    private void updateWorkflow(FRAGMENT_ID nextFragment){
+        if(nextFragment == mCurrentFragment){
+            return;
+        }
+        mCurrentFragment = nextFragment;
         FragmentTransaction ft;
         switch (mCurrentFragment){
             case FRAGMENT_MAP:
 
                 if(mHomeMapFragment == null){
-                    mHomeMapFragment = new HomeMapFragment();
+                    mHomeMapFragment = new HomeMapFragment(mLocationEnabled);
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
@@ -153,7 +160,7 @@ public class HomeActivity extends AppCompatActivity{
 
     static final int REQUEST_TAKE_PHOTO = 1;
 
-    private void dispatchTakePictureIntent() {
+    public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -226,38 +233,43 @@ public class HomeActivity extends AppCompatActivity{
 
     private void setNavigationViewListener() {
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.navDrawer);
         mNavigationView.setNavigationItemSelectedListener((item) -> {
             switch (item.getItemId()){
                 case R.id.nav_item_profile :
                     Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
                     toastProfile.show();
-                    return true;
+                    updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+                    break;
                 case R.id.nav_item_list :
                     Toast toastPictures = Toast.makeText(getApplicationContext(), "List", Toast.LENGTH_LONG);
                     toastPictures.show();
-                    //startActivity(new Intent(this, PicturesActivity.class));
-                    //finish();
-                    return true;
+                    updateWorkflow(FRAGMENT_ID.FRAGMENT_LIST);
+                    break;
                 case R.id.nav_item_map :
                     Toast toastPlaces = Toast.makeText(getApplicationContext(), "Map", Toast.LENGTH_LONG);
                     toastPlaces.show();
-                    return true;
+                    updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
+                    break;
                 case R.id.nav_item_settings :
                     Toast toastSettings = Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG);
                     toastSettings.show();
-                    return true;
+                    break;
                 case R.id.nav_item_about :
                     Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
                     toastAbout.show();
-                    return true;
+                    break;
                 case R.id.nav_item_logout :
                     mAuth.signOut();
                     startActivity(new Intent(this, AuthActivity.class));
                     finish();
-                    return true;
+                    break;
                 default:
                     return super.onOptionsItemSelected(item);
             }
+
+            mDrawer.closeDrawers();
+            return true;
         });
     }
 
@@ -360,9 +372,12 @@ public class HomeActivity extends AppCompatActivity{
      * Called when Location Permission are acquired
      */
     private void locationPermissionGranted(){
+        mLocationEnabled = true;
         mGeolocator = new AlterraGeolocator(this);
         //mGeolocator.addOnLocationChangedListener(mMapsHandler);
-        //mMapsHandler.enableMyLocation();
+        if(mHomeMapFragment != null){
+            mHomeMapFragment.enableGoogleMapsLocation();
+        }
         mGeolocator.addOnGPSStatusChangedListener(enabled -> {
             if (!enabled) {requestGPSActivation();}
         });

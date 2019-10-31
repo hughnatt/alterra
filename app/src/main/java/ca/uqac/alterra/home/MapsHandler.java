@@ -25,10 +25,10 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private boolean mEnableLocation;
     //private Marker mUserMarker;
 
-    public MapsHandler(Activity activity){
+    public MapsHandler(Activity activity, boolean enableLocation){
         mActivity = activity;
         mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
-        mEnableLocation = false; //No location by default, avoid crash if permission is not granted
+        mEnableLocation = enableLocation;
     }
 
     /**

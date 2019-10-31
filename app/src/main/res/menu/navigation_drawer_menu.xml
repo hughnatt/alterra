@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group>
+    <group android:id="@+id/group_menu_profile">
         <item android:id="@+id/nav_item_profile"
             android:title="@string/nav_profile"
             android:icon="@drawable/user"/>
     </group>
 
-    <group>
+    <group android:id="@+id/group_menu_home">
         <item android:id="@+id/nav_item_list"
             android:title="@string/nav_list"
             android:icon="@drawable/photo_library"/>
@@ -15,7 +15,7 @@
             android:icon="@drawable/compass"/>
     </group>
 
-    <group android:id="@+id/group_menu">
+    <group android:id="@+id/group_menu_other">
         <item android:id="@+id/nav_item_settings"
             android:title="@string/nav_settings"
             android:icon="@drawable/settings"/>
