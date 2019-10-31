@@ -19,7 +19,7 @@
             android:id="@+id/toolbarPictures"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="@string/nav_pictures"
+            app:title="@string/nav_list"
             android:background="@color/colorPrimaryDark"
             >
         </androidx.appcompat.widget.Toolbar>

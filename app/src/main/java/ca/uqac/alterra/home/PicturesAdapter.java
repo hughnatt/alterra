@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.home;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide;
 
 
 import java.util.ArrayList;
+
+import ca.uqac.alterra.R;
 
 public class PicturesAdapter extends RecyclerView.Adapter{
 

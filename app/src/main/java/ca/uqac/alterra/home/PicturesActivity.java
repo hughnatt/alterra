@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.home;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -26,6 +26,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+
+import ca.uqac.alterra.R;
+import ca.uqac.alterra.auth.AuthActivity;
 
 
 public class PicturesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -124,10 +127,10 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
                 Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
                 toastProfile.show();
                 return true;
-            case R.id.nav_item_pictures : //We are already on the pictures activity, nothing else must be do
+            case R.id.nav_item_list : //We are already on the pictures activity, nothing else must be do
                 mNavDrawer.closeDrawers();
                 return true;
-            case R.id.nav_item_places :
+            case R.id.nav_item_map :
                 Toast toastPlaces = Toast.makeText(getApplicationContext(), "Places", Toast.LENGTH_LONG);
                 toastPlaces.show();
                 return true;

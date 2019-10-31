@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.auth;
 
 import android.os.Bundle;
 
@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+
+import ca.uqac.alterra.R;
 
 public class RegisterFragment extends Fragment implements View.OnKeyListener {
 

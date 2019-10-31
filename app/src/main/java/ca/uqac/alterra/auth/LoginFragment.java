@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.auth;
 
 import android.os.Bundle;
 
@@ -22,6 +22,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import ca.uqac.alterra.R;
 
 
 public class LoginFragment extends Fragment implements View.OnKeyListener {

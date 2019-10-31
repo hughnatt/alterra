@@ -55,7 +55,7 @@
 
 
         <activity
-            android:name=".AuthActivity"
+            android:name=".auth.AuthActivity"
             android:label="@string/app_title"
             android:windowSoftInputMode="adjustResize">
 
@@ -66,11 +66,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".HomeActivity"
+        <activity android:name=".home.HomeActivity"
             android:label="@string/app_title">
         </activity>
 
-        <activity android:name=".PicturesActivity"
+        <activity android:name=".home.PicturesActivity"
             android:label="@string/app_title">
         </activity>
 

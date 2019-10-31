@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.home;
 
 import android.content.Context;
 import android.location.Location;

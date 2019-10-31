@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.auth;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -6,6 +6,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import ca.uqac.alterra.home.HomeActivity;
+import ca.uqac.alterra.R;
 
 public class AuthActivity extends FragmentActivity implements LogoFragment.LogoListener, LoginFragment.LoginListener, RegisterFragment.RegisterListener {
 
@@ -26,7 +29,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         else
             mCurrentFlow = FLOW.LOGO;
 
-        setContentView(R.layout.activity_workflow);
+        setContentView(R.layout.activity_auth);
         updateWorkflow();
     }
 
@@ -80,7 +83,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
             case HOME :
                 Log.d("DEBUG", "Passing to HomeActivity");
-                Intent startHomeActivityIntent = new Intent(this,HomeActivity.class);
+                Intent startHomeActivityIntent = new Intent(this, HomeActivity.class);
                 startActivity(startHomeActivityIntent);
                 finish();
                 break;

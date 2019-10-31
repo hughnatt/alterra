@@ -6,7 +6,7 @@
     android:fillViewport="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#fafafb"
-    tools:context="ca.uqac.alterra.LoginFragment">
+    tools:context="ca.uqac.alterra.auth.LoginFragment">
 
     <FrameLayout
         android:layout_width="match_parent"
