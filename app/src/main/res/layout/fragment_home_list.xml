@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/camera_button_margin"
         android:layout_marginBottom="@dimen/camera_button_margin"
         android:clickable="true"
