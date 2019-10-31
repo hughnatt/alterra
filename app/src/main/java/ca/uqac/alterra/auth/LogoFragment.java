@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.auth;
 
 import android.os.Bundle;
 
@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import ca.uqac.alterra.R;
 
 
 public class LogoFragment extends Fragment {

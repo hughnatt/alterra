@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.view.View;
@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import ca.uqac.alterra.R;
 
 /**
  * Handle for the bottom sheet view

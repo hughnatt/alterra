@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#fafafb"
     android:fillViewport="true"
-    tools:context="ca.uqac.alterra.LoginFragment">
+    tools:context="ca.uqac.alterra.auth.LoginFragment">
 
 
     <FrameLayout

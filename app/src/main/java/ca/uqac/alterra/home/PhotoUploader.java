@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.home;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -17,10 +17,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import ca.uqac.alterra.R;
 
 public class PhotoUploader {
 

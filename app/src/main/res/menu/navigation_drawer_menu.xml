@@ -4,11 +4,14 @@
         <item android:id="@+id/nav_item_profile"
             android:title="@string/nav_profile"
             android:icon="@drawable/user"/>
-        <item android:id="@+id/nav_item_pictures"
-            android:title="@string/nav_pictures"
+    </group>
+
+    <group>
+        <item android:id="@+id/nav_item_list"
+            android:title="@string/nav_list"
             android:icon="@drawable/photo_library"/>
-        <item android:id="@+id/nav_item_places"
-            android:title="@string/nav_places"
+        <item android:id="@+id/nav_item_map"
+            android:title="@string/nav_map"
             android:icon="@drawable/compass"/>
     </group>
 

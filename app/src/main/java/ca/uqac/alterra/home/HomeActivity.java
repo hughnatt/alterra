@@ -1,4 +1,4 @@
-package ca.uqac.alterra;
+package ca.uqac.alterra.home;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,22 +9,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -42,21 +41,28 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import ca.uqac.alterra.R;
+import ca.uqac.alterra.auth.AuthActivity;
+import ca.uqac.alterra.auth.LoginFragment;
+import ca.uqac.alterra.auth.LogoFragment;
+import ca.uqac.alterra.auth.RegisterFragment;
+
+public class HomeActivity extends AppCompatActivity{
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
-    private MapsHandler mMapsHandler;
-    private BottomSheetHandler mBottomSheetHandler;
-    private FloatingActionButton mCameraButton;
+    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
+    private FRAGMENT_ID mCurrentFragment = FRAGMENT_ID.FRAGMENT_MAP;
+
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
     private AlterraGeolocator mGeolocator;
-
-
-
     private FirebaseAuth mAuth;
     private NavigationView mNavigationView;
+
+    private HomeMapFragment mHomeMapFragment;
+    private HomeListFragment mHomeListFragment;
+    private HomeProfileFragment mHomeProfileFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +74,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
 
+        updateWorkflow();
+
     }
 
 
@@ -75,30 +83,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public void onStart() {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        mMapsHandler = new MapsHandler(this);
-        mBottomSheetHandler = new BottomSheetHandler(this);
+
         mPhotoUploader = new PhotoUploader(getResources().getString(R.string.firebaseBucket), this);
-        mCameraButton = findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener((view) -> dispatchTakePictureIntent());
+
 
         //Notification setup
         createNotificationChannel();
 
-        //Monitoring the bottom panel movements
-        BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomPanel));
-        bottomPanelBehavior.addBottomSheetCallback(mBottomSheetHandler);
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(mMapsHandler);
-
-        DrawerLayout navDrawer = findViewById(R.id.navDrawer);
+        /*DrawerLayout navDrawer = findViewById(R.id.navDrawer);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
         navDrawer.addDrawerListener(toggle);
-        toggle.syncState();
+        toggle.syncState();*/
 
         if (currentUser != null) {
             View headerView = mNavigationView.getHeaderView(0);
@@ -112,6 +110,44 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             requestLocationPermissions(false);
         } else {
             locationPermissionGranted();
+        }
+    }
+
+    private void updateWorkflow(){
+        FragmentTransaction ft;
+        switch (mCurrentFragment){
+            case FRAGMENT_MAP:
+
+                if(mHomeMapFragment == null){
+                    mHomeMapFragment = new HomeMapFragment();
+                }
+
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_home, mHomeMapFragment);
+                ft.commit();
+                break;
+
+            case FRAGMENT_LIST:
+
+                if(mHomeListFragment == null){
+                    mHomeListFragment = new HomeListFragment();
+                }
+
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_home, mHomeListFragment);
+                ft.commit();
+                break;
+
+            case FRAGMENT_PROFILE:
+
+                if(mHomeProfileFragment == null){
+                    mHomeProfileFragment = new HomeProfileFragment();
+                }
+
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_home, mHomeProfileFragment);
+                ft.commit();
+                break;
         }
     }
 
@@ -190,44 +226,39 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     private void setNavigationViewListener() {
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.nav_item_profile :
-                Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
-                toastProfile.show();
-                return true;
-            case R.id.nav_item_pictures :
-                Toast toastPictures = Toast.makeText(getApplicationContext(), "Pictures", Toast.LENGTH_LONG);
-                toastPictures.show();
-                startActivity(new Intent(this, PicturesActivity.class));
-                finish();
-                return true;
-            case R.id.nav_item_places :
-                Toast toastPlaces = Toast.makeText(getApplicationContext(), "Places", Toast.LENGTH_LONG);
-                toastPlaces.show();
-                return true;
-            case R.id.nav_item_settings :
-                Toast toastSettings = Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG);
-                toastSettings.show();
-                return true;
-            case R.id.nav_item_about :
-                Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
-                toastAbout.show();
-                return true;
-            case R.id.nav_item_logout :
-                mAuth.signOut();
-                startActivity(new Intent(this, AuthActivity.class));
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-
-
-        }
+        mNavigationView.setNavigationItemSelectedListener((item) -> {
+            switch (item.getItemId()){
+                case R.id.nav_item_profile :
+                    Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
+                    toastProfile.show();
+                    return true;
+                case R.id.nav_item_list :
+                    Toast toastPictures = Toast.makeText(getApplicationContext(), "List", Toast.LENGTH_LONG);
+                    toastPictures.show();
+                    //startActivity(new Intent(this, PicturesActivity.class));
+                    //finish();
+                    return true;
+                case R.id.nav_item_map :
+                    Toast toastPlaces = Toast.makeText(getApplicationContext(), "Map", Toast.LENGTH_LONG);
+                    toastPlaces.show();
+                    return true;
+                case R.id.nav_item_settings :
+                    Toast toastSettings = Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG);
+                    toastSettings.show();
+                    return true;
+                case R.id.nav_item_about :
+                    Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
+                    toastAbout.show();
+                    return true;
+                case R.id.nav_item_logout :
+                    mAuth.signOut();
+                    startActivity(new Intent(this, AuthActivity.class));
+                    finish();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        });
     }
 
     @Override
@@ -330,8 +361,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
      */
     private void locationPermissionGranted(){
         mGeolocator = new AlterraGeolocator(this);
-        mGeolocator.addOnLocationChangedListener(mMapsHandler);
-        mMapsHandler.enableMyLocation();
+        //mGeolocator.addOnLocationChangedListener(mMapsHandler);
+        //mMapsHandler.enableMyLocation();
         mGeolocator.addOnGPSStatusChangedListener(enabled -> {
             if (!enabled) {requestGPSActivation();}
         });
