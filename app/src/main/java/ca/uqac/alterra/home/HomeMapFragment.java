@@ -41,7 +41,9 @@ public class HomeMapFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        mEnableLocation = getArguments().getBoolean(enableLocationArgument);
+        if (!mEnableLocation){
+            mEnableLocation = getArguments().getBoolean(enableLocationArgument);
+        }
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation);
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
         mCameraButton = getView().findViewById(R.id.cameraButton);
