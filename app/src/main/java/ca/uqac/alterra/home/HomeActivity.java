@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeListFragment mHomeListFragment;
     private HomeProfileFragment mHomeProfileFragment;
 
+    private boolean mGpsEnabled = false;
     private boolean mLocationEnabled = false;
     /**
      * True if we already requested runtime permissions
@@ -174,6 +175,10 @@ public class HomeActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
 
     public void dispatchTakePictureIntent() {
+        if (!mGpsEnabled) {
+            requestGPSActivation();
+            return;
+        }
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -396,7 +401,10 @@ public class HomeActivity extends AppCompatActivity {
             mHomeMapFragment.enableGoogleMapsLocation();
         }
         mGeolocator.addOnGPSStatusChangedListener(enabled -> {
-            if (!enabled) {requestGPSActivation();}
+            mGpsEnabled = enabled;
+            if (!enabled) {
+                requestGPSActivation();
+            }
         });
     }
 
