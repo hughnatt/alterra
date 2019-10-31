@@ -13,19 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3"
+        android:weightSum="2"
         android:baselineAligned="true"
         >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:layout_gravity="center"
-            android:layout_marginLeft="36dp"
-            android:layout_marginRight="36dp"
-            android:gravity="center"
             >
                 <ImageView
                     android:layout_width="100dp"
@@ -53,9 +50,7 @@
             android:orientation="vertical"
             android:layout_weight="1"
             android:weightSum="3"
-            android:gravity="center"
-            android:layout_marginLeft="36dp"
-            android:layout_marginRight="36dp"
+            android:layout_margin="@dimen/common_margin"
             >
 
             <LinearLayout
@@ -135,27 +130,28 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginTop="@dimen/common_margin"
+                    android:layout_marginBottom="@dimen/common_margin">
 
                     <View
-                        android:layout_width="150dp"
+                        android:layout_width="100dp"
                         android:layout_height="3dp"
                         android:background="@color/colorPrimaryDark"
                         android:layout_gravity="center"
                         />
 
                     <TextView
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginRight="15dp"
                         android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
                         android:text="@string/text_new_here"
-                        android:textColor="@color/colorAccent">
-                    </TextView>
+                        android:textColor="@color/colorAccent"
+                        android:textAlignment="center"/>
 
                     <View
-                        android:layout_width="150dp"
+                        android:layout_width="100dp"
                         android:layout_height="3dp"
                         android:layout_gravity="center"
                         android:background="@color/colorPrimaryDark" />

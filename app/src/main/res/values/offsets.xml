@@ -4,4 +4,5 @@
     <dimen name="bottom_sheet_expanded">300dp</dimen>
     <dimen name="camera_button_margin">10dp</dimen>
     <dimen name="camera_button_margin_sheet">82dp</dimen> <!-- Should always be camera_button_margin + bottom_sheet_expanded -->
+    <dimen name="common_margin">36dp</dimen>
 </resources>
