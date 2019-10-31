@@ -164,7 +164,7 @@
                             android:layout_gravity="center"
                             android:layout_marginRight="15dp"
                             android:layout_marginLeft="15dp"
-                            android:text="New here ?"
+                            android:text="@string/text_new_here"
                             android:textColor="@color/colorAccent">
                         </TextView>
 
