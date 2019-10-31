@@ -5,6 +5,9 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -46,6 +49,15 @@ public class HomeMapFragment extends Fragment {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mMapsHandler);
+
+
+        DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
+        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+        ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
+        navDrawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     public void enableGoogleMapsLocation(){
