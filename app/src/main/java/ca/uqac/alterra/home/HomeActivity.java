@@ -48,7 +48,7 @@ import ca.uqac.alterra.auth.LoginFragment;
 import ca.uqac.alterra.auth.LogoFragment;
 import ca.uqac.alterra.auth.RegisterFragment;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity {
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
@@ -92,14 +92,6 @@ public class HomeActivity extends AppCompatActivity{
 
         //Notification setup
         createNotificationChannel();
-
-        /*DrawerLayout navDrawer = findViewById(R.id.navDrawer);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
-        navDrawer.addDrawerListener(toggle);
-        toggle.syncState();*/
 
         if (currentUser != null) {
             View headerView = mNavigationView.getHeaderView(0);
