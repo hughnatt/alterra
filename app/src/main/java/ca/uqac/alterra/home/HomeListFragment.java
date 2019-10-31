@@ -10,9 +10,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import ca.uqac.alterra.R;
 
 public class HomeListFragment extends Fragment {
+
+    FloatingActionButton mCameraButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,5 +33,8 @@ public class HomeListFragment extends Fragment {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        mCameraButton = getView().findViewById(R.id.cameraButton);
+        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
     }
 }

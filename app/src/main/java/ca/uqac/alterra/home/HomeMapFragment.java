@@ -66,6 +66,7 @@ public class HomeMapFragment extends Fragment {
     }
 
     public void enableGoogleMapsLocation(){
+        mEnableLocation = true;
         if(mMapsHandler != null){
             mMapsHandler.enableMyLocation();
         }

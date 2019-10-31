@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,19 +68,36 @@ public class HomeActivity extends AppCompatActivity {
     private HomeListFragment mHomeListFragment;
     private HomeProfileFragment mHomeProfileFragment;
 
+    private boolean mGpsEnabled = false;
     private boolean mLocationEnabled = false;
+    /**
+     * True if we already requested runtime permissions
+     * but we are still waiting user response.
+     * If the user changes orientation, we need to make
+     * sure not to recreate the request
+     */
+    private boolean mPendingPermissionRequest = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FRAGMENT_ID startFragment = null;
         if (savedInstanceState != null){
             mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
+            mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
+            startFragment = (FRAGMENT_ID) savedInstanceState.getSerializable("mCurrentFragment");
         }
+
+        //Not restoring from previous state, use default fragment
+        if (startFragment == null) {
+            startFragment = FRAGMENT_ID.FRAGMENT_MAP;
+        }
+
         setContentView(R.layout.activity_home);
         setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
 
-        updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
+        updateWorkflow(startFragment);
 
     }
 
@@ -103,8 +121,10 @@ public class HomeActivity extends AppCompatActivity {
             //TODO : how to handle this kind of error ?!
         }
 
-        if (!checkLocationPermissions()){
-            requestLocationPermissions(false);
+        if (!checkLocationPermissions() ){
+            if (!mPendingPermissionRequest){
+                requestLocationPermissions(false);
+            }
         } else {
             locationPermissionGranted();
         }
@@ -155,6 +175,10 @@ public class HomeActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
 
     public void dispatchTakePictureIntent() {
+        if (!mGpsEnabled) {
+            requestGPSActivation();
+            return;
+        }
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -271,6 +295,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("mCurrentImagePath",mCurrentImagePath);
+        outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
+        outState.putSerializable("mCurrentFragment",mCurrentFragment);
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
@@ -295,10 +321,12 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void requestLocationPermissions(boolean openSettings){
         if (!openSettings){ //in-app permission request message
+
             ActivityCompat.requestPermissions(this,
                     new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_LOCATION);
+            mPendingPermissionRequest = true;
         } else { //request permission from settings
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -313,6 +341,7 @@ public class HomeActivity extends AppCompatActivity {
                                            String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSIONS_LOCATION: {
+                mPendingPermissionRequest = false;
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -347,19 +376,18 @@ public class HomeActivity extends AppCompatActivity {
      *                      showing the popup again
      */
     private void showLocationPermissionDeniedAlert(boolean neverAskAgain){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.permission_alert_title);
-        builder.setMessage(R.string.permission_alert_body_location);
-        builder.setPositiveButton(R.string.permission_alert_button_positive, (dialog, which) -> {
-            //User wants to retry, request permission again
-            requestLocationPermissions(neverAskAgain);
-        });
-        builder.setNegativeButton(R.string.permission_alert_button_negative, (dialog, which) -> {
-            finish(); //User doesn't want to give location permission, exit application
-        });
-        builder.setCancelable(false);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
+                .setTitle(R.string.permission_alert_title)
+                .setMessage(R.string.permission_alert_body_location)
+                .setPositiveButton(R.string.permission_alert_button_positive, (dialog, which) -> {
+                    //User wants to retry, request permission again
+                    requestLocationPermissions(neverAskAgain);
+                })
+                .setNegativeButton(R.string.permission_alert_button_negative, (dialog, which) -> {
+                    finish(); //User doesn't want to give location permission, exit application
+                })
+                .setCancelable(false)
+                .show();
     }
 
     /**
@@ -373,7 +401,10 @@ public class HomeActivity extends AppCompatActivity {
             mHomeMapFragment.enableGoogleMapsLocation();
         }
         mGeolocator.addOnGPSStatusChangedListener(enabled -> {
-            if (!enabled) {requestGPSActivation();}
+            mGpsEnabled = enabled;
+            if (!enabled) {
+                requestGPSActivation();
+            }
         });
     }
 
@@ -381,12 +412,11 @@ public class HomeActivity extends AppCompatActivity {
      * Show a cancellable alert dialog to ask the user to enable its GPS system
      */
     private void requestGPSActivation(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.gps_alert_title);
-        builder.setMessage(R.string.gps_alert_body);
-        builder.setPositiveButton(R.string.gps_alert_button_positive, null);
-        builder.setCancelable(true);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
+                .setTitle(R.string.gps_alert_title)
+                .setMessage(R.string.gps_alert_body)
+                .setPositiveButton(R.string.gps_alert_button_positive, null)
+                .setCancelable(true)
+                .show();
     }
 }

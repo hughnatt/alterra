@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Alterra</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_world">Hello World</string>
     <string name="app_title">Alterra</string>
     <string name="channel_name">Alterra Notification</string>
     <string name="channel_description">Channel for handling notifications from the Alterra app</string>
@@ -37,4 +36,8 @@
     <string name="maps_stylesheet">maps_style.json</string>
     <string name="asset_icon">alterra-icon-small.png</string>
 
+    <!-- Image Content Description -->
+    <string name="content_description_profile_picture">Profile picture</string>
+    <string name="content_description_alterra_logo">Alterra Logo</string>
+    <string name="content_description_unknown">Undefined picture</string>
 </resources>
