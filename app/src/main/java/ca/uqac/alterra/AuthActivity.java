@@ -26,7 +26,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         else
             mCurrentFlow = FLOW.LOGO;
 
-        setContentView(R.layout.activity_workflow);
+        setContentView(R.layout.activity_auth);
         updateWorkflow();
     }
 
