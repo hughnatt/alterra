@@ -79,15 +79,23 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FRAGMENT_ID startFragment = null;
         if (savedInstanceState != null){
             mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
             mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
+            startFragment = (FRAGMENT_ID) savedInstanceState.getSerializable("mCurrentFragment");
         }
+
+        //Not restoring from previous state, use default fragment
+        if (startFragment == null) {
+            startFragment = FRAGMENT_ID.FRAGMENT_MAP;
+        }
+
         setContentView(R.layout.activity_home);
         setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
 
-        updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
+        updateWorkflow(startFragment);
 
     }
 
@@ -282,6 +290,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putString("mCurrentImagePath",mCurrentImagePath);
         outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
+        outState.putSerializable("mCurrentFragment",mCurrentFragment);
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
