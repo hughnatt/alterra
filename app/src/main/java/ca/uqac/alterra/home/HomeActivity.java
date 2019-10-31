@@ -68,12 +68,20 @@ public class HomeActivity extends AppCompatActivity {
     private HomeProfileFragment mHomeProfileFragment;
 
     private boolean mLocationEnabled = false;
+    /**
+     * True if we already requested runtime permissions
+     * but we are still waiting user response.
+     * If the user changes orientation, we need to make
+     * sure not to recreate the request
+     */
+    private boolean mPendingPermissionRequest = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null){
             mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
+            mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
         }
         setContentView(R.layout.activity_home);
         setNavigationViewListener();
@@ -103,8 +111,10 @@ public class HomeActivity extends AppCompatActivity {
             //TODO : how to handle this kind of error ?!
         }
 
-        if (!checkLocationPermissions()){
-            requestLocationPermissions(false);
+        if (!checkLocationPermissions() ){
+            if (!mPendingPermissionRequest){
+                requestLocationPermissions(false);
+            }
         } else {
             locationPermissionGranted();
         }
@@ -271,6 +281,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("mCurrentImagePath",mCurrentImagePath);
+        outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
@@ -295,10 +306,12 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void requestLocationPermissions(boolean openSettings){
         if (!openSettings){ //in-app permission request message
+
             ActivityCompat.requestPermissions(this,
                     new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_PERMISSIONS_LOCATION);
+            mPendingPermissionRequest = true;
         } else { //request permission from settings
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getPackageName(), null);
@@ -313,6 +326,7 @@ public class HomeActivity extends AppCompatActivity {
                                            String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSIONS_LOCATION: {
+                mPendingPermissionRequest = false;
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
