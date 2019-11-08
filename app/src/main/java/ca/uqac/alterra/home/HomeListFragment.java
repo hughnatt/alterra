@@ -53,6 +53,9 @@ public class HomeListFragment extends Fragment {
         mDataList.add(new HomeListDataModel("Item 2",R.drawable.about));
         mDataList.add(new HomeListDataModel("Item 3",R.drawable.about));
         mDataList.add(new HomeListDataModel("Item 4",R.drawable.about));
+        mDataList.add(new HomeListDataModel("Item 5",R.drawable.about));
+        mDataList.add(new HomeListDataModel("Item 6",R.drawable.about));
+        mDataList.add(new HomeListDataModel("Item 7",R.drawable.about));
 
         HomeListAdapter recyclerAdapter =  new HomeListAdapter(mDataList);
         mRecyclerView.setAdapter(recyclerAdapter);
