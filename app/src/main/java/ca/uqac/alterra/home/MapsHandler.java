@@ -15,8 +15,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.utility.JsonReader;
@@ -29,6 +31,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private LatLng mUserLocation;
     private boolean mEnableLocation;
     private BitmapDescriptor mAlterraMarkerBitmap;
+    private List<AlterraPoint> mAlterraPoints;
     //private Marker mUserMarker;
 
     public MapsHandler(Activity activity, boolean enableLocation){
@@ -36,6 +39,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
         mEnableLocation = enableLocation;
         mAlterraMarkerBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon));
+        mAlterraPoints = new ArrayList<AlterraPoint>();
     }
 
     /**
@@ -70,6 +74,15 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
         if (mEnableLocation){
             mMap.setMyLocationEnabled(true);
+        }
+
+        Iterator<AlterraPoint> iter = mAlterraPoints.iterator();
+        while (iter.hasNext()){
+            AlterraPoint alterraPoint = iter.next();
+            mMap.addMarker(new MarkerOptions()
+                    .position(alterraPoint.getLatLng())
+                    .title(alterraPoint.getId())
+                    .icon(mAlterraMarkerBitmap));
         }
     }
 
@@ -134,11 +147,14 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
                 .icon(BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon))));*/
     }
 
-    public void addAlterraMarker(AlterraPoint alterraPoint){
-        mMap.addMarker(new MarkerOptions()
-                .position(alterraPoint.getLatLng())
-                .title(alterraPoint.getTitle())
-                .icon(mAlterraMarkerBitmap));
+    public void addAlterraPoint(AlterraPoint alterraPoint){
+        mAlterraPoints.add(alterraPoint);
+        if (mMap != null){
+            mMap.addMarker(new MarkerOptions()
+                    .position(alterraPoint.getLatLng())
+                    .title(alterraPoint.getId())
+                    .icon(mAlterraMarkerBitmap));
+        }
     }
 
     public void populateMap(List<AlterraPoint> alterraLocations){

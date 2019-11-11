@@ -20,15 +20,15 @@ import java.util.Map;
 
 import ca.uqac.alterra.home.AlterraPoint;
 
-public class AlterraFirebase implements AlterraDatabase {
+public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 
-    FirebaseFirestore mFirestore;
-    FirebaseStorage mStorage;
+    private FirebaseFirestore mFirestore;
+    private FirebaseStorage mStorage;
 
     private static String COLLECTION_PATH_LOCATIONS = "locations";
     private static String COLLECTION_PATH_USERS = "users";
 
-    public AlterraFirebase(){
+    protected AlterraFirebase(){
         mFirestore = FirebaseFirestore.getInstance();
     }
 
@@ -42,7 +42,7 @@ public class AlterraFirebase implements AlterraDatabase {
                         ArrayList<AlterraPoint> alterraPoints = new ArrayList<AlterraPoint>();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             //Skip the default document
-                            if (document.getId() == "_default") continue;
+                            if (document.getId().equals("_default")) continue;
 
                             //Get and extract the document values
                             Map<String,Object> documentData = document.getData();
@@ -52,7 +52,7 @@ public class AlterraFirebase implements AlterraDatabase {
                                 Map descriptions = (Map) documentData.get("description");
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
-                                alterraPoints.add(new AlterraPoint(coordinates.getLatitude(), coordinates.getLongitude(), title, description));
+                                alterraPoints.add(new AlterraPoint(document.getId(), coordinates.getLatitude(), coordinates.getLongitude(), title, description));
                             } catch (NullPointerException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }

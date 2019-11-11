@@ -3,21 +3,27 @@ package ca.uqac.alterra.home;
 import com.google.android.gms.maps.model.LatLng;
 
 public class AlterraPoint {
+    private String mId;
     private LatLng mLatLng;
     private String mTitle;
     private String mDescription;
 
-
-    public AlterraPoint(LatLng latLng, String title, String description){
+    public AlterraPoint(String id, LatLng latLng, String title, String description){
+        mId = id;
         mLatLng = latLng;
         mTitle = title;
         mDescription = description;
     }
 
-    public AlterraPoint(double lat, double lng, String title, String description){
+    public AlterraPoint(String id, double lat, double lng, String title, String description){
+        mId = id;
         mLatLng = new LatLng(lat,lng);
         mTitle = title;
         mDescription = description;
+    }
+
+    public String getId(){
+        return mId;
     }
 
     public String getTitle(){

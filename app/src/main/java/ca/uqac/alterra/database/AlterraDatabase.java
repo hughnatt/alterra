@@ -1,8 +1,8 @@
 package ca.uqac.alterra.database;
 
-import java.util.List;
+import androidx.annotation.Nullable;
 
-import javax.annotation.Nullable;
+import java.util.List;
 
 import ca.uqac.alterra.home.AlterraPoint;
 
@@ -27,8 +27,4 @@ public interface AlterraDatabase {
      * USER SECTION
      */
     void registerAlterraUser(String UID, String userEmail);
-
-
-
-
 }

@@ -14,7 +14,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Iterator;
+
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraDatabase;
+import ca.uqac.alterra.database.AlterraFirebase;
 
 public class HomeMapFragment extends Fragment {
 
@@ -65,6 +70,17 @@ public class HomeMapFragment extends Fragment {
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
+            alterraDatabase.getAllAlterraLocations((list) -> {
+            if (list == null) return;
+            Iterator<AlterraPoint> iter = list.iterator();
+            while (iter.hasNext()){
+                AlterraPoint p = iter.next();
+                System.out.println(p.getTitle());
+                mMapsHandler.addAlterraPoint(p);
+            }
+        });
     }
 
     public void enableGoogleMapsLocation(){
