@@ -46,9 +46,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 logoFragment.setLogoListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
-
-                ft.setCustomAnimations(R.anim.faded_in,
-                        R.anim.faded_out);
+                ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, logoFragment, LOGO_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
@@ -63,6 +61,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 loginFragment.setLoginListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, loginFragment, LOGIN_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
@@ -72,11 +71,13 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 RegisterFragment registerFragment = (RegisterFragment) getSupportFragmentManager().findFragmentByTag(REGISTER_FRAGMENT_TAG);
 
 
-                if(registerFragment == null)
+                if(registerFragment == null) {
                     registerFragment = new RegisterFragment();
-
+                }
                 registerFragment.setRegisterListener(this);
+
                 ft = getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, registerFragment, REGISTER_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
