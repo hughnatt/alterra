@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
 
 public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
@@ -58,8 +59,6 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     private FirebaseAuth mAuth;
 
-    private FirebaseFirestore db;
-
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -69,7 +68,6 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
     }
 
 
@@ -286,11 +284,8 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if (user != null){
+                                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUid(),user.getEmail());
                                 mListener.onRegisterSuccessful();
-                                //Add user document in database
-                                HashMap<String, Object> data = new HashMap<>();
-                                data.put("displayName", user.getEmail());
-                                db.collection("users").document(user.getUid()).set(data);
                             }
                         } else {
                             if (!task.isSuccessful()) {
