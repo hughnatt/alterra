@@ -106,6 +106,7 @@ public class HomeActivity extends AppCompatActivity {
             navUsername.setText(currentUser.getEmail());
         } else {
             startActivity(new Intent(this, AuthActivity.class));
+            finish();
         }
 
         if (!checkLocationPermissions() ){
