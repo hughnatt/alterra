@@ -2,18 +2,14 @@ package ca.uqac.alterra.home;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -24,17 +20,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,16 +33,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
-import ca.uqac.alterra.auth.LoginFragment;
-import ca.uqac.alterra.auth.LogoFragment;
-import ca.uqac.alterra.auth.RegisterFragment;
-import ca.uqac.alterra.database.AlterraCloud;
-import ca.uqac.alterra.database.AlterraDatabase;
-import ca.uqac.alterra.database.AlterraFirebase;
 
 public class HomeActivity extends AppCompatActivity {
 
