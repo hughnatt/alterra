@@ -21,9 +21,10 @@
         android:background="@color/colorPrimaryDark">
 
         <TextView
+            android:id="@+id/bottomPanelTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/hello_world"
+            android:text="@string/maps_first_marker_click"
             android:textSize="16sp"
             android:textAlignment="center"
             android:textColor="#ffffff"/>

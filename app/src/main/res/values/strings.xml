@@ -40,4 +40,6 @@
     <string name="content_description_profile_picture">Profile picture</string>
     <string name="content_description_alterra_logo">Alterra Logo</string>
     <string name="content_description_unknown">Undefined picture</string>
+
+    <string name="maps_first_marker_click">Click on a marker to begin</string>
 </resources>

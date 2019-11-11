@@ -28,15 +28,17 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private GoogleMap mMap;
     private Activity mActivity;
     private BottomSheetBehavior mBottomPanel;
+    private BottomSheetHandler mBottomSheetHandler;
     private LatLng mUserLocation;
     private boolean mEnableLocation;
     private BitmapDescriptor mAlterraMarkerBitmap;
     private List<AlterraPoint> mAlterraPoints;
     //private Marker mUserMarker;
 
-    public MapsHandler(Activity activity, boolean enableLocation){
+    public MapsHandler(Activity activity, boolean enableLocation, BottomSheetHandler bottomSheetHandler){
         mActivity = activity;
         mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
+        mBottomSheetHandler = bottomSheetHandler;
         mEnableLocation = enableLocation;
         mAlterraMarkerBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon));
         mAlterraPoints = new ArrayList<AlterraPoint>();
@@ -54,11 +56,6 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setOnMarkerClickListener(this);
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMapClickListener(this);
@@ -76,14 +73,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             mMap.setMyLocationEnabled(true);
         }
 
-        Iterator<AlterraPoint> iter = mAlterraPoints.iterator();
-        while (iter.hasNext()){
-            AlterraPoint alterraPoint = iter.next();
-            mMap.addMarker(new MarkerOptions()
-                    .position(alterraPoint.getLatLng())
-                    .title(alterraPoint.getId())
-                    .icon(mAlterraMarkerBitmap));
-        }
+        populateMap(mAlterraPoints);
     }
 
     /**
@@ -106,11 +96,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     @Override
     public boolean onMarkerClick(Marker marker) {
         System.out.println(marker.toString());
-
         mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()),200, new GoogleMap.CancelableCallback(){
             @Override
             public void onFinish() {
                 mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetHandler.updateSheet((AlterraPoint) marker.getTag());
             }
             @Override
             public void onCancel() {
@@ -150,10 +140,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     public void addAlterraPoint(AlterraPoint alterraPoint){
         mAlterraPoints.add(alterraPoint);
         if (mMap != null){
-            mMap.addMarker(new MarkerOptions()
+            Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getId())
                     .icon(mAlterraMarkerBitmap));
+            m.setTag(alterraPoint);
         }
     }
 
@@ -161,10 +152,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         Iterator<AlterraPoint> iter = alterraLocations.iterator();
         while (iter.hasNext()){
             AlterraPoint alterraPoint = iter.next();
-            mMap.addMarker(new MarkerOptions()
+            Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getTitle())
                     .icon(mAlterraMarkerBitmap));
+            m.setTag(alterraPoint);
         }
     }
 }

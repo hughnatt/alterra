@@ -49,8 +49,8 @@ public class HomeMapFragment extends Fragment {
         if (!mEnableLocation){
             mEnableLocation = getArguments().getBoolean(enableLocationArgument);
         }
-        mMapsHandler = new MapsHandler(getActivity(),mEnableLocation);
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
+        mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
         mCameraButton = getView().findViewById(R.id.cameraButton);
         mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
 
