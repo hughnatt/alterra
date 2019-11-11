@@ -1,5 +1,6 @@
 package ca.uqac.alterra.auth;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -15,11 +16,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
     private enum FLOW {LOGO,LOGIN,REGISTER,HOME}
     private FLOW mCurrentFlow;
 
-    private static String LOGO_FRAGMENT_TAG = "LOGO_FRAGMENT_TAG";
-    private static String LOGIN_FRAGMENT_TAG = "LOGIN_FRAGMENT_TAG";
-    private static String REGISTER_FRAGMENT_TAG = "REGISTER_FRAGMENT_TAG";
+    private static final String LOGO_FRAGMENT_TAG = "LOGO_FRAGMENT_TAG";
+    private static final String LOGIN_FRAGMENT_TAG = "LOGIN_FRAGMENT_TAG";
+    private static final String REGISTER_FRAGMENT_TAG = "REGISTER_FRAGMENT_TAG";
 
-    private static String TAG_CURRENT_FLOW = "CurrentState";
+    private static final String TAG_CURRENT_FLOW = "CurrentState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull  Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putSerializable(TAG_CURRENT_FLOW, mCurrentFlow);
     }
