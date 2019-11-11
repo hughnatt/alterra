@@ -43,12 +43,15 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
 import ca.uqac.alterra.auth.LoginFragment;
 import ca.uqac.alterra.auth.LogoFragment;
 import ca.uqac.alterra.auth.RegisterFragment;
+import ca.uqac.alterra.database.AlterraDatabase;
+import ca.uqac.alterra.database.AlterraFirebase;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -78,6 +81,8 @@ public class HomeActivity extends AppCompatActivity {
      */
     private boolean mPendingPermissionRequest = false;
 
+    private AlterraDatabase mDatabase;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +102,9 @@ public class HomeActivity extends AppCompatActivity {
         setNavigationViewListener();
         mAuth = FirebaseAuth.getInstance();
 
-        updateWorkflow(startFragment);
+        mDatabase = new AlterraFirebase();
 
+        updateWorkflow(startFragment);
     }
 
 
@@ -128,6 +134,15 @@ public class HomeActivity extends AppCompatActivity {
         } else {
             locationPermissionGranted();
         }
+
+        mDatabase.getAllAlterraLocations((list) -> {
+            if (list == null) return;
+            Iterator<AlterraPoint> iter = list.iterator();
+            while (iter.hasNext()){
+                AlterraPoint p = iter.next();
+                System.out.println(p.getTitle());
+            }
+        });
     }
 
     private void updateWorkflow(FRAGMENT_ID nextFragment){

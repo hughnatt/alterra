@@ -8,8 +8,14 @@ public class AlterraPoint {
     private String mDescription;
 
 
-    AlterraPoint(LatLng latLng, String title, String description){
+    public AlterraPoint(LatLng latLng, String title, String description){
         mLatLng = latLng;
+        mTitle = title;
+        mDescription = description;
+    }
+
+    public AlterraPoint(double lat, double lng, String title, String description){
+        mLatLng = new LatLng(lat,lng);
         mTitle = title;
         mDescription = description;
     }
