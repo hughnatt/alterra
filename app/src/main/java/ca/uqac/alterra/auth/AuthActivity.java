@@ -116,6 +116,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
     }
 
     @Override
+    public void onBackToLogin() {
+        onBackPressed();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putSerializable(TAG_CURRENT_FLOW, mCurrentFlow);
@@ -123,16 +128,17 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     @Override
     public void onBackPressed() {
-        if(mCurrentFlow == FLOW.REGISTER){
-            mCurrentFlow = FLOW.LOGIN;
-            updateWorkflow();
+        switch (mCurrentFlow){
+            case REGISTER:
+                mCurrentFlow = FLOW.LOGIN;
+                updateWorkflow();
+                break;
+            case LOGO:
+            case LOGIN:
+            case HOME:
+                finish();
+                break;
         }
-
-        else if(mCurrentFlow == FLOW.LOGIN || mCurrentFlow == FLOW.LOGO)
-            finish();
     }
-
-
-
 }
 

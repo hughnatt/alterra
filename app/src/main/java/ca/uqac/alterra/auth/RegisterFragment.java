@@ -49,6 +49,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
     private TextInputLayout confirmPasswordTextInput;
 
     private MaterialButton registerButton;
+    private MaterialButton backButton;
 
     private String name =null;
     private String email=null;
@@ -88,6 +89,11 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
         emailEditText = view.findViewById(R.id.emailEditText);
 
         registerButton = view.findViewById(R.id.registerButton);
+        backButton = view.findViewById(R.id.registerBackButton);
+
+        backButton.setOnClickListener((v) -> {
+            if (mListener != null) { mListener.onBackToLogin(); }
+        });
 
 
         setNameTextListener();
@@ -319,6 +325,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     public interface RegisterListener {
         void onRegisterSuccessful();
+        void onBackToLogin();
     }
 
 }
