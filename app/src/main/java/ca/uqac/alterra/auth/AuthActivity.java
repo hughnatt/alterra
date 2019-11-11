@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import ca.uqac.alterra.home.HomeActivity;
 import ca.uqac.alterra.R;
 
@@ -95,7 +97,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     @Override
     public void onLogoAnimationFinished() {
-        mCurrentFlow = FLOW.LOGIN;
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            mCurrentFlow = FLOW.LOGIN;
+        } else {
+            mCurrentFlow = FLOW.HOME;
+        }
         updateWorkflow();
     }
 
