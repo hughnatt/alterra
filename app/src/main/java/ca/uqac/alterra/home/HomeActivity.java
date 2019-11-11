@@ -99,12 +99,13 @@ public class HomeActivity extends AppCompatActivity {
         //Notification setup
         createNotificationChannel();
 
+        //Make sure a user is logged in. If it's not the case, go back to login screen
         if (currentUser != null) {
             View headerView = mNavigationView.getHeaderView(0);
             TextView navUsername = (TextView) headerView.findViewById(R.id.navUsername);
-            navUsername.setText(currentUser.getEmail()); //TODO : change by the login (need to be availible in register)
+            navUsername.setText(currentUser.getEmail());
         } else {
-            //TODO : how to handle this kind of error ?!
+            startActivity(new Intent(this, AuthActivity.class));
         }
 
         if (!checkLocationPermissions() ){
