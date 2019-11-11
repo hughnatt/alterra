@@ -1,11 +1,14 @@
 package ca.uqac.alterra.auth;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import ca.uqac.alterra.home.HomeActivity;
 import ca.uqac.alterra.R;
@@ -15,11 +18,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
     private enum FLOW {LOGO,LOGIN,REGISTER,HOME}
     private FLOW mCurrentFlow;
 
-    private static String LOGO_FRAGMENT_TAG = "LOGO_FRAGMENT_TAG";
-    private static String LOGIN_FRAGMENT_TAG = "LOGIN_FRAGMENT_TAG";
-    private static String REGISTER_FRAGMENT_TAG = "REGISTER_FRAGMENT_TAG";
+    private static final String LOGO_FRAGMENT_TAG = "LOGO_FRAGMENT_TAG";
+    private static final String LOGIN_FRAGMENT_TAG = "LOGIN_FRAGMENT_TAG";
+    private static final String REGISTER_FRAGMENT_TAG = "REGISTER_FRAGMENT_TAG";
 
-    private static String TAG_CURRENT_FLOW = "CurrentState";
+    private static final String TAG_CURRENT_FLOW = "CurrentState";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 logoFragment.setLogoListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
-
-                ft.setCustomAnimations(R.anim.faded_in,
-                        R.anim.faded_out);
+                ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, logoFragment, LOGO_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
@@ -62,6 +63,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 loginFragment.setLoginListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, loginFragment, LOGIN_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
@@ -71,11 +73,13 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 RegisterFragment registerFragment = (RegisterFragment) getSupportFragmentManager().findFragmentByTag(REGISTER_FRAGMENT_TAG);
 
 
-                if(registerFragment == null)
+                if(registerFragment == null) {
                     registerFragment = new RegisterFragment();
-
+                }
                 registerFragment.setRegisterListener(this);
+
                 ft = getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, registerFragment, REGISTER_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
@@ -93,7 +97,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     @Override
     public void onLogoAnimationFinished() {
-        mCurrentFlow = FLOW.LOGIN;
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            mCurrentFlow = FLOW.LOGIN;
+        } else {
+            mCurrentFlow = FLOW.HOME;
+        }
         updateWorkflow();
     }
 
@@ -116,23 +124,29 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onBackToLogin() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull  Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putSerializable(TAG_CURRENT_FLOW, mCurrentFlow);
     }
 
     @Override
     public void onBackPressed() {
-        if(mCurrentFlow == FLOW.REGISTER){
-            mCurrentFlow = FLOW.LOGIN;
-            updateWorkflow();
+        switch (mCurrentFlow){
+            case REGISTER:
+                mCurrentFlow = FLOW.LOGIN;
+                updateWorkflow();
+                break;
+            case LOGO:
+            case LOGIN:
+            case HOME:
+                finish();
+                break;
         }
-
-        else if(mCurrentFlow == FLOW.LOGIN || mCurrentFlow == FLOW.LOGO)
-            finish();
     }
-
-
-
 }
 

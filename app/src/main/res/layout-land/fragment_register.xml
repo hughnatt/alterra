@@ -16,32 +16,19 @@
         android:baselineAligned="true"
         >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/logoTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_weight="1"
-            android:layout_gravity="center"
-            >
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:src="@drawable/alterra_logo_round"
-                android:contentDescription="@string/content_description_alterra_logo">
-            </ImageView>
+            android:layout_marginTop="64dp"
+            android:text="@string/app_title"
+            android:textAlignment="center"
+            android:textColor="#242B2F"
+            android:textSize="42sp"
+            android:textStyle="bold"
+            android:drawableTop="@drawable/alterra_logo_round"/>
 
-            <TextView
-                android:id="@+id/logoTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/app_title"
-                android:textAlignment="center"
-                android:textColor="#242B2F"
-                android:textSize="30sp"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,7 +41,7 @@
                 android:id="@+id/nameTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginBottom="10dp"
                 android:hint="@string/name_hint"
                 app:endIconMode="clear_text"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -79,7 +66,7 @@
                 android:id="@+id/emailTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_marginBottom="10dp"
                 android:hint="@string/email_address_hint"
                 app:endIconMode="clear_text"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -105,8 +92,8 @@
                 android:id="@+id/passwordTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:hint="@string/password_hint"
-                android:layout_weight="1"
                 app:endIconMode="password_toggle"
                 app:endIconTint="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
@@ -129,9 +116,9 @@
                 android:id="@+id/confirmPasswordTextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:hint="@string/confirm_password_hint"
                 app:endIconMode="password_toggle"
-                android:layout_weight="1"
                 app:endIconTint="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDark"
                 app:boxStrokeColor="@color/colorPrimaryDark"
@@ -152,10 +139,21 @@
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:text="@string/register_button"
-                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                android:backgroundTint="@color/colorPrimaryDark"
+                app:backgroundTint="@color/colorPrimaryDark"
                 android:textColor="@android:color/white"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/registerBackButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/back_button"
+                android:textColor="@color/colorPrimaryDark"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:strokeColor="@color/colorPrimaryDark"
+                />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

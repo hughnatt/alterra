@@ -17,32 +17,20 @@
         android:baselineAligned="true"
         >
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/logoTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_weight="1"
-            android:layout_gravity="center"
-            >
-                <ImageView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/alterra_logo_round"
-                    android:contentDescription="@string/content_description_alterra_logo">
-                </ImageView>
+            android:layout_marginTop="64dp"
+            android:text="@string/app_title"
+            android:textAlignment="center"
+            android:textColor="#242B2F"
+            android:textSize="42sp"
+            android:textStyle="bold"
+            android:drawableTop="@drawable/alterra_logo_round"/>
 
-                <TextView
-                    android:id="@+id/logoTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_title"
-                    android:textAlignment="center"
-                    android:textColor="#242B2F"
-                    android:textSize="30sp"
-                    android:textStyle="bold"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,8 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/login_button"
-                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-                    android:backgroundTint="@color/colorPrimaryDark"
+                    app:backgroundTint="@color/colorPrimaryDark"
                     android:textColor="@android:color/white"/>
 
             </LinearLayout>
