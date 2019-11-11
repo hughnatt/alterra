@@ -148,9 +148,25 @@
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginRight="36dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="20dp"
             android:text="@string/register_button"
             app:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@android:color/white"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/registerBackButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:layout_marginRight="36dp"
+            android:text="@string/back_button"
+            android:textColor="@color/colorPrimaryDark"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/colorPrimaryDark"
+            />
+
     </LinearLayout>
 </ScrollView>

@@ -14,6 +14,7 @@
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm Password</string>
     <string name="register_button">Register</string>
+    <string name="back_button">Back</string>
     <string name="login_button">Login</string>
     <string name="text_new_here">New here ?</string>
 
