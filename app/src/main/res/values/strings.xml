@@ -34,6 +34,12 @@
     <string name="gps_alert_body">Your GPS system seems disabled. Enable GPS to enjoy the most of Alterra</string>
     <string name="gps_alert_button_positive">OK!</string>
 
+    <string name="pointnotfound_alert_title">No nearby Alterra location found</string>
+    <string name="pointnotfound_alert_body">Move closer to nearby points</string>
+    <string name="pointnotfound_alert_button_positive">OK!</string>
+
+    <string name="alterrapointchoice_alert_title">Choose where you want to add a picture</string>
+
     <string name="maps_stylesheet">maps_style.json</string>
     <string name="asset_icon">alterra-icon-small.png</string>
 

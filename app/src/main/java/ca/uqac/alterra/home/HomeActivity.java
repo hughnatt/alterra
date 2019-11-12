@@ -243,6 +243,7 @@ public class HomeActivity extends AppCompatActivity {
                 View view = super.getView(position, convertView, parent);
                 TextView text1 = view.findViewById(android.R.id.text1);
                 text1.setTextColor(ContextCompat.getColor(HomeActivity.this,R.color.colorPrimaryDark));
+                text1.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 return view;
             }
         };
@@ -254,7 +255,8 @@ public class HomeActivity extends AppCompatActivity {
                         mCurrentImagePoint = arrayAdapter.getItem(which);
                         dispatchTakePictureIntent();
                 })
-                .setTitle("")
+                .setTitle(R.string.alterrapointchoice_alert_title)
+                .setCancelable(true)
                 .show();
     }
 
@@ -504,9 +506,9 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void showNoAlterraPointFoundAlert(){
         new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
-                .setTitle("")
-                .setMessage("")
-                .setPositiveButton("",null)
+                .setTitle(R.string.pointnotfound_alert_title)
+                .setMessage(R.string.pointnotfound_alert_body)
+                .setPositiveButton(R.string.pointnotfound_alert_button_positive,null)
                 .setCancelable(true)
                 .show();
     }
