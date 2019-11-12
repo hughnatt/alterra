@@ -10,8 +10,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -23,6 +25,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,21 +40,28 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraDatabase;
 
 public class HomeActivity extends AppCompatActivity {
 
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
+    private static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
     private FRAGMENT_ID mCurrentFragment;
 
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
+    private AlterraPoint mCurrentImagePoint;
     private AlterraGeolocator mGeolocator;
     private FirebaseAuth mAuth;
     private NavigationView mNavigationView;
@@ -67,6 +79,8 @@ public class HomeActivity extends AppCompatActivity {
      * sure not to recreate the request
      */
     private boolean mPendingPermissionRequest = false;
+
+    private List<AlterraPoint> mAlterraLocations;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +102,12 @@ public class HomeActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         updateWorkflow(startFragment);
+
+        //Get all the alterra location from database
+        AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
+        alterraDatabase.getAllAlterraLocations((list) -> {
+            mAlterraLocations = list;
+        });
     }
 
 
@@ -166,10 +186,6 @@ public class HomeActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
 
     public void dispatchTakePictureIntent() {
-        if (!mGpsEnabled) {
-            requestGPSActivation();
-            return;
-        }
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -190,6 +206,56 @@ public class HomeActivity extends AppCompatActivity {
                 System.out.println("Photo saved as" + mCurrentImagePath);
             }
         }
+    }
+
+    public void takeAlterraPhoto(){
+        //Make sure GPS is enabled
+        if (!mGpsEnabled) {
+            requestGPSActivation();
+            return;
+        }
+
+        //Make sure location list is setup
+        if (mAlterraLocations == null){
+            showNoAlterraPointFoundAlert();
+            return;
+        }
+
+        //Look for valid locations
+        List<AlterraPoint> validLocations = new ArrayList<>();
+        Iterator<AlterraPoint> iter = mAlterraLocations.iterator();
+        while (iter.hasNext()){
+            AlterraPoint p = iter.next();
+            System.out.println("Distance = " + distanceFrom(p));
+            if (distanceFrom(p) < MINIMUM_UNLOCK_DISTANCE){
+                validLocations.add(p);
+            }
+        }
+        if (validLocations.size() == 0){
+            showNoAlterraPointFoundAlert();
+            return;
+        }
+
+        final ArrayAdapter<AlterraPoint> arrayAdapter = new ArrayAdapter<AlterraPoint>(this,android.R.layout.select_dialog_item){
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = view.findViewById(android.R.id.text1);
+                text1.setTextColor(ContextCompat.getColor(HomeActivity.this,R.color.colorPrimaryDark));
+                return view;
+            }
+        };
+        arrayAdapter.addAll(validLocations);
+
+        new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
+                .setAdapter(arrayAdapter, (dialog, which) -> {
+                        System.out.println("Choice = " + arrayAdapter.getItem(which).getTitle());
+                        mCurrentImagePoint = arrayAdapter.getItem(which);
+                        dispatchTakePictureIntent();
+                })
+                .setTitle("")
+                .show();
     }
 
     private File createImageFile() throws IOException {
@@ -213,7 +279,12 @@ public class HomeActivity extends AppCompatActivity {
         switch(requestCode){
             case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK){
-                    mPhotoUploader.uploadPhoto(mCurrentImagePath);
+                    //Check if user is still located near the selected point
+                    if (distanceFrom(mCurrentImagePoint) < MINIMUM_UNLOCK_DISTANCE){
+                        mPhotoUploader.uploadPhoto(mCurrentImagePath);
+                    } else {
+                        //TODO tell user he moved too far away from its initial position
+                    }
                 }
                 break;
             case REQUEST_PERMISSIONS_LOCATION:
@@ -426,5 +497,17 @@ public class HomeActivity extends AppCompatActivity {
             temp.setLongitude(alterraPoint.getLongitude());
             return currentPosition.distanceTo(temp);
         }
+    }
+
+    /**
+     * Show an alert fragment indicating that no alterra points were found nearby user location
+     */
+    private void showNoAlterraPointFoundAlert(){
+        new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
+                .setTitle("")
+                .setMessage("")
+                .setPositiveButton("",null)
+                .setCancelable(true)
+                .show();
     }
 }
