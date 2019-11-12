@@ -14,6 +14,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -406,5 +409,22 @@ public class HomeActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.gps_alert_button_positive, null)
                 .setCancelable(true)
                 .show();
+    }
+
+    /**
+     * Return the distance between current user location and the given Alterra Point
+     * @param alterraPoint an alterra location descriptor
+     * @return distance in meters
+     */
+    private double distanceFrom(AlterraPoint alterraPoint){
+        Location currentPosition = mGeolocator.getCurrentLocation();
+        if (currentPosition == null) {
+            return Double.MAX_VALUE;
+        } else {
+            Location temp = new Location(LocationManager.GPS_PROVIDER);
+            temp.setLatitude(alterraPoint.getLatitude());
+            temp.setLongitude(alterraPoint.getLongitude());
+            return currentPosition.distanceTo(temp);
+        }
     }
 }

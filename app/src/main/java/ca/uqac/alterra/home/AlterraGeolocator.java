@@ -56,6 +56,14 @@ public class AlterraGeolocator extends LocationCallback {
         }
     }
 
+    public Location getCurrentLocation(){
+        if (!mGpsEnabled || mCurrentLocation == null){
+            return null;
+        } else {
+            return mCurrentLocation;
+        }
+    }
+
     /**
      * Add a new listener that will receive an update when location changes
      * @param myListener
