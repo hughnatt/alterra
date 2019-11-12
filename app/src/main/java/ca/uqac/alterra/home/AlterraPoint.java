@@ -1,5 +1,7 @@
 package ca.uqac.alterra.home;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 
 public class AlterraPoint {
@@ -44,5 +46,11 @@ public class AlterraPoint {
 
     public double getLongitude(){
         return mLatLng.longitude;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getTitle();
     }
 }
