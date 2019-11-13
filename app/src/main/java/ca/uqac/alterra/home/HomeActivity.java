@@ -283,7 +283,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK){
                     //Check if user is still located near the selected point
                     if (distanceFrom(mCurrentImagePoint) < MINIMUM_UNLOCK_DISTANCE){
-                        mPhotoUploader.uploadPhoto(mCurrentImagePath);
+                        mPhotoUploader.uploadPhoto(mCurrentImagePath,mCurrentImagePoint);
                     } else {
                         //TODO tell user he moved too far away from its initial position
                     }
