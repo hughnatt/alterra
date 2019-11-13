@@ -38,7 +38,10 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="36dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginRight="36dp"
             android:hint="@string/email_address_hint"
             android:textColorHint="@color/colorPrimaryDark"
             app:helperTextTextColor="@color/colorAccent"
@@ -89,10 +92,58 @@
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="36dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginRight="36dp"
             app:backgroundTint="@color/colorPrimaryDark"
             android:text="@string/login_button"
             android:textColor="@android:color/white" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:layout_marginRight="36dp"
+            android:layout_marginBottom="36dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/googleButton"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:text="@string/auth_google"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                app:strokeColor="@color/colorPrimaryDark"
+                app:icon="@drawable/ic_google_logo"
+                app:iconTintMode="add"
+                app:iconTint="@android:color/transparent"
+                app:iconSize="20dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/facebookButton"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:text="@string/auth_facebook"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                app:strokeColor="@color/colorPrimaryDark"
+                app:icon="@drawable/ic_facebook_logo"
+                app:iconTintMode="add"
+                app:iconTint="@android:color/transparent"
+                app:iconSize="20dp" />
+
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -121,8 +172,6 @@
                 android:layout_gravity="center"
                 android:background="@color/colorPrimaryDark" />
         </LinearLayout>
-
-
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/registerButton"

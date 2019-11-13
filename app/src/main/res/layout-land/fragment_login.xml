@@ -108,6 +108,47 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/googleButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/auth_google"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    app:icon="@drawable/ic_google_logo"
+                    app:iconSize="20dp"
+                    app:iconTint="@android:color/transparent"
+                    app:iconTintMode="add"
+                    app:strokeColor="@color/colorPrimaryDark"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/facebookButton"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/auth_facebook"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:singleLine="true"
+                    app:strokeColor="@color/colorPrimaryDark"
+                    app:icon="@drawable/ic_facebook_logo"
+                    app:iconTintMode="add"
+                    app:iconTint="@android:color/transparent"
+                    app:iconSize="20dp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/common_margin"
                 android:layout_marginTop="@dimen/common_margin"
                 android:orientation="horizontal"

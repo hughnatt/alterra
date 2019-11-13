@@ -17,6 +17,8 @@
     <string name="back_button">Back</string>
     <string name="login_button">Login</string>
     <string name="text_new_here">New here ?</string>
+    <string name="auth_google">GOOGLE</string>
+    <string name="auth_facebook">FACEBOOK</string>
 
     <string name="nav_profile">Profile</string>
     <string name="nav_list">List</string>
