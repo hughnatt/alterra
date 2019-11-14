@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -13,8 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ca.uqac.alterra.R;
 
@@ -24,6 +32,8 @@ public class HomeListFragment extends Fragment {
 
     private ArrayList<HomeListDataModel> mDataList;
     private RecyclerView mRecyclerView;
+
+    private FirebaseFirestore mDatabase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,21 +54,32 @@ public class HomeListFragment extends Fragment {
         mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
 
         mDataList = new ArrayList<>();
+        mDatabase = FirebaseFirestore.getInstance();
 
         mRecyclerView = getView().findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        mDataList.add(new HomeListDataModel("Item 1",R.drawable.about));
-        mDataList.add(new HomeListDataModel("Item 2",R.drawable.about));
-        mDataList.add(new HomeListDataModel("Item 3",R.drawable.about));
-        mDataList.add(new HomeListDataModel("Item 4",R.drawable.about));
-        mDataList.add(new HomeListDataModel("Item 5",R.drawable.about));
-        mDataList.add(new HomeListDataModel("Item 6",R.drawable.about));
-        mDataList.add(new HomeListDataModel("Item 7",R.drawable.about));
+        mDatabase.collection("locations").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                    if(doc.get("name") != null ){
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter(mDataList);
-        mRecyclerView.setAdapter(recyclerAdapter);
+                        HashMap<String, String> descriptionArray;
+                        descriptionArray = (HashMap<String, String>) doc.get("name");
+
+                        System.out.println(descriptionArray.get("default"));
+                        mDataList.add(new HomeListDataModel(descriptionArray.get("default"),R.drawable.about));
+                    }
+                }
+
+                HomeListAdapter recyclerAdapter =  new HomeListAdapter(mDataList);
+                mRecyclerView.setAdapter(recyclerAdapter);
+            }
+        });
+
+
 
     }
 }
