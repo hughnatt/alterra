@@ -130,7 +130,7 @@ public class PhotoUploader {
 
         //Create a new notification for success
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
-                .setSmallIcon(R.drawable.alterra_logo_round)
+                .setSmallIcon(R.drawable.ic_alterra_notif)
                 .setContentTitle(mContext.getString(R.string.notification_upload_success))
                 .setContentText("")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -153,7 +153,7 @@ public class PhotoUploader {
 
         //Create a progress bar notification with 0% progress
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
-                .setSmallIcon(R.drawable.alterra_logo_round)
+                .setSmallIcon(R.drawable.ic_alterra_notif)
                 .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
                 .setContentText("0%")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -174,7 +174,7 @@ public class PhotoUploader {
             pauseStr = mContext.getString(R.string.notification_upload_button_pause);
         }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, HomeActivity.CHANNEL_ID)
-                .setSmallIcon(R.drawable.alterra_logo_round)
+                .setSmallIcon(R.drawable.ic_alterra_notif)
                 .setContentTitle(mContext.getString(R.string.notification_upload_inprogress))
                 .setContentText(progressionPercentage + "%")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

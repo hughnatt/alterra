@@ -2,6 +2,7 @@ package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -18,9 +19,11 @@ import ca.uqac.alterra.R;
 public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback {
 
     private FloatingActionButton mCameraButton;
+    private TextView mTitle;
 
     public BottomSheetHandler(Activity activity){
         mCameraButton = activity.findViewById(R.id.cameraButton);
+        mTitle = activity.findViewById(R.id.bottomPanelTitle);
     }
 
     @Override
@@ -37,5 +40,9 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     @Override
     public void onSlide(@NonNull View view, float v) {
+    }
+
+    public void updateSheet(AlterraPoint alterraPoint){
+        mTitle.setText(alterraPoint.getTitle());
     }
 }
