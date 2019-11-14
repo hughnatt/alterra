@@ -1,5 +1,6 @@
 package ca.uqac.alterra.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,16 +13,24 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import ca.uqac.alterra.R;
 
@@ -46,14 +55,24 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
     private FirebaseAuth mAuth;
 
-    public LoginFragment() {
-        // Required empty public constructor
+    private GoogleSignInClient mGoogleSignInClient;
+
+
+    public static LoginFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        LoginFragment fragment = new LoginFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+
+
     }
 
     @Override
@@ -68,6 +87,8 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         emailEditText = view.findViewById(R.id.emailEditText);
         loginButton = view.findViewById(R.id.loginButton);
         registerButton = view.findViewById(R.id.registerButton);
+        Button googleButton = view.findViewById(R.id.googleButton);
+        googleButton.setOnClickListener((v) -> signInWithGoogle());
 
         setEmailTextListener();
         setPasswordTextListener();
@@ -89,7 +110,17 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
         if(currentUser!=null){
             mListener.onLoginSuccessful();
+            return;
         }
+
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.alterra_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
     }
 
     public void setLoginListener(LoginListener listener) { mListener = listener; }
@@ -119,7 +150,7 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         }
 
         if (isValid)
-            login();
+            firebaseAuthWithEmail();
     }
 
     private void setRegisterButtonListener(){
@@ -188,7 +219,7 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         return false; // pass on to other listeners.
     }
 
-    private void login(){
+    private void firebaseAuthWithEmail(){
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this.getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -212,6 +243,26 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
                     }
                 });
     }
+
+    protected void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        auth.signInWithCredential(credential).addOnCompleteListener(getActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        mListener.onLoginSuccessful();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        //Snackbar.make(findViewById(), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void signInWithGoogle(){
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        getActivity().startActivityForResult(signInIntent, AuthActivity.RC_SIGN_IN);
+    }
+
 
     @Override
     public void onStop() {

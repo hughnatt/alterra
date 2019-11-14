@@ -1,5 +1,6 @@
 package ca.uqac.alterra.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -60,8 +61,13 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     private FirebaseAuth mAuth;
 
-    public RegisterFragment() {
-        // Required empty public constructor
+    public static RegisterFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        RegisterFragment fragment = new RegisterFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
@@ -321,7 +327,6 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
                     }
                 });
     }
-
 
     public interface RegisterListener {
         void onRegisterSuccessful();

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="firebaseBucket">gs://alterra-1569341283377.appspot.com</string>
+    <string name="alterra_web_client_id"> 220122298758-md8363rb728plo8ovsgj2743s52gs809.apps.googleusercontent.com </string>
 </resources>

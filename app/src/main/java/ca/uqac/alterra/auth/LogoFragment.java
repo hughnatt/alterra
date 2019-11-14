@@ -16,8 +16,13 @@ public class LogoFragment extends Fragment {
 
     private LogoListener mListener;
 
-    public LogoFragment() {
-        // Required empty public constructor
+    public static LogoFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        LogoFragment fragment = new LogoFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override

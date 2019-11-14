@@ -8,6 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ca.uqac.alterra.home.HomeActivity;
@@ -24,6 +30,14 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     private static final String TAG_CURRENT_FLOW = "CurrentState";
 
+    protected static final int RC_SIGN_IN = 0x03;
+
+
+
+    private LoginFragment mLoginFragment;
+    private LogoFragment mLogoFragment;
+    private RegisterFragment mRegisterFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,51 +50,54 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         updateWorkflow();
     }
 
+
+
     private void updateWorkflow(){
         FragmentTransaction ft;
         switch (mCurrentFlow){
             case LOGO :
-                LogoFragment logoFragment = (LogoFragment) getSupportFragmentManager().findFragmentByTag(LOGO_FRAGMENT_TAG);
-
-                if(logoFragment == null){
-                    logoFragment = new LogoFragment();
+                mLogoFragment = (LogoFragment) getSupportFragmentManager().findFragmentByTag(LOGO_FRAGMENT_TAG);
+                if(mLogoFragment == null){
+                    mLogoFragment = LogoFragment.newInstance();
                 }
-                logoFragment.setLogoListener(this);
+                mLogoFragment.setLogoListener(this);
+
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
-                ft.replace(R.id.emptyContainer, logoFragment, LOGO_FRAGMENT_TAG);
+                ft.replace(R.id.emptyContainer, mLogoFragment, LOGO_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
 
                 break;
             case LOGIN :
-                LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(LOGIN_FRAGMENT_TAG);
+                mLoginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(LOGIN_FRAGMENT_TAG);
 
-                if(loginFragment == null){
-                    loginFragment = new LoginFragment();
+                if(mLoginFragment == null){
+                    mLoginFragment = LoginFragment.newInstance();
                 }
-                loginFragment.setLoginListener(this);
+                mLoginFragment.setLoginListener(this);
+
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
-                ft.replace(R.id.emptyContainer, loginFragment, LOGIN_FRAGMENT_TAG);
+                ft.replace(R.id.emptyContainer, mLoginFragment, LOGIN_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commitAllowingStateLoss();
                 break;
 
             case REGISTER :
-                RegisterFragment registerFragment = (RegisterFragment) getSupportFragmentManager().findFragmentByTag(REGISTER_FRAGMENT_TAG);
+                mRegisterFragment = (RegisterFragment) getSupportFragmentManager().findFragmentByTag(REGISTER_FRAGMENT_TAG);
 
 
-                if(registerFragment == null) {
-                    registerFragment = new RegisterFragment();
+                if(mRegisterFragment == null) {
+                    mRegisterFragment = RegisterFragment.newInstance();
                 }
-                registerFragment.setRegisterListener(this);
+                mRegisterFragment.setRegisterListener(this);
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
-                ft.replace(R.id.emptyContainer, registerFragment, REGISTER_FRAGMENT_TAG);
+                ft.replace(R.id.emptyContainer, mRegisterFragment, REGISTER_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
                 break;
@@ -94,6 +111,25 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                mLoginFragment.firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("DEBUG", "Google sign in failed", e);
+                // [START_EXCLUDE]
+                //updateUI(null);
+                // [END_EXCLUDE]
+            }
+        }
+    }
 
     @Override
     public void onLogoAnimationFinished() {
