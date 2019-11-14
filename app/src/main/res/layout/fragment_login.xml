@@ -124,30 +124,30 @@
                 app:iconTint="@android:color/transparent"
                 app:iconSize="20dp"/>
 
-            <com.facebook.login.widget.LoginButton
+            <!--<com.facebook.login.widget.LoginButton
                 android:id="@+id/facebookButton"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"/>-->
 
-        <!--<com.google.android.material.button.MaterialButton
-            android:id="@+id/facebookButton"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:text="@string/auth_facebook"
-            android:singleLine="true"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryDark"
-            app:strokeColor="@color/colorPrimaryDark"
-            app:icon="@drawable/ic_facebook_logo"
-            app:iconTintMode="add"
-            app:iconTint="@android:color/transparent"
-            app:iconSize="20dp" />-->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/facebookButton"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:text="@string/auth_facebook"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                app:strokeColor="@color/colorPrimaryDark"
+                app:icon="@drawable/ic_facebook_logo"
+                app:iconTintMode="add"
+                app:iconTint="@android:color/transparent"
+                app:iconSize="20dp" />
 
         </LinearLayout>
 

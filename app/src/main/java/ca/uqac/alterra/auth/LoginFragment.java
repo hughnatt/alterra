@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -37,6 +38,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
 
@@ -96,13 +99,16 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         Button googleButton = view.findViewById(R.id.googleButton);
         googleButton.setOnClickListener((v) -> signInWithGoogle());
 
-        LoginButton facebookButton = (LoginButton) view.findViewById(R.id.facebookButton);
+        Button facebookButton = view.findViewById(R.id.facebookButton);
+        facebookButton.setOnClickListener((v) -> LoginManager.getInstance().logIn(getActivity(),null));
+        //LoginButton facebookButton = (LoginButton) view.findViewById(R.id.facebookButton);
         //facebookButton.setReadPermissions("email");
         // If using in a fragment
         //facebookButton.setFragment(this);
+        //
 
         // Callback registration
-        facebookButton.registerCallback(((AuthActivity) getActivity()).mCallbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(((AuthActivity) getActivity()).mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
