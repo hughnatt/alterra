@@ -17,7 +17,6 @@ import ca.uqac.alterra.R;
 
 public class HomeListAdapter extends RecyclerView.Adapter {
 
-    private Context mContext;
     private ArrayList<HomeListDataModel> mDataList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -39,8 +38,8 @@ public class HomeListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public HomeListAdapter(ArrayList<HomeListDataModel> values){
-        this.mDataList = values;
+    public  HomeListAdapter(){
+        mDataList = new ArrayList<>();
     }
 
     @NonNull
@@ -61,5 +60,9 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return mDataList.size();
+    }
+
+    public void addData(HomeListDataModel data){
+        mDataList.add(data);
     }
 }

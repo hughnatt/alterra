@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -30,10 +31,10 @@ public class HomeListFragment extends Fragment {
 
     FloatingActionButton mCameraButton;
 
-    private ArrayList<HomeListDataModel> mDataList;
     private RecyclerView mRecyclerView;
 
     private FirebaseFirestore mDatabase;
+    private FirebaseStorage mStorage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,7 +44,10 @@ public class HomeListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
+
+        mDatabase = FirebaseFirestore.getInstance();
+
+        DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
         ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
@@ -53,12 +57,12 @@ public class HomeListFragment extends Fragment {
         mCameraButton = getView().findViewById(R.id.cameraButton);
         mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
 
-        mDataList = new ArrayList<>();
-        mDatabase = FirebaseFirestore.getInstance();
-
         mRecyclerView = getView().findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        HomeListAdapter recyclerAdapter =  new HomeListAdapter();
+        mRecyclerView.setAdapter(recyclerAdapter);
 
         mDatabase.collection("locations").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -69,17 +73,11 @@ public class HomeListFragment extends Fragment {
                         HashMap<String, String> descriptionArray;
                         descriptionArray = (HashMap<String, String>) doc.get("name");
 
-                        System.out.println(descriptionArray.get("default"));
-                        mDataList.add(new HomeListDataModel(descriptionArray.get("default"),R.drawable.about));
+                        recyclerAdapter.addData(new HomeListDataModel(descriptionArray.get("default"),R.drawable.about));
+                        recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
                     }
                 }
-
-                HomeListAdapter recyclerAdapter =  new HomeListAdapter(mDataList);
-                mRecyclerView.setAdapter(recyclerAdapter);
             }
         });
-
-
-
     }
 }
