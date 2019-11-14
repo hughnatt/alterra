@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -267,6 +268,9 @@ public class HomeActivity extends AppCompatActivity {
                     break;
                 case R.id.nav_item_logout :
                     mAuth.signOut();
+                    //Facebook logout
+                    LoginManager.getInstance().logOut();
+                    //TODO revoke google access
                     startActivity(new Intent(this, AuthActivity.class));
                     finish();
                     break;

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.CallbackManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -32,7 +33,7 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
 
     protected static final int RC_SIGN_IN = 0x03;
 
-
+    protected CallbackManager mCallbackManager;
 
     private LoginFragment mLoginFragment;
     private LogoFragment mLogoFragment;
@@ -47,6 +48,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
             mCurrentFlow = FLOW.LOGO;
 
         setContentView(R.layout.activity_auth);
+
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+
+
         updateWorkflow();
     }
 
@@ -114,6 +120,8 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("DEBUG", "onActivityResult, requestCode=" + requestCode);
+
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -129,6 +137,9 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
                 // [END_EXCLUDE]
             }
         }
+
+        // Pass the activity result back to the Facebook SDK
+        mCallbackManager.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override

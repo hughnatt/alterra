@@ -14,7 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,11 +29,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -89,6 +95,33 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         registerButton = view.findViewById(R.id.registerButton);
         Button googleButton = view.findViewById(R.id.googleButton);
         googleButton.setOnClickListener((v) -> signInWithGoogle());
+
+        LoginButton facebookButton = (LoginButton) view.findViewById(R.id.facebookButton);
+        //facebookButton.setReadPermissions("email");
+        // If using in a fragment
+        //facebookButton.setFragment(this);
+
+        // Callback registration
+        facebookButton.registerCallback(((AuthActivity) getActivity()).mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                Log.d("DEBUG","onSuccess");
+                firebaseAuthWithFacebook(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.d("DEBUG","onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.d("DEBUG","onError");
+            }
+        });
 
         setEmailTextListener();
         setPasswordTextListener();
@@ -255,6 +288,26 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
                         // If sign in fails, display a message to the user.
                         //Snackbar.make(findViewById(), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                     }
+                });
+    }
+
+    private void firebaseAuthWithFacebook(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        mListener.onLoginSuccessful();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(getContext(), "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    // ...
                 });
     }
 
