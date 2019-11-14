@@ -28,6 +28,13 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+
+    signingConfigs {
+        debug {
+            storeFile file("external/debug.keystore")
+        }
+    }
+
 }
 
 dependencies {
