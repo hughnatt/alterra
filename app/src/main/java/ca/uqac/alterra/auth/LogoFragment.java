@@ -16,7 +16,7 @@ public class LogoFragment extends Fragment {
 
     private LogoListener mListener;
 
-    public static LogoFragment newInstance() {
+    static LogoFragment newInstance() {
         
         Bundle args = new Bundle();
         
@@ -31,15 +31,11 @@ public class LogoFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_logo, container, false);
-
-        // Inflate the layout for this fragment
-        return v ;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_logo, container, false);
     }
 
-    public void setLogoListener(LogoListener listener) {
+    void setLogoListener(LogoListener listener) {
         mListener = listener;
     }
 
@@ -47,13 +43,7 @@ public class LogoFragment extends Fragment {
     public void onStart() {
         super.onStart();
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                mListener.onLogoAnimationFinished();
-            }
-        };
-
+        Runnable runnable = () -> mListener.onLogoAnimationFinished();
         handler.postDelayed(runnable, 1000);
     }
 

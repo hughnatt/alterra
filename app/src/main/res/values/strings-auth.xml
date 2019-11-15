@@ -19,7 +19,7 @@
     <string name="auth_confirm_password">Confirm your password</string>
     <string name="auth_password_different">Passwords are different</string>
     <string name="auth_exception_weak_password">Password must be at least 6 characters long</string>
-    <string name="auth_exception_invalid_credentials">Email and password don\'t match</string>
+    <string name="auth_exception_invalid_credentials">Invalid credentials</string>
     <string name="auth_exception_user_collision">Email already registered</string>
     <string name="auth_exception_user_collision_long">Authentication failed. An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.</string>
 

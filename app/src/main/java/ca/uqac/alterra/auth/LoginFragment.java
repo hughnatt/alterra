@@ -31,12 +31,12 @@ import ca.uqac.alterra.database.exceptions.AlterraAuthException;
 import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 
 
-public class LoginFragment extends Fragment implements View.OnKeyListener {
+public class LoginFragment extends Fragment {
 
-    private TextInputEditText emailEditText;
-    private TextInputLayout emailTextInput;
-    private TextInputEditText passwordEditText;
-    private TextInputLayout passwordTextInput;
+    private TextInputEditText mEmailEditText;
+    private TextInputLayout mEmailTextInput;
+    private TextInputEditText mPasswordEditText;
+    private TextInputLayout mPasswordTextInput;
 
     private LoginListener mListener;
 
@@ -64,10 +64,22 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        passwordTextInput = view.findViewById(R.id.passwordTextInput);
-        passwordEditText = view.findViewById(R.id.passwordEditText);
-        emailTextInput = view.findViewById(R.id.emailTextInput);
-        emailEditText = view.findViewById(R.id.emailEditText);
+        mPasswordTextInput = view.findViewById(R.id.passwordTextInput);
+        mPasswordEditText = view.findViewById(R.id.passwordEditText);
+        mPasswordEditText.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                verifyFields();
+                return true;
+            }
+            return false; // pass on to other listeners.
+        });
+
+        mEmailTextInput = view.findViewById(R.id.emailTextInput);
+        mEmailEditText = view.findViewById(R.id.emailEditText);
+
+        setTextWatcher(mEmailEditText,mEmailTextInput);
+        setTextWatcher(mPasswordEditText,mPasswordTextInput);
 
         MaterialButton loginButton = view.findViewById(R.id.loginButton);
         loginButton.setOnClickListener(v -> verifyFields());
@@ -117,9 +129,6 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
             }
         }));
 
-        setEmailTextListener();
-        setPasswordTextListener();
-
         return view;
     }
 
@@ -149,18 +158,18 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
 
     private void verifyFields(){
-        String email = Objects.requireNonNull(emailEditText.getText()).toString();
-        String password = Objects.requireNonNull(passwordEditText.getText()).toString();
+        String email = Objects.requireNonNull(mEmailEditText.getText()).toString();
+        String password = Objects.requireNonNull(mPasswordEditText.getText()).toString();
 
         boolean isValid = true;
 
         if(email.length() <1){
-            emailTextInput.setError(getString(R.string.auth_enter_email));
+            mEmailTextInput.setError(getString(R.string.auth_enter_email));
             isValid = false;
         }
 
         if(password.length() <1){
-            passwordTextInput.setError(getString(R.string.auth_enter_password));
+            mPasswordTextInput.setError(getString(R.string.auth_enter_password));
             isValid = false;
         }
 
@@ -177,7 +186,6 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
                     if (context != null) {
                         new MaterialAlertDialogBuilder(context, R.style.DialogStyle)
                                 .setTitle(R.string.auth_login_failed)
-                                .setMessage(e.getMessage())
                                 .setPositiveButton(R.string.auth_generic_positive_answer, null)
                                 .show();
                     }
@@ -186,68 +194,27 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
     }
 
 
-    private void setEmailTextListener(){
-        emailEditText.addTextChangedListener(new TextWatcher() {
+
+    private void setTextWatcher(TextInputEditText editText, TextInputLayout inputLayout){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                if(emailTextInput.isErrorEnabled()){
-                    emailTextInput.setErrorEnabled(false);
-                }
+            public void afterTextChanged(Editable s) {
+                inputLayout.setErrorEnabled(false);
             }
         });
-    }
-
-    private void setPasswordTextListener(){
-        passwordEditText.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                if(passwordTextInput.isErrorEnabled()){
-                    passwordTextInput.setErrorEnabled(false);
-                }
-            }
-        });
-
-        passwordEditText.setOnKeyListener(this);
-
-    }
-
-    @Override
-    public boolean onKey(View view, int keyCode, KeyEvent event) {
-
-        if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-            verifyFields();
-            return true;
-
-        }
-        return false; // pass on to other listeners.
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        emailTextInput.setError(null);
-        passwordTextInput.setError(null);
+        mEmailTextInput.setErrorEnabled(false);
+        mPasswordTextInput.setErrorEnabled(false);
     }
 
     public interface LoginListener {

@@ -115,7 +115,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                inputLayout.setError(null);
+                inputLayout.setErrorEnabled(false);
             }
         });
     }
@@ -196,24 +196,24 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onFailure(AlterraAuthException e) {
                 // Register failed
-                if (e instanceof AlterraAuthWeakPasswordException){
-                    mPasswordEditText.setError(getString(R.string.auth_exception_weak_password));
-                    mPasswordTextInput.requestFocus();
-                } else if (e instanceof AlterraAuthInvalidCredentialsException) {
-                    mEmailEditText.setError(getString(R.string.auth_exception_invalid_credentials));
-                    mEmailTextInput.requestFocus();
-                } else if (e instanceof AlterraAuthUserCollisionException) {
-                    mEmailEditText.setError(getString(R.string.auth_exception_user_collision));
-                    mEmailTextInput.requestFocus();
-                } else {
-                    Toast.makeText(getContext(),R.string.auth_register_failed,Toast.LENGTH_LONG).show();
-                }
-
                 Context context = getContext();
                 if (context != null){
-                    new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
+
+                    String errorMessage;
+
+                    if (e instanceof AlterraAuthWeakPasswordException){
+                        errorMessage = getString(R.string.auth_exception_weak_password);
+                    } else if (e instanceof AlterraAuthInvalidCredentialsException) {
+                        errorMessage = getString(R.string.auth_exception_invalid_credentials);
+                    } else if (e instanceof AlterraAuthUserCollisionException) {
+                        errorMessage = getString(R.string.auth_exception_user_collision);
+                    } else {
+                        errorMessage = getString(R.string.auth_register_failed);
+                    }
+
+                    new MaterialAlertDialogBuilder(context, R.style.DialogStyle)
                             .setTitle(R.string.auth_register_failed)
-                            .setMessage(e.getMessage())
+                            .setMessage(errorMessage)
                             .setPositiveButton(R.string.auth_generic_positive_answer, null)
                             .show();
                 }
