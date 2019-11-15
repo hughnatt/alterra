@@ -10,7 +10,6 @@ import android.util.ArrayMap;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -21,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
 
 public class PhotoUploader {
 
@@ -60,7 +61,7 @@ public class PhotoUploader {
     private static int notificationId;
 
     private FirebaseFirestore db;
-    private FirebaseAuth auth;
+    private AlterraAuth mAuth;
 
     /**
      * Instantiates a new PhotoUploader
@@ -72,7 +73,7 @@ public class PhotoUploader {
         mContext = context;
         mNotificationManager = NotificationManagerCompat.from(mContext);
         db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
     }
 
     public void uploadPhoto(String path){
@@ -106,7 +107,7 @@ public class PhotoUploader {
      * @param remotePath The path of the photo in Firebase Storage
      */
     private void updateDatabase(String remotePath){
-        String userid = auth.getCurrentUser().getUid();
+        String userid = mAuth.getCurrentUser().getUID();
         HashMap<String, Object> data = new HashMap<>();
         data.put("link", remotePath);
         data.put("owner", userid);

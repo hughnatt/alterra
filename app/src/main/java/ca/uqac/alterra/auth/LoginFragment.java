@@ -1,59 +1,62 @@
 package ca.uqac.alterra.auth;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.database.exceptions.AlterraAuthException;
+import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 
 
-public class LoginFragment extends Fragment implements View.OnKeyListener {
+public class LoginFragment extends Fragment {
 
-    public static final String TAG = LoginFragment.class.getSimpleName();
-
-    private TextInputEditText emailEditText;
-    private TextInputLayout emailTextInput;
-
-    private TextInputEditText passwordEditText;
-    private TextInputLayout passwordTextInput;
-
-    private MaterialButton loginButton;
-    private MaterialButton registerButton;
-
-    private String email;
-    private String password;
+    private TextInputEditText mEmailEditText;
+    private TextInputLayout mEmailTextInput;
+    private TextInputEditText mPasswordEditText;
+    private TextInputLayout mPasswordTextInput;
 
     private LoginListener mListener;
 
-    private FirebaseAuth mAuth;
+    private AlterraAuth mAuth;
 
-    public LoginFragment() {
-        // Required empty public constructor
+    static LoginFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        LoginFragment fragment = new LoginFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
+        mAuth.initFacebookAuth();
+        mAuth.initGoogleAuth(getContext(), getString(R.string.alterra_web_client_id));
     }
 
     @Override
@@ -61,18 +64,70 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        passwordTextInput = view.findViewById(R.id.passwordTextInput);
-        passwordEditText = view.findViewById(R.id.passwordEditText);
+        mPasswordTextInput = view.findViewById(R.id.passwordTextInput);
+        mPasswordEditText = view.findViewById(R.id.passwordEditText);
+        mPasswordEditText.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                verifyFields();
+                return true;
+            }
+            return false; // pass on to other listeners.
+        });
 
-        emailTextInput = view.findViewById(R.id.emailTextInput);
-        emailEditText = view.findViewById(R.id.emailEditText);
-        loginButton = view.findViewById(R.id.loginButton);
-        registerButton = view.findViewById(R.id.registerButton);
+        mEmailTextInput = view.findViewById(R.id.emailTextInput);
+        mEmailEditText = view.findViewById(R.id.emailEditText);
 
-        setEmailTextListener();
-        setPasswordTextListener();
-        setNextButtonListener();
-        setRegisterButtonListener();
+        setTextWatcher(mEmailEditText,mEmailTextInput);
+        setTextWatcher(mPasswordEditText,mPasswordTextInput);
+
+        MaterialButton loginButton = view.findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(v -> verifyFields());
+
+        MaterialButton registerButton = view.findViewById(R.id.registerButton);
+        registerButton.setOnClickListener(v -> mListener.onRegisterRequested());
+
+
+
+        Button googleButton = view.findViewById(R.id.googleButton);
+        googleButton.setOnClickListener((v) -> mAuth.logInWithGoogle(this, new AlterraAuth.AlterraAuthListener() {
+            @Override
+            public void onSuccess(AlterraUser user) {
+                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                mListener.onLoginSuccessful();
+            }
+
+            @Override
+            public void onFailure(AlterraAuthException e) {
+                if (e instanceof AlterraAuthUserCollisionException){
+                    Toast.makeText(getContext(), R.string.auth_exception_user_collision_long,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(),R.string.auth_login_failed,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }));
+
+        Button facebookButton = view.findViewById(R.id.facebookButton);
+        facebookButton.setOnClickListener((v) -> mAuth.logInWithFacebook(this, new AlterraAuth.AlterraAuthListener() {
+            @Override
+            public void onSuccess(AlterraUser user) {
+                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                mListener.onLoginSuccessful();
+            }
+
+            @Override
+            public void onFailure(AlterraAuthException e) {
+                if (e instanceof AlterraAuthUserCollisionException){
+                    Toast.makeText(getContext(), R.string.auth_exception_user_collision_long,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), R.string.auth_login_failed,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }));
 
         return view;
     }
@@ -83,141 +138,83 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
         //DEBUG: For testing purposes, signOut User on application startup
         //mAuth.signOut();
+        //LoginManager.getInstance().logOut();
+        //mGoogleSignInClient.revokeAccess();
 
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if(currentUser!=null){
+        if(mAuth.getCurrentUser()!=null){
             mListener.onLoginSuccessful();
         }
     }
 
-    public void setLoginListener(LoginListener listener) { mListener = listener; }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        mAuth.getCallback().onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
 
-    private void setNextButtonListener(){
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                verifyFields();
-            }
-        });
     }
 
-    private void verifyFields(){
-        email = emailEditText.getText().toString();
-        password = passwordEditText.getText().toString();
+    void setLoginListener(LoginListener listener) { mListener = listener; }
 
-        Boolean isValid =true;
+
+    private void verifyFields(){
+        String email = Objects.requireNonNull(mEmailEditText.getText()).toString();
+        String password = Objects.requireNonNull(mPasswordEditText.getText()).toString();
+
+        boolean isValid = true;
 
         if(email.length() <1){
-            emailTextInput.setError("Please enter email");
+            mEmailTextInput.setError(getString(R.string.auth_enter_email));
             isValid = false;
         }
 
         if(password.length() <1){
-            passwordTextInput.setError("Please enter password");
+            mPasswordTextInput.setError(getString(R.string.auth_enter_password));
             isValid = false;
         }
 
         if (isValid)
-            login();
-    }
-
-    private void setRegisterButtonListener(){
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mListener.onRegisterRequested();
-            }
-        });
-    }
-
-
-    private void setEmailTextListener(){
-        emailEditText.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                if(emailTextInput.isErrorEnabled()){
-                    emailTextInput.setErrorEnabled(false);
+            mAuth.logInWithPassword(email, password, new AlterraAuth.AlterraAuthListener() {
+                @Override
+                public void onSuccess(AlterraUser user) {
+                    mListener.onLoginSuccessful();
                 }
-            }
-        });
-    }
 
-    private void setPasswordTextListener(){
-        passwordEditText.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                if(passwordTextInput.isErrorEnabled()){
-                    passwordTextInput.setErrorEnabled(false);
-                }
-            }
-        });
-
-        passwordEditText.setOnKeyListener(this);
-
-    }
-
-    @Override
-    public boolean onKey(View view, int keyCode, KeyEvent event) {
-
-        if (event.getAction() == KeyEvent.ACTION_DOWN &&
-                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-            verifyFields();
-            return true;
-
-        }
-        return false; // pass on to other listeners.
-    }
-
-    private void login(){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this.getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            mListener.onLoginSuccessful();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            if(!task.isSuccessful()) {
-                                new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
-                                        .setTitle("Login Failed")
-                                        .setMessage(task.getException().getMessage())
-                                        .setPositiveButton("OK", null)
-                                        .show();
-                            }
-                        }
+                @Override
+                public void onFailure(AlterraAuthException e) {
+                    Context context = getContext();
+                    if (context != null) {
+                        new MaterialAlertDialogBuilder(context, R.style.DialogStyle)
+                                .setTitle(R.string.auth_login_failed)
+                                .setPositiveButton(R.string.auth_generic_positive_answer, null)
+                                .show();
                     }
-                });
+                }
+            });
+    }
+
+
+
+    private void setTextWatcher(TextInputEditText editText, TextInputLayout inputLayout){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                inputLayout.setErrorEnabled(false);
+            }
+        });
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        emailTextInput.setError(null);
-        passwordTextInput.setError(null);
+        mEmailTextInput.setErrorEnabled(false);
+        mPasswordTextInput.setErrorEnabled(false);
     }
 
     public interface LoginListener {
