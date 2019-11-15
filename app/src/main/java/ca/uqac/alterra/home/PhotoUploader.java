@@ -11,12 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -28,6 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
 
 public class PhotoUploader {
 
@@ -67,7 +71,7 @@ public class PhotoUploader {
     private static int notificationId;
 
     private FirebaseFirestore db;
-    private FirebaseAuth auth;
+    private AlterraAuth mAuth;
 
     /**
      * Instantiates a new PhotoUploader
@@ -79,7 +83,7 @@ public class PhotoUploader {
         mContext = context;
         mNotificationManager = NotificationManagerCompat.from(mContext);
         db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
     }
 
     public void uploadPhoto(String path, AlterraPoint alterraPoint){
@@ -118,7 +122,7 @@ public class PhotoUploader {
      * @param alterraPoint Location where the photo was taken
      */
     private void updateDatabase(String remotePath, AlterraPoint alterraPoint){
-        String userID = auth.getCurrentUser().getUid();
+        String userID = mAuth.getCurrentUser().getUID();
         String locationID = alterraPoint.getId();
         HashMap<String, Object> data = new HashMap<>();
         data.put("link", remotePath);

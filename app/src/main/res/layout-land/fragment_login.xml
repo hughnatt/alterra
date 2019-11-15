@@ -50,10 +50,9 @@
                     android:id="@+id/emailTextInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/email_address_hint"
+                    android:hint="@string/auth_email_address_hint"
                     app:endIconMode="clear_text"
                     android:textColorHint="@color/colorPrimaryDark"
-                    app:errorTextColor="@color/colorPrimaryDark"
                     app:endIconTint="@color/colorPrimaryDark"
                     app:boxStrokeColor="@color/colorPrimaryDark"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -75,7 +74,7 @@
                     android:id="@+id/passwordTextInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password_hint"
+                    android:hint="@string/auth_password_hint"
                     app:endIconMode="password_toggle"
                     app:endIconTint="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
@@ -99,9 +98,58 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/login_button"
+                    android:text="@string/auth_login_button"
                     app:backgroundTint="@color/colorPrimaryDark"
                     android:textColor="@android:color/white"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/googleButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/auth_google"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    app:icon="@drawable/ic_google_logo"
+                    app:iconSize="20dp"
+                    app:iconTint="@android:color/transparent"
+                    app:iconTintMode="add"
+                    app:strokeColor="@color/colorPrimaryDark"/>
+
+                <!--<com.facebook.login.widget.LoginButton
+                    android:id="@+id/facebookButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"/>-->
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/facebookButton"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/auth_facebook"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:singleLine="true"
+                    app:strokeColor="@color/colorPrimaryDark"
+                    app:icon="@drawable/ic_facebook_logo"
+                    app:iconTintMode="add"
+                    app:iconTint="@android:color/transparent"
+                    app:iconSize="20dp" />
+
 
             </LinearLayout>
 
@@ -126,7 +174,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:text="@string/text_new_here"
+                    android:text="@string/auth_text_new_here"
                     android:textColor="@color/colorAccent"
                     android:textAlignment="center"/>
 
@@ -141,7 +189,7 @@
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/register_button"
+                android:text="@string/auth_register_button"
                 android:textColor="@color/colorPrimaryDark"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:strokeColor="@color/colorPrimaryDark"

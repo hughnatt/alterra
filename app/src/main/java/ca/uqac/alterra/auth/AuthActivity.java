@@ -8,8 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
-
+import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.home.HomeActivity;
 import ca.uqac.alterra.R;
 
@@ -36,29 +35,30 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         updateWorkflow();
     }
 
+
+
     private void updateWorkflow(){
         FragmentTransaction ft;
         switch (mCurrentFlow){
             case LOGO :
                 LogoFragment logoFragment = (LogoFragment) getSupportFragmentManager().findFragmentByTag(LOGO_FRAGMENT_TAG);
-
                 if(logoFragment == null){
-                    logoFragment = new LogoFragment();
+                    logoFragment = LogoFragment.newInstance();
                 }
                 logoFragment.setLogoListener(this);
+
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.setCustomAnimations(R.anim.faded_in, R.anim.faded_out);
                 ft.replace(R.id.emptyContainer, logoFragment, LOGO_FRAGMENT_TAG);
                 ft.addToBackStack(null);
                 ft.commit();
-
                 break;
             case LOGIN :
                 LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(LOGIN_FRAGMENT_TAG);
 
                 if(loginFragment == null){
-                    loginFragment = new LoginFragment();
+                    loginFragment = LoginFragment.newInstance();
                 }
                 loginFragment.setLoginListener(this);
 
@@ -72,9 +72,8 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
             case REGISTER :
                 RegisterFragment registerFragment = (RegisterFragment) getSupportFragmentManager().findFragmentByTag(REGISTER_FRAGMENT_TAG);
 
-
                 if(registerFragment == null) {
-                    registerFragment = new RegisterFragment();
+                    registerFragment = RegisterFragment.newInstance();
                 }
                 registerFragment.setRegisterListener(this);
 
@@ -94,10 +93,9 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
         }
     }
 
-
     @Override
     public void onLogoAnimationFinished() {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (AlterraCloud.getAuthInstance().getCurrentUser() == null) {
             mCurrentFlow = FLOW.LOGIN;
         } else {
             mCurrentFlow = FLOW.HOME;
