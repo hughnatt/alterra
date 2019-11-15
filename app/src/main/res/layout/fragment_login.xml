@@ -48,7 +48,6 @@
             app:boxStrokeColor="@color/colorPrimaryDark"
             app:endIconMode="clear_text"
             app:endIconTint="@color/colorPrimaryDark"
-            app:errorTextColor="@color/colorPrimaryDark"
 
             >
 
