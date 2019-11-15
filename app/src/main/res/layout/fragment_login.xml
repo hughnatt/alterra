@@ -42,7 +42,7 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="36dp"
             android:layout_marginRight="36dp"
-            android:hint="@string/email_address_hint"
+            android:hint="@string/auth_email_address_hint"
             android:textColorHint="@color/colorPrimaryDark"
             app:helperTextTextColor="@color/colorAccent"
             app:boxStrokeColor="@color/colorPrimaryDark"
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="36dp"
             android:layout_marginRight="36dp"
-            android:hint="@string/password_hint"
+            android:hint="@string/auth_password_hint"
             app:helperTextTextColor="@color/colorAccent"
             android:textColorHint="@color/colorPrimaryDark"
             app:boxStrokeColor="@color/colorPrimaryDark"
@@ -97,7 +97,7 @@
             android:layout_marginLeft="36dp"
             android:layout_marginRight="36dp"
             app:backgroundTint="@color/colorPrimaryDark"
-            android:text="@string/login_button"
+            android:text="@string/auth_login_button"
             android:textColor="@android:color/white" />
 
         <LinearLayout
@@ -170,7 +170,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:text="@string/text_new_here"
+                android:text="@string/auth_text_new_here"
                 android:textColor="@color/colorAccent" />
 
             <View
@@ -185,7 +185,7 @@
             android:layout_margin="36dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/register_button"
+            android:text="@string/auth_register_button"
             android:textColor="@color/colorPrimaryDark"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:strokeColor="@color/colorPrimaryDark" />

@@ -50,7 +50,7 @@
                     android:id="@+id/emailTextInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/email_address_hint"
+                    android:hint="@string/auth_email_address_hint"
                     app:endIconMode="clear_text"
                     android:textColorHint="@color/colorPrimaryDark"
                     app:errorTextColor="@color/colorPrimaryDark"
@@ -75,7 +75,7 @@
                     android:id="@+id/passwordTextInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password_hint"
+                    android:hint="@string/auth_password_hint"
                     app:endIconMode="password_toggle"
                     app:endIconTint="@color/colorPrimaryDark"
                     android:textColorHint="@color/colorPrimaryDark"
@@ -99,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/login_button"
+                    android:text="@string/auth_login_button"
                     app:backgroundTint="@color/colorPrimaryDark"
                     android:textColor="@android:color/white"/>
 
@@ -175,7 +175,7 @@
                     android:layout_gravity="center"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:text="@string/text_new_here"
+                    android:text="@string/auth_text_new_here"
                     android:textColor="@color/colorAccent"
                     android:textAlignment="center"/>
 
@@ -190,7 +190,7 @@
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/register_button"
+                android:text="@string/auth_register_button"
                 android:textColor="@color/colorPrimaryDark"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 app:strokeColor="@color/colorPrimaryDark"
