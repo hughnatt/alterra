@@ -1,11 +1,6 @@
 package ca.uqac.alterra.auth;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,28 +9,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.database.exceptions.AlterraAuthException;
+import ca.uqac.alterra.database.exceptions.AlterraAuthInvalidCredentialsException;
+import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
+import ca.uqac.alterra.database.exceptions.AlterraAuthWeakPasswordException;
 
 public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
-    public static final String TAG = RegisterFragment.class.getSimpleName();
+    private static final String TAG = RegisterFragment.class.getSimpleName();
 
     private TextInputEditText nameEditText;
     private TextInputLayout nameTextInput;
@@ -59,9 +51,9 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     private RegisterListener mListener;
 
-    private FirebaseAuth mAuth;
+    private AlterraAuth mAuth;
 
-    public static RegisterFragment newInstance() {
+    static RegisterFragment newInstance() {
         
         Bundle args = new Bundle();
         
@@ -74,7 +66,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
     }
 
 
@@ -122,11 +114,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
 
     private void setRegisterButtonListener() {
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                verifyFields();
-            }
-        });
+        registerButton.setOnClickListener(v -> verifyFields());
     }
 
     private void verifyFields() {
@@ -269,7 +257,7 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        AlterraUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null)
             mListener.onRegisterSuccessful();
     }
@@ -286,46 +274,40 @@ public class RegisterFragment extends Fragment implements View.OnKeyListener {
 
     private void register() {
         Log.d(TAG, "register");
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+        mAuth.registerWithPassword(email, password, new AlterraAuth.AlterraAuthListener() {
+            @Override
+            public void onSuccess(AlterraUser user) {
+                // Sign in success
+                if (user != null){
+                    AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                    mListener.onRegisterSuccessful();
+                }
+            }
 
-                            if (user != null){
-                                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUid(),user.getEmail());
-                                mListener.onRegisterSuccessful();
-                            }
-                        } else {
-                            if (!task.isSuccessful()) {
-                                try {
-                                    throw task.getException();
-                                } catch (FirebaseAuthWeakPasswordException e) {
-                                    passwordEditText.setError("Password must be at least 6 characters long");
-                                    passwordTextInput.requestFocus();
-                                } catch (FirebaseAuthInvalidCredentialsException e) {
-                                    emailEditText.setError("Email is incorrect");
-                                    emailTextInput.requestFocus();
-                                } catch (FirebaseAuthUserCollisionException e) {
-                                    emailEditText.setError("Email already exists");
-                                    emailTextInput.requestFocus();
-                                } catch (Exception e) {
-                                    Log.e(TAG, e.getMessage());
-                                }
+            @Override
+            public void onFailure(AlterraAuthException e) {
+                // Sign in failed
+                if (e instanceof AlterraAuthWeakPasswordException){
+                    passwordEditText.setError("Password must be at least 6 characters long");
+                    passwordTextInput.requestFocus();
+                } else if (e instanceof AlterraAuthInvalidCredentialsException) {
+                    emailEditText.setError("Email is incorrect");
+                    emailTextInput.requestFocus();
+                } else if (e instanceof AlterraAuthUserCollisionException) {
+                    emailEditText.setError("Email already exists");
+                    emailTextInput.requestFocus();
+                } else {
+                    Log.e(TAG, e.getMessage());
+                }
 
-                                new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
-                                        .setTitle("Register Failed")
-                                        .setMessage(task.getException().getMessage())
-                                        .setPositiveButton("OK", null)
-                                        .show();
+                new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
+                        .setTitle("Register Failed")
+                        .setMessage(e.getMessage())
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
 
-                            }
-                        }
-                    }
-                });
     }
 
     public interface RegisterListener {

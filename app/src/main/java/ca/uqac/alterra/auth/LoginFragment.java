@@ -3,7 +3,7 @@ package ca.uqac.alterra.auth;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -16,58 +16,34 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-
-import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.database.exceptions.AlterraAuthException;
+import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 
 
 public class LoginFragment extends Fragment implements View.OnKeyListener {
 
-    public static final String TAG = LoginFragment.class.getSimpleName();
+    private static final String TAG = LoginFragment.class.getSimpleName();
+
 
     private TextInputEditText emailEditText;
     private TextInputLayout emailTextInput;
-
     private TextInputEditText passwordEditText;
     private TextInputLayout passwordTextInput;
 
-    private MaterialButton loginButton;
-    private MaterialButton registerButton;
-
-    private String email;
-    private String password;
-
     private LoginListener mListener;
 
-    private FirebaseAuth mAuth;
+    private AlterraAuth mAuth;
 
-    private GoogleSignInClient mGoogleSignInClient;
-
-
-    public static LoginFragment newInstance() {
+    static LoginFragment newInstance() {
         
         Bundle args = new Bundle();
         
@@ -79,9 +55,9 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-
-
+        mAuth = AlterraCloud.getAuthInstance();
+        mAuth.initFacebookAuth();
+        mAuth.initGoogleAuth(getContext(), getString(R.string.alterra_web_client_id));
     }
 
     @Override
@@ -91,48 +67,63 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
         passwordTextInput = view.findViewById(R.id.passwordTextInput);
         passwordEditText = view.findViewById(R.id.passwordEditText);
-
         emailTextInput = view.findViewById(R.id.emailTextInput);
         emailEditText = view.findViewById(R.id.emailEditText);
-        loginButton = view.findViewById(R.id.loginButton);
-        registerButton = view.findViewById(R.id.registerButton);
+
+        MaterialButton loginButton = view.findViewById(R.id.loginButton);
+        loginButton.setOnClickListener(v -> verifyFields());
+
+        MaterialButton registerButton = view.findViewById(R.id.registerButton);
+        registerButton.setOnClickListener(v -> mListener.onRegisterRequested());
+
+
+
         Button googleButton = view.findViewById(R.id.googleButton);
-        googleButton.setOnClickListener((v) -> signInWithGoogle());
+        googleButton.setOnClickListener((v) -> {
+            mAuth.logInWithGoogle(this, new AlterraAuth.AlterraAuthListener() {
+                @Override
+                public void onSuccess(AlterraUser user) {
+                    AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                    mListener.onLoginSuccessful();
+                }
+
+                @Override
+                public void onFailure(AlterraAuthException e) {
+                    if (e instanceof AlterraAuthUserCollisionException){
+                        Toast.makeText(getContext(), "Authentication failed. An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Authentication failed.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+        });
 
         Button facebookButton = view.findViewById(R.id.facebookButton);
-        facebookButton.setOnClickListener((v) -> LoginManager.getInstance().logIn(getActivity(),null));
-        //LoginButton facebookButton = (LoginButton) view.findViewById(R.id.facebookButton);
-        //facebookButton.setReadPermissions("email");
-        // If using in a fragment
-        //facebookButton.setFragment(this);
-        //
+        facebookButton.setOnClickListener((v) -> {
+            mAuth.logInWithFacebook(this, new AlterraAuth.AlterraAuthListener() {
+                @Override
+                public void onSuccess(AlterraUser user) {
+                    AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                    mListener.onLoginSuccessful();
+                }
 
-        // Callback registration
-        LoginManager.getInstance().registerCallback(((AuthActivity) getActivity()).mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.d("DEBUG","onSuccess");
-                firebaseAuthWithFacebook(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.d("DEBUG","onCancel");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.d("DEBUG","onError");
-            }
+                @Override
+                public void onFailure(AlterraAuthException e) {
+                    if (e instanceof AlterraAuthUserCollisionException){
+                        Toast.makeText(getContext(), "Authentication failed. An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Authentication failed.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
         });
 
         setEmailTextListener();
         setPasswordTextListener();
-        setNextButtonListener();
-        setRegisterButtonListener();
 
         return view;
     }
@@ -143,40 +134,31 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
 
         //DEBUG: For testing purposes, signOut User on application startup
         //mAuth.signOut();
+        //LoginManager.getInstance().logOut();
+        //mGoogleSignInClient.revokeAccess();
 
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if(currentUser!=null){
+        if(mAuth.getCurrentUser()!=null){
             mListener.onLoginSuccessful();
-            return;
         }
-
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.alterra_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
     }
 
-    public void setLoginListener(LoginListener listener) { mListener = listener; }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d("DEBUG","requestCode = " + requestCode);
+        mAuth.getCallback().onActivityResult(requestCode,resultCode,data);
+        super.onActivityResult(requestCode, resultCode, data);
 
-    private void setNextButtonListener(){
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                verifyFields();
-            }
-        });
     }
+
+    protected void setLoginListener(LoginListener listener) { mListener = listener; }
+
 
     private void verifyFields(){
-        email = emailEditText.getText().toString();
-        password = passwordEditText.getText().toString();
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
 
-        Boolean isValid =true;
+        boolean isValid = true;
 
         if(email.length() <1){
             emailTextInput.setError("Please enter email");
@@ -189,15 +171,25 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         }
 
         if (isValid)
-            firebaseAuthWithEmail();
-    }
+            mAuth.logInWithPassword(email, password, new AlterraAuth.AlterraAuthListener() {
+                @Override
+                public void onSuccess(AlterraUser user) {
+                    mListener.onLoginSuccessful();
+                }
 
-    private void setRegisterButtonListener(){
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mListener.onRegisterRequested();
-            }
-        });
+                @Override
+                public void onFailure(AlterraAuthException e) {
+                    new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
+                            .setTitle("Login Failed")
+                            .setMessage(e.getMessage())
+                            .setPositiveButton("OK", null)
+                            .show();
+                }
+            });
+
+
+
+        mListener.onLoginSuccessful();
     }
 
 
@@ -257,71 +249,6 @@ public class LoginFragment extends Fragment implements View.OnKeyListener {
         }
         return false; // pass on to other listeners.
     }
-
-    private void firebaseAuthWithEmail(){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this.getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            mListener.onLoginSuccessful();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            if(!task.isSuccessful()) {
-                                new MaterialAlertDialogBuilder(getContext(), R.style.DialogStyle)
-                                        .setTitle("Login Failed")
-                                        .setMessage(task.getException().getMessage())
-                                        .setPositiveButton("OK", null)
-                                        .show();
-                            }
-                        }
-                    }
-                });
-    }
-
-    protected void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        auth.signInWithCredential(credential).addOnCompleteListener(getActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        mListener.onLoginSuccessful();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        //Snackbar.make(findViewById(), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void firebaseAuthWithFacebook(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(getActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        mListener.onLoginSuccessful();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "signInWithCredential:failure", task.getException());
-                        Toast.makeText(getContext(), "Authentication failed.",
-                                Toast.LENGTH_SHORT).show();
-                    }
-
-                    // ...
-                });
-    }
-
-    public void signInWithGoogle(){
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        getActivity().startActivityForResult(signInIntent, AuthActivity.RC_SIGN_IN);
-    }
-
 
     @Override
     public void onStop() {

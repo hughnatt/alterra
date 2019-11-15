@@ -24,11 +24,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.login.LoginManager;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +35,9 @@ import java.util.Date;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraUser;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
     private AlterraGeolocator mGeolocator;
-    private FirebaseAuth mAuth;
+    private AlterraAuth mAuth;
     private NavigationView mNavigationView;
 
     private HomeMapFragment mHomeMapFragment;
@@ -83,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_home);
         setNavigationViewListener();
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
 
         updateWorkflow(startFragment);
     }
@@ -92,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        AlterraUser currentUser = mAuth.getCurrentUser();
 
         mPhotoUploader = new PhotoUploader(getResources().getString(R.string.firebaseBucket), this);
 
@@ -267,10 +268,7 @@ public class HomeActivity extends AppCompatActivity {
                     toastAbout.show();
                     break;
                 case R.id.nav_item_logout :
-                    mAuth.signOut();
-                    //Facebook logout
-                    LoginManager.getInstance().logOut();
-                    //TODO revoke google access
+                    mAuth.logOut();
                     startActivity(new Intent(this, AuthActivity.class));
                     finish();
                     break;
