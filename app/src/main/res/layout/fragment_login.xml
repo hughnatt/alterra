@@ -103,16 +103,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginLeft="36dp"
             android:layout_marginRight="36dp"
-            android:layout_marginBottom="36dp"
-            android:orientation="horizontal">
+            android:layout_marginBottom="36dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/googleButton"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:text="@string/auth_google"
                 android:singleLine="true"
