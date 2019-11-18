@@ -81,13 +81,9 @@ public class HomeProfileFragment extends Fragment {
                                 myAdapter.notifyItemInserted(myAdapter.getItemCount());
                             }
 
-
+                            toolbar.setTitle(getResources().getString(R.string.profile_photos) + " (" + myAdapter.getItemCount() + ")");
                         }
                     }
-
-
                 });
-
-
     }
 }
