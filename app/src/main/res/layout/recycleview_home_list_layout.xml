@@ -12,7 +12,7 @@
 
         <ImageView
             android:id="@+id/recyclerviewImage"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="150dp"/>
 
         <TextView

@@ -3,9 +3,9 @@ package ca.uqac.alterra.home;
 public class HomeListDataModel {
 
     private String text;
-    private int imageRessource;
+    private String imageRessource;
 
-    public HomeListDataModel(String txt, int image){
+    public HomeListDataModel(String txt, String image){
         this.text = txt;
         this.imageRessource = image;
     }
@@ -14,7 +14,7 @@ public class HomeListDataModel {
         return this.text;
     }
 
-    public int getImage(){
+    public String getImage(){
         return this.imageRessource;
     }
 

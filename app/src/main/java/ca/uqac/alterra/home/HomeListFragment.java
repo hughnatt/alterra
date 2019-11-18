@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -60,23 +63,27 @@ public class HomeListFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter();
+        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext());
         mRecyclerView.setAdapter(recyclerAdapter);
 
-        mDatabase.collection("locations").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                    if(doc.get("name") != null ){
 
-                        HashMap<String, String> descriptionArray;
-                        descriptionArray = (HashMap<String, String>) doc.get("name");
+        mDatabase.collection("locations").get().addOnCompleteListener(task -> {
 
-                        recyclerAdapter.addData(new HomeListDataModel(descriptionArray.get("default"),R.drawable.about));
-                        recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
-                    }
+            if(task.isSuccessful()){
+                for(QueryDocumentSnapshot document : task.getResult()){
+
+                    HashMap<String, String> descriptionArray = (HashMap<String, String>) document.get("name");
+                    String thumbnail = (String) document.get("thumbnail");
+
+                    recyclerAdapter.addData(new HomeListDataModel(descriptionArray.get("default"), thumbnail));
+                    recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
+
                 }
             }
+            else{
+                //TODO
+            }
         });
+
     }
 }

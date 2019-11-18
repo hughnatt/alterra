@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
@@ -18,6 +20,7 @@ import ca.uqac.alterra.R;
 public class HomeListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<HomeListDataModel> mDataList;
+    public Context mContext;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -34,12 +37,19 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
         public void setData(HomeListDataModel dm){
             this.textView.setText(dm.getText());
-            this.imgView.setImageResource(dm.getImage());
+            //this.imgView.setImageResource(dm.getImage());
+
+            Glide.with(mContext)
+                    .load(dm.getImage())
+                    .fitCenter()
+                    .into(this.imgView);
+
         }
     }
 
-    public  HomeListAdapter(){
+    public  HomeListAdapter(Context context){
         mDataList = new ArrayList<>();
+        mContext = context;
     }
 
     @NonNull
