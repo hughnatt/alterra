@@ -41,7 +41,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
             Glide.with(mContext)
                     .load(dm.getImage())
-                    .fitCenter()
+                    .centerCrop()
                     .into(this.imgView);
 
         }
