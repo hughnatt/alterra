@@ -11,14 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
@@ -88,29 +90,49 @@ public class PhotoUploader {
 
     public void uploadPhoto(String path, AlterraPoint alterraPoint){
 
-
+        int id = showProgressNotification();
         Uri file = Uri.fromFile(new File(path));
         String remotePath = "images/"+file.getLastPathSegment();
-        StorageReference riversRef = mStorage.getReference().child(remotePath);
+        StorageReference imagesRef = mStorage.getReference().child(remotePath);
 
-        UploadTask uploadTask = riversRef.putFile(file);
-
-
-
-        int id = showProgressNotification();
-
+        UploadTask uploadTask = imagesRef.putFile(file);
+  
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener((exception) -> {
             //TODO Handle unsuccessful uploads
         }).addOnSuccessListener((taskSnapshot) -> {
             showSuccessNotification(id);
-            updateDatabase(remotePath, alterraPoint);
         }).addOnProgressListener((taskSnapshot) -> {
             int progress = getTaskProgression(taskSnapshot);
             System.out.println("Upload is " + progress + "% done");
             updateProgressNotification(id , progress, false);
         });
+      
 
+      
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return riversRef.getDownloadUrl();
+            }
+        });
+        
+        urlTask.addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    updateDatabase(downloadUri.toString());
+                } else {
+                    //TODO Handle errors
+                }
+            }
+        });
 
         //Save the UploadTask and the corresponding notification id
         mUploadTasks.put(id,uploadTask);
@@ -126,11 +148,12 @@ public class PhotoUploader {
         String locationID = alterraPoint.getId();
         HashMap<String, Object> data = new HashMap<>();
         data.put("link", remotePath);
+        data.put("date",System.currentTimeMillis());
         data.put("owner", userID);
         data.put("location",locationID);
 
-        db.collection("photos")
-                .add(data)
+        db.collection("photos").add(data);
+/*
                 .addOnCompleteListener(task -> {
             DocumentReference photoDocument = task.getResult();
             if (photoDocument != null){
@@ -149,7 +172,7 @@ public class PhotoUploader {
                         .set(photosMap,SetOptions.merge());
             }
         });
-
+*/
 
         //db.collection("locations").document(alterraPoint.getId()).update();
 
