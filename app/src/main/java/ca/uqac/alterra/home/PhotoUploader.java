@@ -7,9 +7,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.ArrayMap;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -85,12 +89,34 @@ public class PhotoUploader {
 
         int id = showProgressNotification();
 
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return riversRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    updateDatabase(downloadUri.toString());
+                } else {
+                    //TODO Handle errors
+                }
+            }
+        });
+
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener((exception) -> {
             //TODO Handle unsuccessful uploads
         }).addOnSuccessListener((taskSnapshot) -> {
             showSuccessNotification(id);
-            updateDatabase(remotePath);
+
         }).addOnProgressListener((taskSnapshot) -> {
             int progress = getTaskProgression(taskSnapshot);
             System.out.println("Upload is " + progress + "% done");
@@ -111,6 +137,7 @@ public class PhotoUploader {
         HashMap<String, Object> data = new HashMap<>();
         data.put("link", remotePath);
         data.put("owner", userid);
+        data.put("date",System.currentTimeMillis());
 
         db.collection("photos").add(data);
     }
