@@ -55,8 +55,7 @@ public class HomeListFragment extends Fragment {
         toggle.syncState();
 
         mCameraButton = getView().findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
-
+        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).takeAlterraPhoto());
         mRecyclerView = getView().findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);

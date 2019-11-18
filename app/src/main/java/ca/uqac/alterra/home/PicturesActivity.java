@@ -20,8 +20,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -29,15 +27,19 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraUser;
 
 
 public class PicturesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     RecyclerView mRecyclerView;
 
-    private FirebaseAuth mAuth;
+    private AlterraAuth mAuth;
+    private AlterraUser currentUser;
     private FirebaseStorage mStorage;
     private FirebaseFirestore mFirestore;
-    private FirebaseUser currentUser;
+
 
     private NavigationView mNavigationView;
     private DrawerLayout mNavDrawer;
@@ -50,7 +52,7 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
 
         setNavigationViewListener();
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
         currentUser = mAuth.getCurrentUser();
 
         mFirestore = FirebaseFirestore.getInstance();
@@ -64,7 +66,7 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
         mRecyclerView.setAdapter(myAdapter);
 
         mFirestore.collection("photos")
-                .whereEqualTo("owner", currentUser.getUid())
+                .whereEqualTo("owner", currentUser.getUID())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -88,10 +90,6 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
                         }
                     }
                 });
-
-
-
-
     }
 
     @Override
@@ -143,7 +141,7 @@ public class PicturesActivity extends AppCompatActivity implements NavigationVie
                 toastAbout.show();
                 return true;
             case R.id.nav_item_logout :
-                mAuth.signOut();
+                mAuth.logOut();
                 startActivity(new Intent(this, AuthActivity.class));
                 finish();
                 return true;

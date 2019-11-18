@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_name_hint">Enter your name</string>
+    <string name="auth_email_address_hint">Email address</string>
+    <string name="auth_password_hint">Password</string>
+    <string name="auth_confirm_password_hint">Confirm Password</string>
+    <string name="auth_register_button">Register</string>
+    <string name="auth_back_button">Back</string>
+    <string name="auth_login_button">Login</string>
+    <string name="auth_text_new_here">New here ?</string>
+    <string name="auth_google">GOOGLE</string>
+    <string name="auth_facebook">FACEBOOK</string>
+    <string name="auth_register_failed">Register failed</string>
+    <string name="auth_login_failed">Login Failed</string>
+    <string name="auth_generic_positive_answer">OK</string>
+    <string name="auth_enter_name">Enter your name</string>
+    <string name="auth_enter_email">Enter your email</string>
+    <string name="auth_enter_password">Enter your password</string>
+    <string name="auth_confirm_password">Confirm your password</string>
+    <string name="auth_password_different">Passwords are different</string>
+    <string name="auth_exception_weak_password">Password must be at least 6 characters long</string>
+    <string name="auth_exception_invalid_credentials">Invalid credentials</string>
+    <string name="auth_exception_user_collision">Email already registered</string>
+    <string name="auth_exception_user_collision_long">Authentication failed. An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.</string>
+
+</resources>

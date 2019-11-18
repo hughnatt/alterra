@@ -18,19 +18,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraUser;
 
 public class HomeProfileFragment extends Fragment {
 
-    FirebaseAuth mAuth;
-    FirebaseUser mCurrentUser;
+    AlterraAuth mAuth;
+    AlterraUser mCurrentUser;
     FirebaseFirestore mFirestore;
     FirebaseStorage mStorage;
 
@@ -52,7 +53,7 @@ public class HomeProfileFragment extends Fragment {
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
         mCurrentUser = mAuth.getCurrentUser();
 
         mFirestore = FirebaseFirestore.getInstance();
@@ -66,7 +67,7 @@ public class HomeProfileFragment extends Fragment {
         mRecyclerView.setAdapter(myAdapter);
 
         mFirestore.collection("photos")
-                .whereEqualTo("owner", mCurrentUser.getUid())
+                .whereEqualTo("owner", mCurrentUser.getUID())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
