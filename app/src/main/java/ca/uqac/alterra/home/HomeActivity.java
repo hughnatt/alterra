@@ -195,7 +195,6 @@ public class HomeActivity extends AppCompatActivity {
                 mHomeProfilePhotoFragment = HomeProfilePhotoFragment.newInstance(mImageUrl);
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeProfilePhotoFragment);
-                ft.addToBackStack(null);
                 ft.commit();
                 break;
         }
@@ -524,5 +523,9 @@ public class HomeActivity extends AppCompatActivity {
     public void displayPicture(String url){
         this.mImageUrl = url;
         updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE_PHOTO);
+    }
+
+    public void backToProfil(){
+        updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE); //TODO : find another way to do it !!
     }
 }

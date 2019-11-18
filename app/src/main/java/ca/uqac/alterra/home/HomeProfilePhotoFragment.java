@@ -44,5 +44,15 @@ public class HomeProfilePhotoFragment extends Fragment {
                 .load(mUrl)
                 .fitCenter()
                 .into(imageToShow);
+
+        imageToShow.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(getContext() instanceof HomeActivity){
+                    HomeActivity homeActivity =(HomeActivity) getContext();
+                    homeActivity.backToProfil();
+                }
+            }
+        });;
     }
 }
