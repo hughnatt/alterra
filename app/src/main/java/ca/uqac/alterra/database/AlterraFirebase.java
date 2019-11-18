@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -352,10 +354,23 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
         UploadTask uploadTask = imagesRef.putFile(file);
         uploadTask.addOnFailureListener(uploadListener::onFailure);
-        uploadTask.addOnCompleteListener((t) -> uploadListener.onSuccess());
         uploadTask.addOnProgressListener((taskSnapshot) -> {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             uploadListener.onProgress((int) progress);
+        });
+        uploadTask.continueWithTask(task -> {
+            if (true) {
+                return null;
+            } else {
+                // Continue with the task to get the download URL
+                return imagesRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                uploadListener.onSuccess(task.getResult().toString());
+            } else {
+                uploadListener.onFailure(task.getException());
+            }
         });
     }
 }
