@@ -52,7 +52,7 @@ public class HomeMapFragment extends Fragment {
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
         mCameraButton = getView().findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).dispatchTakePictureIntent());
+        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).takeAlterraPhoto());
 
         //Monitoring the bottom panel movements
         BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(getView().findViewById(R.id.bottomPanel));
