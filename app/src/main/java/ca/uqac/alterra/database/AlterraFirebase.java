@@ -4,6 +4,7 @@ package ca.uqac.alterra.database;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -33,7 +34,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +53,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
     private static String COLLECTION_PATH_LOCATIONS = "locations";
     private static String COLLECTION_PATH_USERS = "users";
+    private static String STORAGE_BUCKET = "gs://alterra-1569341283377.appspot.com";
     private static final int RC_SIGN_IN = 0x03;
 
     private FirebaseFirestore mFirestore;
@@ -64,7 +69,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
     AlterraFirebase(){
         mFirestore = FirebaseFirestore.getInstance();
-        mStorage = FirebaseStorage.getInstance();
+        mStorage = FirebaseStorage.getInstance(STORAGE_BUCKET);
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -337,5 +342,20 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         } else {
             return new AlterraAuthException(e);
         }
+    }
+
+    @Override
+    public void uploadPhoto(String path, AlterraPoint alterraPoint, UploadListener uploadListener) {
+        Uri file = Uri.fromFile(new File(path));
+        String remotePath = "images/"+file.getLastPathSegment();
+        StorageReference imagesRef = mStorage.getReference().child(remotePath);
+
+        UploadTask uploadTask = imagesRef.putFile(file);
+        uploadTask.addOnFailureListener(uploadListener::onFailure);
+        uploadTask.addOnCompleteListener((t) -> uploadListener.onSuccess());
+        uploadTask.addOnProgressListener((taskSnapshot) -> {
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            uploadListener.onProgress((int) progress);
+        });
     }
 }
