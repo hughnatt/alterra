@@ -143,7 +143,8 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getId())
-                    .icon(mAlterraMarkerBitmap));
+                    .icon(mAlterraMarkerBitmap)
+                    .anchor(0.5F,0.5F));
             m.setTag(alterraPoint);
         }
     }
@@ -155,7 +156,8 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getTitle())
-                    .icon(mAlterraMarkerBitmap));
+                    .icon(mAlterraMarkerBitmap)
+                    .anchor(0.5F,0.5F));
             m.setTag(alterraPoint);
         }
     }
