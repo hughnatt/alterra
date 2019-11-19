@@ -55,8 +55,6 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = AlterraCloud.getAuthInstance();
-        mAuth.initFacebookAuth();
-        mAuth.initGoogleAuth(getContext(), getString(R.string.alterra_web_client_id));
     }
 
     @Override
