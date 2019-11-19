@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.home.HomeActivity;
 import ca.uqac.alterra.R;
@@ -32,6 +33,11 @@ public class AuthActivity extends FragmentActivity implements LogoFragment.LogoL
             mCurrentFlow = FLOW.LOGO;
 
         setContentView(R.layout.activity_auth);
+
+        AlterraAuth auth = AlterraCloud.getAuthInstance();
+        auth.initFacebookAuth();
+        auth.initGoogleAuth(AuthActivity.this, getString(R.string.alterra_web_client_id));
+
         updateWorkflow();
     }
 
