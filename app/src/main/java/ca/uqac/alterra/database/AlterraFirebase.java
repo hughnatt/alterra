@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -111,33 +112,43 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location) {
+    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location, WriteListener writeListener) {
         //Add user to location document
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .document(location.getId())
-                .update("users."+user.getUID(),true);
-        //Add location to user document
-        mFirestore.collection(COLLECTION_PATH_USERS)
-                .document(user.getUID())
-                .update("locations"+location.getId(),true);
+                .update("users."+user.getUID(),true)
+                .continueWithTask(task -> {
+                    //Add location to user document
+                    return mFirestore.collection(COLLECTION_PATH_USERS)
+                                    .document(user.getUID())
+                                    .update("locations"+location.getId(),true);
+                })
+                .addOnCompleteListener((voidTask) -> writeListener.onSuccess())
+                .addOnFailureListener((voidTask) -> writeListener.onError());
     }
 
     @Override
-    public void registerAlterraUser(String userID, String userEmail) {
+    public void registerAlterraUser(String userID, String userEmail, WriteListener writeListener) {
         //Add user document in database
         HashMap<String, Object> data = new HashMap<>();
         data.put("displayName", userEmail);
-        mFirestore.collection(COLLECTION_PATH_USERS).document(userID).set(data);
+        mFirestore.collection(COLLECTION_PATH_USERS)
+                .document(userID)
+                .set(data)
+                .addOnSuccessListener((voidTask) -> writeListener.onSuccess())
+                .addOnFailureListener((voidTask) -> writeListener.onError());
     }
 
     @Override
-    public void addPhoto(String userID, String locationID, String remoteLink, long timestamp) {
+    public void addPhoto(String userID, String locationID, String remoteLink, long timestamp, WriteListener writeListener) {
         HashMap<String, Object> data = new HashMap<>();
         data.put("link", remoteLink);
         data.put("date",timestamp);
         data.put("owner", userID);
         data.put("location",locationID);
-        mFirestore.collection("photos").add(data);
+        mFirestore.collection("photos").add(data)
+                .addOnCompleteListener((voidTask) -> writeListener.onSuccess())
+                .addOnFailureListener((voidTask) -> writeListener.onError());
     }
 
     @Override

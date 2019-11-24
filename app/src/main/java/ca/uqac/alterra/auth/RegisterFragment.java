@@ -188,7 +188,7 @@ public class RegisterFragment extends Fragment {
             public void onSuccess(AlterraUser user) {
                 // Register success
                 if (user != null){
-                    AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                    AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail(),null);
                     mListener.onRegisterSuccessful();
                 }
             }

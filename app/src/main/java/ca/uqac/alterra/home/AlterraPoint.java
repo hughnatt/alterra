@@ -70,6 +70,6 @@ public class AlterraPoint {
 
     public void unlock(){
         mUnlocked = true;
-        AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),this);
+        AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),this, null);
     }
 }

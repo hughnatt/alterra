@@ -92,7 +92,7 @@ public class PhotoUploader {
             @Override
             public void onSuccess(String downloadLink) {
                 showSuccessNotification(id);
-                mDatabase.addPhoto(mAuth.getCurrentUser().getUID(),alterraPoint.getId(),downloadLink,System.currentTimeMillis());
+                mDatabase.addPhoto(mAuth.getCurrentUser().getUID(),alterraPoint.getId(),downloadLink,System.currentTimeMillis(),null);
             }
 
             @Override
