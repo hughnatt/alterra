@@ -7,13 +7,12 @@
     android:background="@android:color/transparent"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="85dp"
+    app:behavior_peekHeight="55dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         app:cardCornerRadius="1dp"
         app:cardElevation="20dp">
 
@@ -21,7 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#fafafb">
+            android:background="#fafafa"
+            >
 
             <View
                 android:layout_width="30dp"
@@ -33,23 +33,22 @@
             <TextView
                 android:id="@+id/bottomPanelTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:gravity="center_vertical"
-                android:minHeight="50dp"
                 android:text="@string/maps_first_marker_click"
-                android:textSize="28sp"
+                android:textSize="15sp"
                 android:textAlignment="center"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@android:color/black"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="#fafafa">
 
-               <View
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-
                     android:background="@color/lightGrey" />
 
                 <TextView

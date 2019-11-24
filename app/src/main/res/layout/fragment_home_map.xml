@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         layout="@layout/fragment_google_maps"/>
 
-
     <!--bottom sheet container-->
     <include layout="@layout/bottom_sheet" />
 
@@ -19,13 +18,12 @@
         android:id="@+id/cameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|end"
         android:clickable="true"
-        android:focusable="true"
+        android:layout_marginEnd="20dp"
         app:fabSize="normal"
         app:layout_anchor="@id/bottom_sheet"
         app:layout_anchorGravity="top|end"
-        app:rippleColor="@color/colorAccent"
+        android:backgroundTint="@android:color/white"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <androidx.appcompat.widget.Toolbar

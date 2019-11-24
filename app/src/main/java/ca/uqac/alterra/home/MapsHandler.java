@@ -118,7 +118,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 /*
                 mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
 */
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetHandler.updateSheet((AlterraPoint) marker.getTag());
             }
             @Override
@@ -135,7 +135,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
     @Override
     public void onCameraMove() {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        if(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED )
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+
 /*
         mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
 */
