@@ -14,11 +14,16 @@
     <LinearLayout
         android:id="@+id/bottomPanel"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_expanded"
+        android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="@dimen/bottom_sheet_retracted"
-        app:behavior_hideable="false"
+        app:behavior_hideable="true"
         android:background="@color/colorPrimaryDark">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="">
+        </ImageButton>
 
         <TextView
             android:id="@+id/bottomPanelTitle"
@@ -30,6 +35,10 @@
             android:textColor="#ffffff"/>
 
     </LinearLayout>
+
+
+    <!--bottom sheet container-->
+    <include layout="@layout/bottom_sheet" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/cameraButton"
