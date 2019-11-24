@@ -98,7 +98,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
                                 Map users = (Map) documentData.get("users");
-                                boolean unlocked = (users != null && users.containsKey(currentUser));
+                                boolean unlocked = (users != null && users.containsKey(currentUser.getUID()));
                                 alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked));
                             } catch (NullPointerException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
@@ -109,6 +109,13 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                        System.out.println("Error getting documents: " + task.getException());
                     }
                 });
+    }
+
+    @Override
+    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location) {
+        mFirestore.collection(COLLECTION_PATH_LOCATIONS)
+                .document(location.getId())
+                .update("users."+user.getUID(),true);
     }
 
     @Override

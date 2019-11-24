@@ -23,6 +23,8 @@ public interface AlterraDatabase {
         void onSuccess(@Nullable List<AlterraPoint> alterraPoints);
     }
 
+    void unlockAlterraLocation(AlterraUser user, AlterraPoint location);
+
 
     /*
      * USER SECTION

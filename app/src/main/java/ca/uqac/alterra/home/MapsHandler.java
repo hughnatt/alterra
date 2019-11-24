@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.utility.JsonReader;
 
 public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener, AlterraGeolocator.OnLocationChangedListener {
@@ -104,12 +105,12 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        System.out.println(marker.toString());
+        AlterraPoint alterraPoint = (AlterraPoint) Objects.requireNonNull(marker.getTag());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),14),800, new GoogleMap.CancelableCallback(){
             @Override
             public void onFinish() {
                 mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
-                mBottomSheetHandler.updateSheet((AlterraPoint) Objects.requireNonNull(marker.getTag()));
+                mBottomSheetHandler.updateSheet(alterraPoint);
             }
             @Override
             public void onCancel() {
@@ -117,6 +118,8 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             }
         });
 
+        //FOR TESTING ONLY, unlock position for current user
+        //AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),alterraPoint);
 
         return true; //Consume event to prevent the default Google Maps behavior
     }
@@ -144,8 +147,8 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             if (!alterraPoint.isUnlocked()){
                 if (((HomeActivity) mActivity).distanceFrom(alterraPoint) < HomeActivity.MINIMUM_UNLOCK_DISTANCE) {
                     marker.setIcon(mMarkerUnlockableBitmap);
-                } else if (alterraPoint.isUnlocked()) {
-                    marker.setIcon(mMarkerUnlockedBitmap);
+                } else {
+                    marker.setIcon(mMarkerLockedBitmap);
                 }
             }
         }
