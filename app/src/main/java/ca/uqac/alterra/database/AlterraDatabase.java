@@ -30,4 +30,17 @@ public interface AlterraDatabase {
      * USER SECTION
      */
     void registerAlterraUser(String UID, String userEmail);
+
+    /*
+     * PHOTO SECTION
+     */
+
+    /**
+     *
+     * @param userID Current user ID
+     * @param locationID Alterra location ID
+     * @param remoteLink The direct download link for this photo
+     * @param timestamp Date when the photo was taken
+     */
+    void addPhoto(String userID, String locationID, String remoteLink, long timestamp);
 }

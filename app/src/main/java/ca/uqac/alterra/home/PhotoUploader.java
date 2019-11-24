@@ -28,6 +28,7 @@ import java.util.Map;
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraStorage;
 
 public class PhotoUploader {
@@ -61,13 +62,13 @@ public class PhotoUploader {
         }
     }
 
-    private AlterraStorage mStorage;
     private Map<Integer,UploadTask> mUploadTasks;
     private Context mContext;
     private NotificationManagerCompat mNotificationManager;
     private static int notificationId;
 
-    private FirebaseFirestore db;
+    private AlterraStorage mStorage;
+    private AlterraDatabase mDatabase;
     private AlterraAuth mAuth;
 
     /**
@@ -75,11 +76,11 @@ public class PhotoUploader {
      * @param bucket Firebase Cloud Storage bucket URI e.g gs://app-0123456789.appspot.com
      */
     public PhotoUploader(String bucket, Context context){
-        mStorage = AlterraCloud.getStorageInstance();
         mUploadTasks = new ArrayMap<>();
         mContext = context;
         mNotificationManager = NotificationManagerCompat.from(mContext);
-        db = FirebaseFirestore.getInstance();
+        mStorage = AlterraCloud.getStorageInstance();
+        mDatabase = AlterraCloud.getDatabaseInstance();
         mAuth = AlterraCloud.getAuthInstance();
     }
 
@@ -91,7 +92,7 @@ public class PhotoUploader {
             @Override
             public void onSuccess(String downloadLink) {
                 showSuccessNotification(id);
-                updateDatabase(downloadLink, alterraPoint);
+                mDatabase.addPhoto(mAuth.getCurrentUser().getUID(),alterraPoint.getId(),downloadLink,System.currentTimeMillis());
             }
 
             @Override
@@ -108,47 +109,6 @@ public class PhotoUploader {
 
         //Save the UploadTask and the corresponding notification id
         //mUploadTasks.put(id,uploadTask);
-    }
-
-    /**
-     * Upload photo informations on Firestore
-     * @param remoteLink The path of the photo in Firebase Storage
-     * @param alterraPoint Location where the photo was taken
-     */
-    private void updateDatabase(String remoteLink, AlterraPoint alterraPoint){
-        String userID = mAuth.getCurrentUser().getUID();
-        String locationID = alterraPoint.getId();
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("link", remoteLink);
-        data.put("date",System.currentTimeMillis());
-        data.put("owner", userID);
-        data.put("location",locationID);
-
-        db.collection("photos").add(data);
-/*
-                .addOnCompleteListener(task -> {
-            DocumentReference photoDocument = task.getResult();
-            if (photoDocument != null){
-                Map<String,Boolean> photoBinding = new HashMap<>();
-                photoBinding.put(photoDocument.getId(),Boolean.TRUE);
-                Map<String,Object> photosMap = new HashMap<>();
-                photosMap.put("photos",photoBinding);
-
-                //Add this photo reference to current user collection
-                db.collection("users")
-                        .document(userID)
-                        .set(photosMap, SetOptions.merge());
-                //Add this photo reference to AlterraPoint collection
-                db.collection("locations")
-                        .document(locationID)
-                        .set(photosMap,SetOptions.merge());
-            }
-        });
-*/
-
-        //db.collection("locations").document(alterraPoint.getId()).update();
-
-
     }
 
     /**

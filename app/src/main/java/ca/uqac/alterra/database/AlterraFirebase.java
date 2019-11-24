@@ -21,12 +21,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -76,7 +74,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void getAllAlterraLocations(AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
+    public void getAllAlterraLocations(@NonNull AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -130,6 +128,16 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         HashMap<String, Object> data = new HashMap<>();
         data.put("displayName", userEmail);
         mFirestore.collection(COLLECTION_PATH_USERS).document(userID).set(data);
+    }
+
+    @Override
+    public void addPhoto(String userID, String locationID, String remoteLink, long timestamp) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("link", remoteLink);
+        data.put("date",timestamp);
+        data.put("owner", userID);
+        data.put("location",locationID);
+        mFirestore.collection("photos").add(data);
     }
 
     @Override
@@ -376,12 +384,8 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
             uploadListener.onProgress((int) progress);
         });
         uploadTask.continueWithTask(task -> {
-            if (true) {
-                return null;
-            } else {
-                // Continue with the task to get the download URL
-                return imagesRef.getDownloadUrl();
-            }
+            // Continue with the task to get the download URL
+            return imagesRef.getDownloadUrl();
         }).addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 uploadListener.onSuccess(task.getResult().toString());
