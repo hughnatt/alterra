@@ -98,8 +98,9 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
                                 Map users = (Map) documentData.get("users");
+                                String thumbnail = (String) documentData.get("thumbnail");
                                 boolean unlocked = (users != null && users.containsKey(currentUser.getUID()));
-                                alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked));
+                                alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked, thumbnail));
                             } catch (NullPointerException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }

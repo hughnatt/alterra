@@ -12,6 +12,7 @@ public class AlterraPoint {
     private String mTitle;
     private String mDescription;
     private boolean mUnlocked;
+    private String mThumbnail;
 
     public AlterraPoint(String id, LatLng latLng, String title, String description){
         mId = id;
@@ -20,12 +21,13 @@ public class AlterraPoint {
         mDescription = description;
     }
 
-    public AlterraPoint(String id, double lat, double lng, String title, String description, boolean unlocked){
+    public AlterraPoint(String id, double lat, double lng, String title, String description, boolean unlocked, String thumbnail){
         mId = id;
         mLatLng = new LatLng(lat,lng);
         mTitle = title;
         mDescription = description;
         mUnlocked = unlocked;
+        mThumbnail = thumbnail;
     }
 
     public String getId(){
@@ -54,6 +56,10 @@ public class AlterraPoint {
 
     public boolean isUnlocked() {
         return mUnlocked;
+    }
+
+    public String getThumbnail(){
+        return mThumbnail;
     }
 
     @NonNull

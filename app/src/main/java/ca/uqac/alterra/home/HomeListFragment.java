@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 
@@ -39,11 +40,11 @@ public class HomeListFragment extends Fragment {
     FloatingActionButton mCameraButton;
 
     private RecyclerView mRecyclerView;
-
     private FirebaseFirestore mDatabase;
     private FirebaseStorage mStorage;
 
-    private List<AlterraPoint> mAlterraLocations;
+    private AlterraAuth mAuth;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class HomeListFragment extends Fragment {
         super.onStart();
 
         mDatabase = FirebaseFirestore.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
 
         DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
@@ -73,35 +75,18 @@ public class HomeListFragment extends Fragment {
         mRecyclerView.setAdapter(recyclerAdapter);
 
 
-        //Get all the alterra location from database
+        //Get Alterra locations
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
-        alterraDatabase.getAllAlterraLocations((list) -> mAlterraLocations = list);
+        alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> {
 
-        Iterator<AlterraPoint> iter = mAlterraLocations.iterator();
-        while (iter.hasNext()){
+            if(list != null) {
+                for (AlterraPoint p : list) {
 
-            AlterraPoint p = iter.next();
-            //recyclerAdapter.addData(new HomeListDataModel(p.getDescription(), ));
-
-        }
-
-        mDatabase.collection("locations").get().addOnCompleteListener(task -> {
-
-            if(task.isSuccessful()){
-                for(QueryDocumentSnapshot document : task.getResult()){
-
-                    HashMap<String, String> descriptionArray = (HashMap<String, String>) document.get("name");
-                    String thumbnail = (String) document.get("thumbnail");
-
-                    recyclerAdapter.addData(new HomeListDataModel(descriptionArray.get("default"), thumbnail));
+                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail()));
                     recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
 
                 }
             }
-            else{
-                //TODO
-            }
         });
-
     }
 }
