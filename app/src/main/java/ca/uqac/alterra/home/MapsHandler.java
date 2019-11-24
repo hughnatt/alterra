@@ -2,6 +2,7 @@ package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.location.Location;
+import android.widget.LinearLayout;
 
 
 import androidx.annotation.Nullable;
@@ -40,9 +41,16 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private List<Marker> mMarkers;
     //private Marker mUserMarker;
 
+    private BottomSheetBehavior bottomSheetBehavior;
+
     public MapsHandler(Activity activity, boolean enableLocation, BottomSheetHandler bottomSheetHandler){
         mActivity = activity;
-        mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
+        /*mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));*/
+
+        LinearLayout llBottomSheet = (LinearLayout) mActivity.findViewById(R.id.bottom_sheet);
+
+        // init the bottom sheet behavior
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
         mBottomSheetHandler = bottomSheetHandler;
         mEnableLocation = enableLocation;
         mMarkerLockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_locked_icon));
@@ -107,8 +115,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),14),800, new GoogleMap.CancelableCallback(){
             @Override
             public void onFinish() {
+/*
                 mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
-                mBottomSheetHandler.updateSheet(alterraPoint);
+*/
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                mBottomSheetHandler.updateSheet((AlterraPoint) marker.getTag());
             }
             @Override
             public void onCancel() {
@@ -124,13 +135,19 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
     @Override
     public void onCameraMove() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+/*
         mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+*/
     }
 
 
     @Override
     public void onMapClick(LatLng latLng) {
+/*
         mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+*/
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     /**
