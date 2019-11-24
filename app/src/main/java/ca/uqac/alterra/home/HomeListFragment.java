@@ -27,8 +27,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraDatabase;
 
 public class HomeListFragment extends Fragment {
 
@@ -38,6 +42,8 @@ public class HomeListFragment extends Fragment {
 
     private FirebaseFirestore mDatabase;
     private FirebaseStorage mStorage;
+
+    private List<AlterraPoint> mAlterraLocations;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,6 +72,18 @@ public class HomeListFragment extends Fragment {
         HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext());
         mRecyclerView.setAdapter(recyclerAdapter);
 
+
+        //Get all the alterra location from database
+        AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
+        alterraDatabase.getAllAlterraLocations((list) -> mAlterraLocations = list);
+
+        Iterator<AlterraPoint> iter = mAlterraLocations.iterator();
+        while (iter.hasNext()){
+
+            AlterraPoint p = iter.next();
+            //recyclerAdapter.addData(new HomeListDataModel(p.getDescription(), ));
+
+        }
 
         mDatabase.collection("locations").get().addOnCompleteListener(task -> {
 
