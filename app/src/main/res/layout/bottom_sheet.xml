@@ -7,7 +7,7 @@
     android:background="@android:color/transparent"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="55dp"
+    app:behavior_peekHeight="60dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <com.google.android.material.card.MaterialCardView
@@ -30,18 +30,39 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/swipe_up_handle" />
 
-            <TextView
-                android:id="@+id/bottomPanelTitle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:gravity="center_vertical"
-                android:text="@string/maps_first_marker_click"
-                android:textSize="15sp"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/bottomPanelTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="25dp"
+                    android:gravity="center"
+                    android:text="@string/maps_first_marker_click"
+                    android:textSize="20sp"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"/>
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:layout_marginEnd="25dp"
+                    android:text="10000 km "
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary" />
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:id="@+id/BSLocationInfoParentLayout"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -52,15 +73,14 @@
                     android:layout_height="1dp"
                     android:background="@color/lightGrey" />
 
-                <TextView
-                    android:id="@+id/distance"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:text="1 km "
-                    android:textSize="20sp"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorPrimary" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/material_button"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@android:color/white"
+                    android:text="See more"/>
 
                 <View
                     android:layout_width="match_parent"

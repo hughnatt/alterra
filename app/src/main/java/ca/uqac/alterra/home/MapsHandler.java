@@ -120,9 +120,8 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             @Override
             public void onFinish() {
                 mBottomSheetHandler.updateSheet((AlterraPoint) marker.getTag());
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 bsParentLinLayout.setVisibility(View.VISIBLE);
-
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
             @Override
             public void onCancel() {

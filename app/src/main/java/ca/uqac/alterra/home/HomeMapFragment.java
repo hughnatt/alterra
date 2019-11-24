@@ -61,7 +61,6 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         mCameraButton = getView().findViewById(R.id.cameraButton);
 
         bsParentLinLayout = getView().findViewById(R.id.BSLocationInfoParentLayout);
-        bsParentLinLayout.setVisibility(View.GONE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
