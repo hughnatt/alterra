@@ -1,7 +1,9 @@
-package ca.uqac.alterra.home;
+package ca.uqac.alterra.utility;
 
 import android.content.Context;
 import android.location.Location;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -17,27 +19,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AlterraGeolocator extends LocationCallback {
+public class AlterraGeolocator {
 
     //Try to update location every 5 seconds
     private static final int LOCATION_UPDATE_INTERVAL=5000;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private Location mCurrentLocation;
-    private List<OnLocationChangedListener> mOnLocationChangedListeners;
-    private List<OnGPSStatusChangedListener> mOnGPSStatusChangedListeners;
-    private boolean mGpsEnabled;
+    private static Location mCurrentLocation;
+    private static List<OnLocationChangedListener> mOnLocationChangedListeners = new ArrayList<>();
+    private static List<OnGPSStatusChangedListener> mOnGPSStatusChangedListeners = new ArrayList<>();
+    private static boolean mGpsEnabled = false;
 
-    public AlterraGeolocator(Context context){
-        super();
-        mOnLocationChangedListeners = new ArrayList<>();
-        mOnGPSStatusChangedListeners = new ArrayList<>();
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-        mFusedLocationProviderClient.requestLocationUpdates(LocationRequest.create()
+    public static void initGeolocatorForContext(Context context){
+        FusedLocationProviderClient fusedLocationProviderClient;
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        fusedLocationProviderClient.requestLocationUpdates(LocationRequest.create()
                         .setInterval(LOCATION_UPDATE_INTERVAL)
                         .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY),
                 new AlterraLocationCallback(),null);
-        mGpsEnabled = false;
-        /*Task task = mFusedLocationProviderClient.getLastLocation();
+                /*Task task = mFusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener((OnSuccessListener<Location>) location -> {
 
             if (location != null){
@@ -48,7 +46,7 @@ public class AlterraGeolocator extends LocationCallback {
         });*/
     }
 
-    public LatLng getCurrentLatLng(){
+    public static LatLng getCurrentLatLng(){
         if (!mGpsEnabled || mCurrentLocation == null){
             return null;
         } else {
@@ -56,7 +54,7 @@ public class AlterraGeolocator extends LocationCallback {
         }
     }
 
-    public Location getCurrentLocation(){
+    public static Location getCurrentLocation(){
         if (!mGpsEnabled || mCurrentLocation == null){
             return null;
         } else {
@@ -66,17 +64,21 @@ public class AlterraGeolocator extends LocationCallback {
 
     /**
      * Add a new listener that will receive an update when location changes
-     * @param myListener
+     * @param onLocationChangedListener callback for location updates
      */
-    public void addOnLocationChangedListener(OnLocationChangedListener myListener){
-        mOnLocationChangedListeners.add(myListener);
+    public static void addOnLocationChangedListener(@NonNull OnLocationChangedListener onLocationChangedListener){
+        mOnLocationChangedListeners.add(onLocationChangedListener);
     }
 
-    public void addOnGPSStatusChangedListener(OnGPSStatusChangedListener myListener){
-        mOnGPSStatusChangedListeners.add(myListener);
+    /**
+     * Add a new listener that will receive update when GPS status changes
+     * @param onGPSStatusChangedListener callback for GPS status changes
+     */
+    public static void addOnGPSStatusChangedListener(@NonNull OnGPSStatusChangedListener onGPSStatusChangedListener){
+        mOnGPSStatusChangedListeners.add(onGPSStatusChangedListener);
     }
 
-    private class AlterraLocationCallback extends LocationCallback {
+    private static class AlterraLocationCallback extends LocationCallback {
         @Override
         public void onLocationAvailability (LocationAvailability locationAvailability){
             super.onLocationAvailability(locationAvailability);
@@ -87,9 +89,8 @@ public class AlterraGeolocator extends LocationCallback {
                 System.out.println("Location off");
                 mGpsEnabled = false;
             }
-            Iterator<OnGPSStatusChangedListener> listenerIterator = mOnGPSStatusChangedListeners.iterator();
-            while (listenerIterator.hasNext()){
-                listenerIterator.next().onGPSStatusChanged(mGpsEnabled);
+            for (OnGPSStatusChangedListener mOnGPSStatusChangedListener : mOnGPSStatusChangedListeners) {
+                mOnGPSStatusChangedListener.onGPSStatusChanged(mGpsEnabled);
             }
         }
 
@@ -98,9 +99,8 @@ public class AlterraGeolocator extends LocationCallback {
             super.onLocationResult(locationResult);
             System.out.println(locationResult.getLastLocation());
             mCurrentLocation = locationResult.getLastLocation();
-            Iterator<OnLocationChangedListener> listenerIterator = mOnLocationChangedListeners.iterator();
-            while (listenerIterator.hasNext()){
-                listenerIterator.next().onLocationChanged(mCurrentLocation);
+            for (OnLocationChangedListener mOnLocationChangedListener : mOnLocationChangedListeners) {
+                mOnLocationChangedListener.onLocationChanged(mCurrentLocation);
             }
         }
     }
