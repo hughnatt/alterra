@@ -41,9 +41,6 @@ public class HomeListFragment extends Fragment {
     FloatingActionButton mCameraButton;
 
     private RecyclerView mRecyclerView;
-    private FirebaseFirestore mDatabase;
-    private FirebaseStorage mStorage;
-
     private AlterraAuth mAuth;
 
 
@@ -74,7 +71,6 @@ public class HomeListFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        mDatabase = FirebaseFirestore.getInstance();
         mAuth = AlterraCloud.getAuthInstance();
 
         DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
