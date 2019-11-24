@@ -25,25 +25,25 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView imgView;
-        public TextView textView;
-        public LinearLayout linearLayout;
+        public TextView titleView;
+        public TextView distanceView;
 
         public MyViewHolder(View v) {
             super(v);
             imgView = v.findViewById(R.id.recyclerviewImage);
-            textView = v.findViewById(R.id.recyclerviewText);
-            linearLayout = v.findViewById(R.id.recyclerviewLinear);
+            titleView = v.findViewById(R.id.listRecyclerviewTitle);
+            distanceView = v.findViewById(R.id.listRecyclerviewDistance);
         }
 
         public void setData(HomeListDataModel dm){
-            this.textView.setText(dm.getText());
-            //this.imgView.setImageResource(dm.getImage());
+            this.titleView.setText(dm.getText());
 
             Glide.with(mContext)
                     .load(dm.getImage())
                     .centerCrop()
                     .into(this.imgView);
 
+            this.distanceView.setText(dm.getDistance());
         }
     }
 

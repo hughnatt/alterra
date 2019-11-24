@@ -82,7 +82,11 @@ public class HomeListFragment extends Fragment {
             if(list != null) {
                 for (AlterraPoint p : list) {
 
-                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail()));
+                    double distance = ((HomeActivity) getActivity()).distanceFrom(p);
+
+                    String distancestr = String.valueOf(distance);
+
+                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail(), distancestr));
                     recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
 
                 }
