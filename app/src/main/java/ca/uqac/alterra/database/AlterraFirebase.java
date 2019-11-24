@@ -76,7 +76,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void getAllAlterraLocations(@Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
+    public void getAllAlterraLocations(AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -91,11 +91,16 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                             Map<String,Object> documentData = document.getData();
                             try {
                                 GeoPoint coordinates = (GeoPoint) documentData.get("coordinates");
+                                double latitude = coordinates.getLatitude();
+                                double longitude = coordinates.getLongitude();
                                 Map titles = (Map) documentData.get("name");
                                 Map descriptions = (Map) documentData.get("description");
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
-                                alterraPoints.add(new AlterraPoint(document.getId(), coordinates.getLatitude(), coordinates.getLongitude(), title, description));
+                                Map users = (Map) documentData.get("users");
+                                String thumbnail = (String) documentData.get("thumbnail");
+                                boolean unlocked = (users != null && users.containsKey(currentUser.getUID()));
+                                alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked, thumbnail));
                             } catch (NullPointerException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }
@@ -105,6 +110,18 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                        System.out.println("Error getting documents: " + task.getException());
                     }
                 });
+    }
+
+    @Override
+    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location) {
+        //Add user to location document
+        mFirestore.collection(COLLECTION_PATH_LOCATIONS)
+                .document(location.getId())
+                .update("users."+user.getUID(),true);
+        //Add location to user document
+        mFirestore.collection(COLLECTION_PATH_USERS)
+                .document(user.getUID())
+                .update("locations"+location.getId(),true);
     }
 
     @Override

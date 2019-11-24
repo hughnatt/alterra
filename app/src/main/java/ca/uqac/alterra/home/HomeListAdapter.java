@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
@@ -18,28 +20,36 @@ import ca.uqac.alterra.R;
 public class HomeListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<HomeListDataModel> mDataList;
+    public Context mContext;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView imgView;
-        public TextView textView;
-        public LinearLayout linearLayout;
+        public TextView titleView;
+        public TextView distanceView;
 
         public MyViewHolder(View v) {
             super(v);
             imgView = v.findViewById(R.id.recyclerviewImage);
-            textView = v.findViewById(R.id.recyclerviewText);
-            linearLayout = v.findViewById(R.id.recyclerviewLinear);
+            titleView = v.findViewById(R.id.listRecyclerviewTitle);
+            distanceView = v.findViewById(R.id.listRecyclerviewDistance);
         }
 
         public void setData(HomeListDataModel dm){
-            this.textView.setText(dm.getText());
-            this.imgView.setImageResource(dm.getImage());
+            this.titleView.setText(dm.getText());
+
+            Glide.with(mContext)
+                    .load(dm.getImage())
+                    .centerCrop()
+                    .into(this.imgView);
+
+            this.distanceView.setText(dm.getDistance());
         }
     }
 
-    public  HomeListAdapter(){
+    public  HomeListAdapter(Context context){
         mDataList = new ArrayList<>();
+        mContext = context;
     }
 
     @NonNull

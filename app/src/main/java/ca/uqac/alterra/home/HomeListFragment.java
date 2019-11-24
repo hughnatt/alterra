@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,30 +25,53 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraDatabase;
 
 public class HomeListFragment extends Fragment {
 
     FloatingActionButton mCameraButton;
 
     private RecyclerView mRecyclerView;
+    private AlterraAuth mAuth;
 
-    private FirebaseFirestore mDatabase;
-    private FirebaseStorage mStorage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home_list,container,false);
     }
 
+    private String distancePrettyPrint(double distance){
+
+        String distanceString;
+
+        if(distance < 1000){
+            distanceString = new DecimalFormat("#.##").format(distance) + " m";
+        }
+        else if(distance < 1000000){
+            distance /= 1000;
+            distanceString = new DecimalFormat("#.#").format(distance) + " km";
+        }
+        else {
+            distanceString = "+999 km";
+        }
+
+        return distanceString;
+    }
+
     @Override
     public void onStart() {
         super.onStart();
 
-        mDatabase = FirebaseFirestore.getInstance();
+        mAuth = AlterraCloud.getAuthInstance();
 
         DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
@@ -60,21 +86,22 @@ public class HomeListFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter();
+        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext());
         mRecyclerView.setAdapter(recyclerAdapter);
 
-        mDatabase.collection("locations").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                    if(doc.get("name") != null ){
 
-                        HashMap<String, String> descriptionArray;
-                        descriptionArray = (HashMap<String, String>) doc.get("name");
+        //Get Alterra locations
+        AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
+        alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> {
 
-                        recyclerAdapter.addData(new HomeListDataModel(descriptionArray.get("default"),R.drawable.about));
-                        recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
-                    }
+            if(list != null) {
+                for (AlterraPoint p : list) {
+
+                    double distance = ((HomeActivity) getActivity()).distanceFrom(p);
+
+                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail(), distancePrettyPrint(distance)));
+                    recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
+
                 }
             }
         });
