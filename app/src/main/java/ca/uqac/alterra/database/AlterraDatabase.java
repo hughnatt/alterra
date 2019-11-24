@@ -23,11 +23,30 @@ public interface AlterraDatabase {
         void onSuccess(@Nullable List<AlterraPoint> alterraPoints);
     }
 
-    void unlockAlterraLocation(AlterraUser user, AlterraPoint location);
+    void unlockAlterraLocation(AlterraUser user, AlterraPoint location, @Nullable WriteListener writeListener);
 
 
     /*
      * USER SECTION
      */
-    void registerAlterraUser(String UID, String userEmail);
+    void registerAlterraUser(String UID, String userEmail, @Nullable WriteListener writeListener);
+
+    /*
+     * PHOTO SECTION
+     */
+
+    /**
+     *
+     * @param userID Current user ID
+     * @param locationID Alterra location ID
+     * @param remoteLink The direct download link for this photo
+     * @param timestamp Date when the photo was taken
+     */
+    void addPhoto(String userID, String locationID, String remoteLink, long timestamp, @Nullable WriteListener writeListener);
+
+
+    interface WriteListener {
+        void onSuccess();
+        void onError();
+    }
 }

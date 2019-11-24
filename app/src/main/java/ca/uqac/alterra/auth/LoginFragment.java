@@ -91,7 +91,7 @@ public class LoginFragment extends Fragment {
         googleButton.setOnClickListener((v) -> mAuth.logInWithGoogle(this, new AlterraAuth.AlterraAuthListener() {
             @Override
             public void onSuccess(AlterraUser user) {
-                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail(),null);
                 mListener.onLoginSuccessful();
             }
 
@@ -111,7 +111,7 @@ public class LoginFragment extends Fragment {
         facebookButton.setOnClickListener((v) -> mAuth.logInWithFacebook(this, new AlterraAuth.AlterraAuthListener() {
             @Override
             public void onSuccess(AlterraUser user) {
-                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail());
+                AlterraCloud.getDatabaseInstance().registerAlterraUser(user.getUID(),user.getEmail(),null);
                 mListener.onLoginSuccessful();
             }
 

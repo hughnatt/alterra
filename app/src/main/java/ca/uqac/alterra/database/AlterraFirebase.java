@@ -26,7 +26,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthEmailException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -76,7 +75,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void getAllAlterraLocations(AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
+    public void getAllAlterraLocations(@NonNull AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -113,23 +112,43 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location) {
+    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location, WriteListener writeListener) {
         //Add user to location document
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .document(location.getId())
-                .update("users."+user.getUID(),true);
-        //Add location to user document
-        mFirestore.collection(COLLECTION_PATH_USERS)
-                .document(user.getUID())
-                .update("locations"+location.getId(),true);
+                .update("users."+user.getUID(),true)
+                .continueWithTask(task -> {
+                    //Add location to user document
+                    return mFirestore.collection(COLLECTION_PATH_USERS)
+                                    .document(user.getUID())
+                                    .update("locations"+location.getId(),true);
+                })
+                .addOnCompleteListener((voidTask) -> writeListener.onSuccess())
+                .addOnFailureListener((voidTask) -> writeListener.onError());
     }
 
     @Override
-    public void registerAlterraUser(String userID, String userEmail) {
+    public void registerAlterraUser(String userID, String userEmail, WriteListener writeListener) {
         //Add user document in database
         HashMap<String, Object> data = new HashMap<>();
         data.put("displayName", userEmail);
-        mFirestore.collection(COLLECTION_PATH_USERS).document(userID).set(data);
+        mFirestore.collection(COLLECTION_PATH_USERS)
+                .document(userID)
+                .set(data)
+                .addOnSuccessListener((voidTask) -> writeListener.onSuccess())
+                .addOnFailureListener((voidTask) -> writeListener.onError());
+    }
+
+    @Override
+    public void addPhoto(String userID, String locationID, String remoteLink, long timestamp, WriteListener writeListener) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("link", remoteLink);
+        data.put("date",timestamp);
+        data.put("owner", userID);
+        data.put("location",locationID);
+        mFirestore.collection("photos").add(data)
+                .addOnCompleteListener((voidTask) -> writeListener.onSuccess())
+                .addOnFailureListener((voidTask) -> writeListener.onError());
     }
 
     @Override
@@ -376,12 +395,8 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
             uploadListener.onProgress((int) progress);
         });
         uploadTask.continueWithTask(task -> {
-            if (true) {
-                return null;
-            } else {
-                // Continue with the task to get the download URL
-                return imagesRef.getDownloadUrl();
-            }
+            // Continue with the task to get the download URL
+            return imagesRef.getDownloadUrl();
         }).addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 uploadListener.onSuccess(task.getResult().toString());
