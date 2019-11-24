@@ -6,21 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.ArrayMap;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -32,6 +28,7 @@ import java.util.Map;
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraStorage;
 
 public class PhotoUploader {
 
@@ -64,7 +61,7 @@ public class PhotoUploader {
         }
     }
 
-    private FirebaseStorage mStorage;
+    private AlterraStorage mStorage;
     private Map<Integer,UploadTask> mUploadTasks;
     private Context mContext;
     private NotificationManagerCompat mNotificationManager;
@@ -78,7 +75,7 @@ public class PhotoUploader {
      * @param bucket Firebase Cloud Storage bucket URI e.g gs://app-0123456789.appspot.com
      */
     public PhotoUploader(String bucket, Context context){
-        mStorage = FirebaseStorage.getInstance(bucket);
+        mStorage = AlterraCloud.getStorageInstance();
         mUploadTasks = new ArrayMap<>();
         mContext = context;
         mNotificationManager = NotificationManagerCompat.from(mContext);
@@ -88,49 +85,47 @@ public class PhotoUploader {
 
     public void uploadPhoto(String path, AlterraPoint alterraPoint){
 
-
-        Uri file = Uri.fromFile(new File(path));
-        String remotePath = "images/"+file.getLastPathSegment();
-        StorageReference riversRef = mStorage.getReference().child(remotePath);
-
-        UploadTask uploadTask = riversRef.putFile(file);
-
-
-
         int id = showProgressNotification();
 
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener((exception) -> {
-            //TODO Handle unsuccessful uploads
-        }).addOnSuccessListener((taskSnapshot) -> {
-            showSuccessNotification(id);
-            updateDatabase(remotePath, alterraPoint);
-        }).addOnProgressListener((taskSnapshot) -> {
-            int progress = getTaskProgression(taskSnapshot);
-            System.out.println("Upload is " + progress + "% done");
-            updateProgressNotification(id , progress, false);
+        mStorage.uploadPhoto(path, alterraPoint, new AlterraStorage.UploadListener() {
+            @Override
+            public void onSuccess(String downloadLink) {
+                showSuccessNotification(id);
+                updateDatabase(downloadLink, alterraPoint);
+            }
+
+            @Override
+            public void onProgress(int progressPercentage) {
+                updateProgressNotification(id , progressPercentage, false);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                mNotificationManager.cancel(id);
+                Log.d("WARNING","Upload failed");
+            }
         });
 
-
         //Save the UploadTask and the corresponding notification id
-        mUploadTasks.put(id,uploadTask);
+        //mUploadTasks.put(id,uploadTask);
     }
 
     /**
      * Upload photo informations on Firestore
-     * @param remotePath The path of the photo in Firebase Storage
+     * @param remoteLink The path of the photo in Firebase Storage
      * @param alterraPoint Location where the photo was taken
      */
-    private void updateDatabase(String remotePath, AlterraPoint alterraPoint){
+    private void updateDatabase(String remoteLink, AlterraPoint alterraPoint){
         String userID = mAuth.getCurrentUser().getUID();
         String locationID = alterraPoint.getId();
         HashMap<String, Object> data = new HashMap<>();
-        data.put("link", remotePath);
+        data.put("link", remoteLink);
+        data.put("date",System.currentTimeMillis());
         data.put("owner", userID);
         data.put("location",locationID);
 
-        db.collection("photos")
-                .add(data)
+        db.collection("photos").add(data);
+/*
                 .addOnCompleteListener(task -> {
             DocumentReference photoDocument = task.getResult();
             if (photoDocument != null){
@@ -149,16 +144,11 @@ public class PhotoUploader {
                         .set(photosMap,SetOptions.merge());
             }
         });
-
+*/
 
         //db.collection("locations").document(alterraPoint.getId()).update();
 
 
-    }
-
-    private int getTaskProgression(UploadTask.TaskSnapshot taskSnapshot){
-        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-        return (int) progress;
     }
 
     /**

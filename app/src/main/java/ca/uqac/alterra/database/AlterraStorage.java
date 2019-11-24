@@ -8,7 +8,7 @@ public interface AlterraStorage {
 
 
     interface UploadListener {
-        void onSuccess();
+        void onSuccess(String downloadLink);
         void onProgress(int progressPercentage);
         void onFailure(Exception e);
     }

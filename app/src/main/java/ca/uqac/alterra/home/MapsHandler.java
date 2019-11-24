@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.location.Location;
 
 
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.utility.JsonReader;
 
 public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener, AlterraGeolocator.OnLocationChangedListener {
@@ -31,8 +35,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private BottomSheetHandler mBottomSheetHandler;
     private LatLng mUserLocation;
     private boolean mEnableLocation;
-    private BitmapDescriptor mAlterraMarkerBitmap;
+    private BitmapDescriptor mMarkerUnlockedBitmap;
+    private BitmapDescriptor mMarkerUnlockableBitmap;
+    private BitmapDescriptor mMarkerLockedBitmap;
     private List<AlterraPoint> mAlterraPoints;
+    private List<Marker> mMarkers;
     //private Marker mUserMarker;
 
     public MapsHandler(Activity activity, boolean enableLocation, BottomSheetHandler bottomSheetHandler){
@@ -40,8 +47,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
         mBottomSheetHandler = bottomSheetHandler;
         mEnableLocation = enableLocation;
-        mAlterraMarkerBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon));
+        mMarkerLockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_locked_icon));
+        mMarkerUnlockableBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlockable_icon));
+        mMarkerUnlockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlocked_icon));
         mAlterraPoints = new ArrayList<AlterraPoint>();
+        mMarkers = new ArrayList<>();
     }
 
     /**
@@ -95,12 +105,12 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        System.out.println(marker.toString());
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()),200, new GoogleMap.CancelableCallback(){
+        AlterraPoint alterraPoint = (AlterraPoint) Objects.requireNonNull(marker.getTag());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),14),800, new GoogleMap.CancelableCallback(){
             @Override
             public void onFinish() {
                 mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
-                mBottomSheetHandler.updateSheet((AlterraPoint) marker.getTag());
+                mBottomSheetHandler.updateSheet(alterraPoint);
             }
             @Override
             public void onCancel() {
@@ -108,6 +118,8 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             }
         });
 
+        //FOR TESTING ONLY, unlock position for current user
+        //alterraPoint.unlock();
 
         return true; //Consume event to prevent the default Google Maps behavior
     }
@@ -128,6 +140,20 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         //Update user location and marker position
         mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
+        System.out.println("Hello onLocationChanged");
+        for (Marker marker : mMarkers) {
+            AlterraPoint alterraPoint = (AlterraPoint) marker.getTag();
+            assert alterraPoint != null;
+            if (!alterraPoint.isUnlocked()){
+                if (((HomeActivity) mActivity).distanceFrom(alterraPoint) < HomeActivity.MINIMUM_UNLOCK_DISTANCE) {
+                    marker.setIcon(mMarkerUnlockableBitmap);
+                } else {
+                    marker.setIcon(mMarkerLockedBitmap);
+                }
+            }
+        }
+
+
 /*        if (mUserMarker != null){
             mUserMarker.remove();
         }
@@ -140,23 +166,38 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     public void addAlterraPoint(AlterraPoint alterraPoint){
         mAlterraPoints.add(alterraPoint);
         if (mMap != null){
-            Marker m = mMap.addMarker(new MarkerOptions()
-                    .position(alterraPoint.getLatLng())
-                    .title(alterraPoint.getId())
-                    .icon(mAlterraMarkerBitmap));
-            m.setTag(alterraPoint);
+            addMarker(alterraPoint);
         }
     }
 
     public void populateMap(List<AlterraPoint> alterraLocations){
-        Iterator<AlterraPoint> iter = alterraLocations.iterator();
-        while (iter.hasNext()){
-            AlterraPoint alterraPoint = iter.next();
+        for (AlterraPoint alterraPoint : alterraLocations) {
+            addMarker(alterraPoint);
+        }
+    }
+
+    /**
+     *
+     * @param alterraPoint
+     * @return Reference to the new marker or null if marker hasn't been created (maps is not ready)
+     */
+    @Nullable
+    private Marker addMarker(AlterraPoint alterraPoint){
+        if (mMap != null) {
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getTitle())
-                    .icon(mAlterraMarkerBitmap));
+                    .zIndex(Float.MAX_VALUE));
             m.setTag(alterraPoint);
+            if (alterraPoint.isUnlocked()) {
+                m.setIcon(mMarkerUnlockedBitmap);
+            } else {
+                m.setIcon(mMarkerLockedBitmap);
+            }
+            mMarkers.add(m);
+            return m;
+        } else {
+            return null;
         }
     }
 }

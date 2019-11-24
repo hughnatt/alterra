@@ -1,5 +1,6 @@
 package ca.uqac.alterra.database;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.List;
@@ -16,11 +17,13 @@ public interface AlterraDatabase {
     /*
      * LOCATION SECTION
      */
-    void getAllAlterraLocations(@Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener);
+    void getAllAlterraLocations(@NonNull AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener);
 
     interface OnGetLocationsSuccessListener {
         void onSuccess(@Nullable List<AlterraPoint> alterraPoints);
     }
+
+    void unlockAlterraLocation(AlterraUser user, AlterraPoint location);
 
 
     /*

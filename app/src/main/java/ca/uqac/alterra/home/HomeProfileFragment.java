@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -68,6 +69,7 @@ public class HomeProfileFragment extends Fragment {
 
         mFirestore.collection("photos")
                 .whereEqualTo("owner", mCurrentUser.getUID())
+                .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -75,21 +77,15 @@ public class HomeProfileFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String link = (String) document.getData().get("link");
-                                mStorage.getReference().child(link).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        System.out.println(uri.toString());
-                                        myAdapter.addPicture(uri.toString());
-                                        myAdapter.notifyItemInserted(myAdapter.getItemCount());
-
-                                    }
-                                });
-
+                                myAdapter.addPicture(link);
+                                myAdapter.notifyItemInserted(myAdapter.getItemCount());
                             }
 
 
                         }
                     }
+
+
                 });
 
 

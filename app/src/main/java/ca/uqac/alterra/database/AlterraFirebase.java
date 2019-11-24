@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -74,7 +76,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void getAllAlterraLocations(@Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
+    public void getAllAlterraLocations(AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -89,11 +91,15 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                             Map<String,Object> documentData = document.getData();
                             try {
                                 GeoPoint coordinates = (GeoPoint) documentData.get("coordinates");
+                                double latitude = coordinates.getLatitude();
+                                double longitude = coordinates.getLongitude();
                                 Map titles = (Map) documentData.get("name");
                                 Map descriptions = (Map) documentData.get("description");
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
-                                alterraPoints.add(new AlterraPoint(document.getId(), coordinates.getLatitude(), coordinates.getLongitude(), title, description));
+                                Map users = (Map) documentData.get("users");
+                                boolean unlocked = (users != null && users.containsKey(currentUser.getUID()));
+                                alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked));
                             } catch (NullPointerException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }
@@ -103,6 +109,18 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                        System.out.println("Error getting documents: " + task.getException());
                     }
                 });
+    }
+
+    @Override
+    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location) {
+        //Add user to location document
+        mFirestore.collection(COLLECTION_PATH_LOCATIONS)
+                .document(location.getId())
+                .update("users."+user.getUID(),true);
+        //Add location to user document
+        mFirestore.collection(COLLECTION_PATH_USERS)
+                .document(user.getUID())
+                .update("locations"+location.getId(),true);
     }
 
     @Override
@@ -352,10 +370,23 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
         UploadTask uploadTask = imagesRef.putFile(file);
         uploadTask.addOnFailureListener(uploadListener::onFailure);
-        uploadTask.addOnCompleteListener((t) -> uploadListener.onSuccess());
         uploadTask.addOnProgressListener((taskSnapshot) -> {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             uploadListener.onProgress((int) progress);
+        });
+        uploadTask.continueWithTask(task -> {
+            if (true) {
+                return null;
+            } else {
+                // Continue with the task to get the download URL
+                return imagesRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                uploadListener.onSuccess(task.getResult().toString());
+            } else {
+                uploadListener.onFailure(task.getException());
+            }
         });
     }
 }
