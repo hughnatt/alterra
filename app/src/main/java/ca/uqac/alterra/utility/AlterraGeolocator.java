@@ -12,40 +12,37 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class AlterraGeolocator {
 
-    //Try to update location every 5 seconds
     private static final int LOCATION_UPDATE_INTERVAL=5000;
     private static Location mCurrentLocation;
     private static List<OnLocationChangedListener> mOnLocationChangedListeners = new ArrayList<>();
     private static List<OnGPSStatusChangedListener> mOnGPSStatusChangedListeners = new ArrayList<>();
     private static boolean mGpsEnabled = false;
 
+    /**
+     * Init the application-wide geolocation system with this context
+     * @param context Main application context
+     */
     public static void initGeolocatorForContext(Context context){
         FusedLocationProviderClient fusedLocationProviderClient;
+        //Get the Google Play Services location provider
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        //Init the location request delay and set the callback
         fusedLocationProviderClient.requestLocationUpdates(LocationRequest.create()
                         .setInterval(LOCATION_UPDATE_INTERVAL)
                         .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY),
                 new AlterraLocationCallback(),null);
-                /*Task task = mFusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener((OnSuccessListener<Location>) location -> {
-
-            if (location != null){
-                System.out.println("Position:" + location.getLatitude() + "," + location.getLongitude());
-            } else {
-                System.out.println("null location");
-            }
-        });*/
     }
 
+    /**
+     * Return the current position
+     * @return Current position as a LatLng object or null if position cannot be determined
+     */
     public static LatLng getCurrentLatLng(){
         if (!mGpsEnabled || mCurrentLocation == null){
             return null;
@@ -54,6 +51,10 @@ public class AlterraGeolocator {
         }
     }
 
+    /**
+     * Return the current position
+     * @return Current position as a Location object or null if position cannot be determined
+     */
     public static Location getCurrentLocation(){
         if (!mGpsEnabled || mCurrentLocation == null){
             return null;
@@ -78,32 +79,36 @@ public class AlterraGeolocator {
         mOnGPSStatusChangedListeners.add(onGPSStatusChangedListener);
     }
 
+    /**
+     * Location Callback for location updates
+     */
     private static class AlterraLocationCallback extends LocationCallback {
         @Override
         public void onLocationAvailability (LocationAvailability locationAvailability){
-            super.onLocationAvailability(locationAvailability);
-            if (locationAvailability.isLocationAvailable()){
-                System.out.println("Location on");
-                mGpsEnabled = true;
-            } else {
-                System.out.println("Location off");
-                mGpsEnabled = false;
-            }
+            mGpsEnabled = locationAvailability.isLocationAvailable();
+
             for (OnGPSStatusChangedListener mOnGPSStatusChangedListener : mOnGPSStatusChangedListeners) {
                 mOnGPSStatusChangedListener.onGPSStatusChanged(mGpsEnabled);
             }
+
+            super.onLocationAvailability(locationAvailability);
         }
 
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            super.onLocationResult(locationResult);
-            System.out.println(locationResult.getLastLocation());
             mCurrentLocation = locationResult.getLastLocation();
+
             for (OnLocationChangedListener mOnLocationChangedListener : mOnLocationChangedListeners) {
                 mOnLocationChangedListener.onLocationChanged(mCurrentLocation);
             }
+
+            super.onLocationResult(locationResult);
         }
     }
+
+    /*
+     * Interfaces for callbacks/listeners
+     */
 
     public interface OnLocationChangedListener {
         void onLocationChanged(Location location);
