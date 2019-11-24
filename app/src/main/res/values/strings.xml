@@ -32,7 +32,9 @@
     <string name="alterrapointchoice_alert_title">Choose where you want to add a picture</string>
 
     <string name="maps_stylesheet">maps_style.json</string>
-    <string name="asset_icon">alterra-icon-small.png</string>
+    <string name="map_marker_locked_icon">alterra-map-marker-locked.svg.png</string>
+    <string name="map_marker_unlocked_icon">alterra-map-marker-unlocked.svg.png</string>
+    <string name="map_marker_unlockable_icon">alterra-map-marker-unlockable.svg.png</string>
 
     <!-- Image Content Description -->
     <string name="content_description_profile_picture">Profile picture</string>

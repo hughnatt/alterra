@@ -31,7 +31,9 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private BottomSheetHandler mBottomSheetHandler;
     private LatLng mUserLocation;
     private boolean mEnableLocation;
-    private BitmapDescriptor mAlterraMarkerBitmap;
+    private BitmapDescriptor mMarkerUnlockedBitmap;
+    private BitmapDescriptor mMarkerUnlockableBitmap;
+    private BitmapDescriptor mMarkerLockedBitmap;
     private List<AlterraPoint> mAlterraPoints;
     //private Marker mUserMarker;
 
@@ -40,7 +42,9 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
         mBottomSheetHandler = bottomSheetHandler;
         mEnableLocation = enableLocation;
-        mAlterraMarkerBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.asset_icon));
+        mMarkerLockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_locked_icon));
+        mMarkerUnlockableBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlockable_icon));
+        mMarkerUnlockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlocked_icon));
         mAlterraPoints = new ArrayList<AlterraPoint>();
     }
 
@@ -143,8 +147,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getId())
-                    .icon(mAlterraMarkerBitmap)
-                    .anchor(0.5F,0.5F));
+                    .icon(mMarkerLockedBitmap));
             m.setTag(alterraPoint);
         }
     }
@@ -156,8 +159,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getTitle())
-                    .icon(mAlterraMarkerBitmap)
-                    .anchor(0.5F,0.5F));
+                    .icon(mMarkerLockedBitmap));
             m.setTag(alterraPoint);
         }
     }
