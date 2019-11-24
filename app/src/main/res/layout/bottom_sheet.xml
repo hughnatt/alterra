@@ -41,6 +41,7 @@
                 android:textColor="@android:color/black"/>
 
             <LinearLayout
+                android:id="@+id/BSLocationInfoParentLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -94,7 +95,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:gravity="center_vertical"
-                            android:text="740 Valencia St, San Francisco, CA"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/colorPrimaryDark" />
 
@@ -119,7 +119,6 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:layout_marginStart="25dp"
-                            android:text="La tour Eiffel est une tour de fer puddlé de 324 mètres de hauteur (avec antennes) située à Paris, à l’extrémité nord-ouest du parc du Champ-de-Mars en bordure de la Seine dans le 7e arrondissement"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/colorPrimaryDark" />
 

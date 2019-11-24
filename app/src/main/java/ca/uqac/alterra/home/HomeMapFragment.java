@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
@@ -33,6 +34,7 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     private FloatingActionButton mCameraButton;
     private static String enableLocationArgument = "enableLocation";
     private BottomSheetBehavior bottomSheetBehavior;
+    private LinearLayout bsParentLinLayout;
 
     public static HomeMapFragment newInstance(boolean enableLocation){
         Bundle args = new Bundle();
@@ -57,13 +59,9 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
         mCameraButton = getView().findViewById(R.id.cameraButton);
-/*
-        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).takeAlterraPhoto());
-*/
 
-        //Monitoring the bottom panel movements
-/*        BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(getView().findViewById(R.id.bottomPanel));
-        bottomPanelBehavior.addBottomSheetCallback(mBottomSheetHandler);*/
+        bsParentLinLayout = getView().findViewById(R.id.BSLocationInfoParentLayout);
+        bsParentLinLayout.setVisibility(View.GONE);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -114,10 +112,22 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         // change the state of the bottom sheet
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
+
+
         // set callback for changes
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+                switch(newState){
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        mCameraButton.setVisibility(View.GONE);
+                        break;
+                    default:
+                        mCameraButton.setVisibility(View.VISIBLE);
+                        break;
+                }
 
             }
 

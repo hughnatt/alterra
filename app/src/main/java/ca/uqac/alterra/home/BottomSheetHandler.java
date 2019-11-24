@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,19 +37,12 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mDescription = activity.findViewById(R.id.locationDescription);
         bsAddressLinLayout = activity.findViewById(R.id.BSAddressLinLayout);
         bsDescriptionLinLayout = activity.findViewById(R.id.BSDescriptionLinLayout);
+
     }
 
     @Override
     public void onStateChanged(@NonNull View view, int i) {
-        switch(i){
-            case BottomSheetBehavior.STATE_COLLAPSED:
-                mCameraButton.show();
-                break;
-            default:
-                mCameraButton.hide();
-                break;
-        }
-    }
+            }
 
     @Override
     public void onSlide(@NonNull View view, float v) {
