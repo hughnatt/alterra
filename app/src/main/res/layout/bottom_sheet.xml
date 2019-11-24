@@ -76,6 +76,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/BSAddressLinLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
@@ -100,6 +101,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/BSDescriptionLinLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
@@ -112,7 +114,7 @@
                             android:src="@drawable/ic_info" />
 
                         <TextView
-                            android:id="@+id/locationDetails"
+                            android:id="@+id/locationDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"

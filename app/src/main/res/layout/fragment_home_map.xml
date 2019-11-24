@@ -23,6 +23,7 @@
         app:fabSize="normal"
         app:layout_anchor="@id/bottom_sheet"
         app:layout_anchorGravity="top|end"
+        app:borderWidth="0dp"
         android:backgroundTint="@android:color/white"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
