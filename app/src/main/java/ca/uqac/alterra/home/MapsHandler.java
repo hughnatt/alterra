@@ -119,7 +119,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         });
 
         //FOR TESTING ONLY, unlock position for current user
-        //AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),alterraPoint);
+        //alterraPoint.unlock();
 
         return true; //Consume event to prevent the default Google Maps behavior
     }

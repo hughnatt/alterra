@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import ca.uqac.alterra.database.AlterraCloud;
+
 public class AlterraPoint {
     private String mId;
     private LatLng mLatLng;
@@ -58,5 +60,10 @@ public class AlterraPoint {
     @Override
     public String toString() {
         return getTitle();
+    }
+
+    public void unlock(){
+        mUnlocked = true;
+        AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),this);
     }
 }
