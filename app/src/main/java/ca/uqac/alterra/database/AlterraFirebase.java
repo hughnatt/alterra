@@ -113,9 +113,14 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
     @Override
     public void unlockAlterraLocation(AlterraUser user, AlterraPoint location) {
+        //Add user to location document
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .document(location.getId())
                 .update("users."+user.getUID(),true);
+        //Add location to user document
+        mFirestore.collection(COLLECTION_PATH_USERS)
+                .document(user.getUID())
+                .update("locations"+location.getId(),true);
     }
 
     @Override
