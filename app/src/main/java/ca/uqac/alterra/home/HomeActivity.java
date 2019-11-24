@@ -109,9 +109,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Get all the alterra location from database
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
-        alterraDatabase.getAllAlterraLocations((list) -> {
-            mAlterraLocations = list;
-        });
+        alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> mAlterraLocations = list);
     }
 
 

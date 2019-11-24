@@ -76,7 +76,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void getAllAlterraLocations(@Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
+    public void getAllAlterraLocations(AlterraUser currentUser, @Nullable OnGetLocationsSuccessListener onGetLocationsSuccessListener) {
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -91,12 +91,15 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                             Map<String,Object> documentData = document.getData();
                             try {
                                 GeoPoint coordinates = (GeoPoint) documentData.get("coordinates");
+                                double latitude = coordinates.getLatitude();
+                                double longitude = coordinates.getLongitude();
                                 Map titles = (Map) documentData.get("name");
                                 Map descriptions = (Map) documentData.get("description");
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
-                                boolean unlocked = false;
-                                alterraPoints.add(new AlterraPoint(document.getId(), coordinates.getLatitude(), coordinates.getLongitude(), title, description, unlocked));
+                                Map users = (Map) documentData.get("users");
+                                boolean unlocked = (users != null && users.containsKey(currentUser));
+                                alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked));
                             } catch (NullPointerException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }

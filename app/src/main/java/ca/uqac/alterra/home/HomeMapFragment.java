@@ -72,7 +72,7 @@ public class HomeMapFragment extends Fragment {
         toggle.syncState();
 
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
-            alterraDatabase.getAllAlterraLocations((list) -> {
+            alterraDatabase.getAllAlterraLocations(AlterraCloud.getAuthInstance().getCurrentUser(),(list) -> {
             if (list == null) return;
             Iterator<AlterraPoint> iter = list.iterator();
             while (iter.hasNext()){
