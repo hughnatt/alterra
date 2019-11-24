@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.utility.JsonReader;
@@ -100,11 +101,11 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     @Override
     public boolean onMarkerClick(Marker marker) {
         System.out.println(marker.toString());
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()),200, new GoogleMap.CancelableCallback(){
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),14),800, new GoogleMap.CancelableCallback(){
             @Override
             public void onFinish() {
                 mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
-                mBottomSheetHandler.updateSheet((AlterraPoint) marker.getTag());
+                mBottomSheetHandler.updateSheet((AlterraPoint) Objects.requireNonNull(marker.getTag()));
             }
             @Override
             public void onCancel() {
