@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
-    private static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
+    public static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
     private FRAGMENT_ID mCurrentFragment;
@@ -156,6 +156,9 @@ public class HomeActivity extends AppCompatActivity {
 
                 if(mHomeMapFragment == null){
                     mHomeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
+                    if (mGeolocator != null){
+                        mGeolocator.addOnLocationChangedListener(mHomeMapFragment.getMapsHandler());
+                    }
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
@@ -464,9 +467,9 @@ public class HomeActivity extends AppCompatActivity {
     private void locationPermissionGranted(){
         mLocationEnabled = true;
         mGeolocator = new AlterraGeolocator(this);
-        //mGeolocator.addOnLocationChangedListener(mMapsHandler);
         if(mHomeMapFragment != null){
             mHomeMapFragment.enableGoogleMapsLocation();
+            mGeolocator.addOnLocationChangedListener(mHomeMapFragment.getMapsHandler());
         }
         mGeolocator.addOnGPSStatusChangedListener(enabled -> {
             mGpsEnabled = enabled;
@@ -493,7 +496,7 @@ public class HomeActivity extends AppCompatActivity {
      * @param alterraPoint an alterra location descriptor
      * @return distance in meters
      */
-    private double distanceFrom(AlterraPoint alterraPoint){
+    public double distanceFrom(AlterraPoint alterraPoint){
         Location currentPosition = mGeolocator.getCurrentLocation();
         if (currentPosition == null) {
             return Double.MAX_VALUE;

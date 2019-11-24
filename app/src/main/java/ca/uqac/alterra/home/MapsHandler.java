@@ -36,6 +36,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private BitmapDescriptor mMarkerUnlockableBitmap;
     private BitmapDescriptor mMarkerLockedBitmap;
     private List<AlterraPoint> mAlterraPoints;
+    private List<Marker> mMarkers;
     //private Marker mUserMarker;
 
     public MapsHandler(Activity activity, boolean enableLocation, BottomSheetHandler bottomSheetHandler){
@@ -47,6 +48,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mMarkerUnlockableBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlockable_icon));
         mMarkerUnlockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlocked_icon));
         mAlterraPoints = new ArrayList<AlterraPoint>();
+        mMarkers = new ArrayList<>();
     }
 
     /**
@@ -133,6 +135,17 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         //Update user location and marker position
         mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
+        System.out.println("Hello onLocationChanged");
+        for (Marker marker : mMarkers) {
+            AlterraPoint alterraPoint = (AlterraPoint) marker.getTag();
+            if (((HomeActivity) mActivity).distanceFrom(alterraPoint) < HomeActivity.MINIMUM_UNLOCK_DISTANCE) {
+                marker.setIcon(mMarkerUnlockableBitmap);
+            } else {
+                marker.setIcon(mMarkerLockedBitmap);
+            } //TODO check if marker is unlocked
+        }
+
+
 /*        if (mUserMarker != null){
             mUserMarker.remove();
         }
@@ -148,8 +161,10 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getId())
+                    .zIndex(Float.MAX_VALUE)
                     .icon(mMarkerLockedBitmap));
             m.setTag(alterraPoint);
+            mMarkers.add(m);
         }
     }
 
@@ -160,8 +175,10 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             Marker m = mMap.addMarker(new MarkerOptions()
                     .position(alterraPoint.getLatLng())
                     .title(alterraPoint.getTitle())
+                    .zIndex(Float.MAX_VALUE)
                     .icon(mMarkerLockedBitmap));
             m.setTag(alterraPoint);
+            mMarkers.add(m);
         }
     }
 }

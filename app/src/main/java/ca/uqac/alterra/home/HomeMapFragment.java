@@ -89,4 +89,8 @@ public class HomeMapFragment extends Fragment {
             mMapsHandler.enableMyLocation();
         }
     }
+
+    public MapsHandler getMapsHandler(){
+        return mMapsHandler;
+    }
 }
