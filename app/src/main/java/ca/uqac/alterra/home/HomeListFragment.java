@@ -25,6 +25,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,6 +50,24 @@ public class HomeListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home_list,container,false);
+    }
+
+    private String distancePrettyPrint(double distance){
+
+        String distanceString;
+
+        if(distance < 1000){
+            distanceString = new DecimalFormat("#.##").format(distance) + " m";
+        }
+        else if(distance < 1000000){
+            distance /= 1000;
+            distanceString = new DecimalFormat("#.#").format(distance) + " km";
+        }
+        else {
+            distanceString = "+999 km";
+        }
+
+        return distanceString;
     }
 
     @Override
@@ -84,9 +103,7 @@ public class HomeListFragment extends Fragment {
 
                     double distance = ((HomeActivity) getActivity()).distanceFrom(p);
 
-                    String distancestr = String.valueOf(distance);
-
-                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail(), distancestr));
+                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail(), distancePrettyPrint(distance)));
                     recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
 
                 }
