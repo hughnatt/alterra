@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
         mSeeMore.setOnClickListener((View v) -> {
             Intent startActivityIntent = new Intent(activity, AlterraDetailsActivity.class);
-            startActivityIntent.putExtra("AlterraPointTitle", mAlterraPoint.getTitle());
+            startActivityIntent.putExtra("AlterraPoint", new Gson().toJson(mAlterraPoint));
             mActivity.startActivity(startActivityIntent);
         });
 

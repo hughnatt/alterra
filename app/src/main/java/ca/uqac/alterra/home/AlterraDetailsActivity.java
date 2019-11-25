@@ -5,6 +5,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+
 import ca.uqac.alterra.R;
 
 public class AlterraDetailsActivity extends AppCompatActivity {
@@ -18,11 +20,19 @@ public class AlterraDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alterra_details);
 
-        mAlterraPoint = this.getIntent().getStringExtra("AlterraPointTitle");
+        String jsonMyObject;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            jsonMyObject = extras.getString("AlterraPoint");
+            AlterraPoint myObject = new Gson().fromJson(jsonMyObject, AlterraPoint.class);
+            mTitle = findViewById(R.id.alterraTitle);
 
-        mTitle = findViewById(R.id.alterraTitle);
+            mTitle.setText(myObject.getTitle());
 
-        mTitle.setText(mAlterraPoint);
+        }
+
+
+
 
     }
 }
