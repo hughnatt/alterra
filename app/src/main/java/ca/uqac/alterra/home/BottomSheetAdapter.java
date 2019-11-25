@@ -9,11 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nullable;
 
 import ca.uqac.alterra.R;
 
@@ -22,11 +25,12 @@ public class BottomSheetAdapter extends RecyclerView.Adapter<BottomSheetAdapter.
     private ArrayList<String> mImageUrls;
     private Context mContext;
 
-    public BottomSheetAdapter(Context context, ArrayList<String> imageUrls) {
+    BottomSheetAdapter(Context context, ArrayList<String> imageUrls) {
         mImageUrls = imageUrls;
         mContext = context;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bottom_sheet_image, parent, false);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,11 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.details.DetailsActivity;
 
 /**
  * Handle for the bottom sheet view
@@ -32,15 +33,14 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     private Button mSeeMore;
 
-    private LinearLayout bsDescriptionLinLayout;
-    private LinearLayout bsAddressLinLayout;
-
     private Activity mActivity;
 
     private ArrayList<String> mImageUrls = new ArrayList<>();
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
 
     private AlterraPoint mAlterraPoint;
+
+    private FloatingActionButton mCameraButton;
 
     public BottomSheetHandler(Activity activity){
         mActivity = activity;
@@ -48,9 +48,9 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mDistance =activity.findViewById(R.id.distance);
         mAddress = activity.findViewById(R.id.locationAddress);
         mDescription = activity.findViewById(R.id.locationDescription);
-        bsAddressLinLayout = activity.findViewById(R.id.BSAddressLinLayout);
-        bsDescriptionLinLayout = activity.findViewById(R.id.BSDescriptionLinLayout);
         mSeeMore =activity.findViewById(R.id.SeeMore);
+        mCameraButton = activity.findViewById(R.id.cameraButton);
+
 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
@@ -61,13 +61,21 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
+        mRecyclerView.setLayoutManager(layoutManager);
 
     }
 
     @Override
-    public void onStateChanged(@NonNull View view, int i) {
+    public void onStateChanged(@NonNull View view, int newState) {
+        switch(newState){
+            case BottomSheetBehavior.STATE_HIDDEN:
+                mCameraButton.hide();
+                break;
+            default:
+                mCameraButton.show();
+                break;
+        }
             }
 
     @Override
@@ -75,17 +83,17 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     }
 
     public void updateSheet(AlterraPoint alterraPoint){
+        mAlterraPoint = alterraPoint;
         mImageUrls.clear();
         getImages();
         BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(adapter);
 
         mTitle.setText(alterraPoint.getTitle());
         if(alterraPoint.getDescription().isEmpty())
-            bsDescriptionLinLayout.setVisibility(View.GONE);
+            mDescription.setText("...");
         else{
             mDescription.setText(alterraPoint.getDescription());
-            bsDescriptionLinLayout.setVisibility(View.VISIBLE);
         }
         mAddress.setText(alterraPoint.getLatLng().toString());
     }

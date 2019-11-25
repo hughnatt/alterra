@@ -22,7 +22,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".home.DetailsActivity"></activity>
+        <activity android:name=".details.DetailsActivity">
+        </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -58,10 +59,12 @@
         </activity>
         <activity
             android:name=".home.HomeActivity"
-            android:label="@string/app_title"></activity>
+            android:label="@string/app_title">
+        </activity>
         <activity
             android:name=".home.PicturesActivity"
-            android:label="@string/app_title"></activity>
+            android:label="@string/app_title">
+        </activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fafafa"
-    tools:context=".home.DetailsActivity">
+    tools:context=".details.DetailsActivity">
 
     <TextView
         android:id="@+id/alterraTitle"

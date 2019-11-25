@@ -1,4 +1,4 @@
-package ca.uqac.alterra.home;
+package ca.uqac.alterra.details;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.home.AlterraPoint;
 
 public class DetailsActivity extends AppCompatActivity {
 

@@ -106,7 +106,7 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        /*bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch(newState){
@@ -121,6 +121,6 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
-        });
+        });*/
     }
 }
