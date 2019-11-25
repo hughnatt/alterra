@@ -22,11 +22,8 @@ import java.util.Iterator;
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
-<<<<<<< 9aa935cf4d3c8608048be607155f9f6094dea2ac
-import ca.uqac.alterra.database.AlterraFirebase;
 import ca.uqac.alterra.utility.AlterraGeolocator;
-=======
->>>>>>> Remove unused code
+
 
 public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLocationChangedListener {
 
