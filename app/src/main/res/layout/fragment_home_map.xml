@@ -11,35 +11,23 @@
         android:layout_height="wrap_content"
         layout="@layout/fragment_google_maps"/>
 
-    <LinearLayout
-        android:id="@+id/bottomPanel"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_sheet_expanded"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_peekHeight="@dimen/bottom_sheet_retracted"
-        app:behavior_hideable="false"
-        android:background="@color/colorPrimaryDark">
-
-        <TextView
-            android:id="@+id/bottomPanelTitle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/maps_first_marker_click"
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:textColor="#ffffff"/>
-
-    </LinearLayout>
+    <!--bottom sheet container-->
+    <include layout="@layout/bottom_sheet" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/cameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/camera_button_margin"
-        android:layout_marginBottom="@dimen/camera_button_margin_sheet"
         android:clickable="true"
         android:focusable="true"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        android:layout_marginEnd="20dp"
+        app:fabSize="normal"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|end"
+        app:borderWidth="0dp"
+        android:backgroundTint="@android:color/white"
+        android:tint="@android:color/black"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <androidx.appcompat.widget.Toolbar

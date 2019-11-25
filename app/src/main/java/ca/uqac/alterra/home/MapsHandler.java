@@ -2,6 +2,8 @@ package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.location.Location;
+import android.view.View;
+import android.widget.LinearLayout;
 
 
 import androidx.annotation.Nullable;
@@ -22,14 +24,12 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.JsonReader;
 
 public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     private Activity mActivity;
-    private BottomSheetBehavior mBottomPanel;
     private BottomSheetHandler mBottomSheetHandler;
     private LatLng mUserLocation;
     private boolean mEnableLocation;
@@ -39,11 +39,18 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private List<AlterraPoint> mAlterraPoints;
     private List<Marker> mMarkers;
     //private Marker mUserMarker;
+    private LinearLayout mBsParentLinLayout;
+
+
+    private BottomSheetBehavior mBottomSheetBehavior;
 
     public MapsHandler(Activity activity, boolean enableLocation, BottomSheetHandler bottomSheetHandler){
         mActivity = activity;
-        mBottomPanel = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottomPanel));
+
+        mBsParentLinLayout = mActivity.findViewById(R.id.BSLocationInfoParentLayout);
+        mBottomSheetBehavior = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottom_sheet));
         mBottomSheetHandler = bottomSheetHandler;
+
         mEnableLocation = enableLocation;
         mMarkerLockedBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_locked_icon));
         mMarkerUnlockableBitmap = BitmapDescriptorFactory.fromAsset(mActivity.getString(R.string.map_marker_unlockable_icon));
@@ -107,8 +114,9 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),14),800, new GoogleMap.CancelableCallback(){
             @Override
             public void onFinish() {
-                mBottomPanel.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetHandler.updateSheet(alterraPoint);
+                mBsParentLinLayout.setVisibility(View.VISIBLE);
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
             @Override
             public void onCancel() {
@@ -124,13 +132,14 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
     @Override
     public void onCameraMove() {
-        mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED )
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
 
     @Override
     public void onMapClick(LatLng latLng) {
-        mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     /**

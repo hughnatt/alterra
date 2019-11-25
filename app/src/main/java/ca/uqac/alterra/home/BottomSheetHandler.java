@@ -1,15 +1,23 @@
 package ca.uqac.alterra.home;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.details.DetailsActivity;
 
 /**
  * Handle for the bottom sheet view
@@ -18,31 +26,82 @@ import ca.uqac.alterra.R;
  */
 public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback {
 
-    private FloatingActionButton mCameraButton;
     private TextView mTitle;
+    private TextView mDistance;
+    private TextView mAddress;
+    private TextView mDescription;
+
+    private Button mSeeMore;
+
+    private Activity mActivity;
+
+    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private RecyclerView mRecyclerView;
+
+    private AlterraPoint mAlterraPoint;
+
+    private FloatingActionButton mCameraButton;
 
     public BottomSheetHandler(Activity activity){
-        mCameraButton = activity.findViewById(R.id.cameraButton);
+        mActivity = activity;
         mTitle = activity.findViewById(R.id.bottomPanelTitle);
+        mDistance =activity.findViewById(R.id.distance);
+        mAddress = activity.findViewById(R.id.locationAddress);
+        mDescription = activity.findViewById(R.id.locationDescription);
+        mSeeMore =activity.findViewById(R.id.SeeMore);
+        mCameraButton = activity.findViewById(R.id.cameraButton);
+
+
+        //Start new activity
+        mSeeMore.setOnClickListener((View v) -> {
+            Intent startActivityIntent = new Intent(activity, DetailsActivity.class);
+            startActivityIntent.putExtra("AlterraPoint", new Gson().toJson(mAlterraPoint));
+            mActivity.startActivity(startActivityIntent);
+        });
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
+        mRecyclerView.setLayoutManager(layoutManager);
+
     }
 
     @Override
-    public void onStateChanged(@NonNull View view, int i) {
-        switch(i){
-            case BottomSheetBehavior.STATE_COLLAPSED:
-                mCameraButton.show();
-                break;
-            default:
+    public void onStateChanged(@NonNull View view, int newState) {
+        switch(newState){
+            case BottomSheetBehavior.STATE_HIDDEN:
                 mCameraButton.hide();
                 break;
+            default:
+                mCameraButton.show();
+                break;
         }
-    }
+            }
 
     @Override
     public void onSlide(@NonNull View view, float v) {
     }
 
     public void updateSheet(AlterraPoint alterraPoint){
+        mAlterraPoint = alterraPoint;
+        mImageUrls.clear();
+        getImages();
+        BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
+        mRecyclerView.setAdapter(adapter);
+
         mTitle.setText(alterraPoint.getTitle());
+        if(alterraPoint.getDescription().isEmpty())
+            mDescription.setText("...");
+        else{
+            mDescription.setText(alterraPoint.getDescription());
+        }
+        mAddress.setText(alterraPoint.getLatLng().toString());
+    }
+
+    private void getImages(){
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
     }
 }
