@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,12 +28,14 @@ public class HomeListAdapter extends RecyclerView.Adapter {
         public ImageView imgView;
         public TextView titleView;
         public TextView distanceView;
+        public Button button;
 
         public MyViewHolder(View v) {
             super(v);
             imgView = v.findViewById(R.id.recyclerviewImage);
             titleView = v.findViewById(R.id.listRecyclerviewTitle);
             distanceView = v.findViewById(R.id.listRecyclerviewDistance);
+            button = v.findViewById(R.id.listRecyclerviewButton);
         }
 
         public void setData(HomeListDataModel dm){
@@ -44,6 +47,21 @@ public class HomeListAdapter extends RecyclerView.Adapter {
                     .into(this.imgView);
 
             this.distanceView.setText(dm.getDistance());
+
+            if(dm.isUnlocked()){
+                button.setText("détails");
+            }
+            else {
+                button.setText("déverrouiller");
+            }
+
+            if(dm.isUnlockable()){
+                button.setClickable(true);
+            }
+            else{
+                button.setClickable(false);
+                button.setAlpha(.5f);
+            }
         }
     }
 

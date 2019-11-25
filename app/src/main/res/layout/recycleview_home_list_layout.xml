@@ -49,6 +49,14 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textAlignment="center"/>
 
+                <Button
+                    android:id="@+id/listRecyclerviewButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Déverrouiller">
+                </Button>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
