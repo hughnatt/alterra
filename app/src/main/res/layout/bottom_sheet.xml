@@ -115,8 +115,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="25dp"
                             android:gravity="center_vertical"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textColor="@color/colorPrimaryDark" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@android:color/black" />
 
                     </LinearLayout>
 
@@ -139,8 +139,8 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:layout_marginStart="25dp"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textColor="@color/colorPrimaryDark" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textColor="@android:color/black" />
 
                     </LinearLayout>
 
@@ -151,15 +151,14 @@
                     android:layout_height="1dp"
                     android:background="@color/lightGrey" />
 
- <!--               <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewBottomSheet"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
-                </android.support.v7.widget.RecyclerView>
--->
+                </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
 
         </LinearLayout>
