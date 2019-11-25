@@ -1,7 +1,9 @@
 package ca.uqac.alterra.home;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +32,8 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     private TextView mAddress;
     private TextView mDescription;
 
+    private Button mSeeMore;
+
     private LinearLayout bsDescriptionLinLayout;
     private LinearLayout bsAddressLinLayout;
 
@@ -37,6 +41,8 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private RecyclerView recyclerView;
+
+    private AlterraPoint mAlterraPoint;
 
     public BottomSheetHandler(Activity activity){
         mActivity = activity;
@@ -47,6 +53,16 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mDescription = activity.findViewById(R.id.locationDescription);
         bsAddressLinLayout = activity.findViewById(R.id.BSAddressLinLayout);
         bsDescriptionLinLayout = activity.findViewById(R.id.BSDescriptionLinLayout);
+        mSeeMore =activity.findViewById(R.id.SeeMore);
+
+        mSeeMore.setOnClickListener((View v) -> {
+            Intent startActivityIntent = new Intent(activity, AlterraDetailsActivity.class);
+/*
+            startActivityIntent.putExtra("AlterraPoint", mAlterraPoint);
+*/
+            mActivity.startActivity(startActivityIntent);
+        });
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         recyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
@@ -65,25 +81,26 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     }
 
     public void updateSheet(AlterraPoint alterraPoint){
+        mAlterraPoint = alterraPoint;
         mImageUrls.clear();
-        getImages(alterraPoint);
+        getImages();
         BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
         recyclerView.setAdapter(adapter);
 
 
-        mTitle.setText(alterraPoint.getTitle());
-        if(alterraPoint.getDescription().isEmpty())
+        mTitle.setText(mAlterraPoint.getTitle());
+        if(mAlterraPoint.getDescription().isEmpty())
             bsDescriptionLinLayout.setVisibility(View.GONE);
         else{
-            mDescription.setText(alterraPoint.getDescription());
+            mDescription.setText(mAlterraPoint.getDescription());
             bsDescriptionLinLayout.setVisibility(View.VISIBLE);
         }
-        mAddress.setText(alterraPoint.getLatLng().toString());
+        mAddress.setText(mAlterraPoint.getLatLng().toString());
 
 
     }
 
-    private void getImages(AlterraPoint alterraPoint){
+    private void getImages(){
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
