@@ -9,14 +9,14 @@ import com.google.gson.Gson;
 
 import ca.uqac.alterra.R;
 
-public class AlterraDetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity {
 
     private TextView mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alterra_details);
+        setContentView(R.layout.activity_details);
 
         String jsonMyObject;
         Bundle extras = getIntent().getExtras();

@@ -54,7 +54,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
-            Intent startActivityIntent = new Intent(activity, AlterraDetailsActivity.class);
+            Intent startActivityIntent = new Intent(activity, DetailsActivity.class);
             startActivityIntent.putExtra("AlterraPoint", new Gson().toJson(mAlterraPoint));
             mActivity.startActivity(startActivityIntent);
         });
