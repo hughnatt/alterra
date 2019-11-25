@@ -27,6 +27,7 @@
         app:layout_anchorGravity="top|end"
         app:borderWidth="0dp"
         android:backgroundTint="@android:color/white"
+        android:tint="@android:color/black"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <androidx.appcompat.widget.Toolbar

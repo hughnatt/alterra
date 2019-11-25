@@ -65,7 +65,12 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     }
 
     public void updateSheet(AlterraPoint alterraPoint){
+        mImageUrls.clear();
         getImages(alterraPoint);
+        BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
+        recyclerView.setAdapter(adapter);
+
+
         mTitle.setText(alterraPoint.getTitle());
         if(alterraPoint.getDescription().isEmpty())
             bsDescriptionLinLayout.setVisibility(View.GONE);
@@ -75,8 +80,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         }
         mAddress.setText(alterraPoint.getLatLng().toString());
 
-        BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
-        recyclerView.setAdapter(adapter);
+
     }
 
     private void getImages(AlterraPoint alterraPoint){
