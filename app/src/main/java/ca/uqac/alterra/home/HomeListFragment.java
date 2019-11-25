@@ -49,23 +49,23 @@ public class HomeListFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_home_list,container,false);
     }
 
-    private String distancePrettyPrint(double distance){
-
-        String distanceString;
-
-        if(distance < 1000){
-            distanceString = new DecimalFormat("#.##").format(distance) + " m";
-        }
-        else if(distance < 1000000){
-            distance /= 1000;
-            distanceString = new DecimalFormat("#.#").format(distance) + " km";
-        }
-        else {
-            distanceString = "+999 km";
-        }
-
-        return distanceString;
-    }
+//    private String distancePrettyPrint(double distance){
+//
+//        String distanceString;
+//
+//        if(distance < 1000){
+//            distanceString = new DecimalFormat("#.##").format(distance) + " m";
+//        }
+//        else if(distance < 1000000){
+//            distance /= 1000;
+//            distanceString = new DecimalFormat("#.#").format(distance) + " km";
+//        }
+//        else {
+//            distanceString = "+999 km";
+//        }
+//
+//        return distanceString;
+//    }
 
     @Override
     public void onStart() {
@@ -99,7 +99,7 @@ public class HomeListFragment extends Fragment {
 
                     double distance = ((HomeActivity) getActivity()).distanceFrom(p);
 
-                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail(), distancePrettyPrint(distance)));
+                    recyclerAdapter.addData(new HomeListDataModel(p, distance));
                     recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
 
                 }

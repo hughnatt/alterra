@@ -1,14 +1,18 @@
 package ca.uqac.alterra.home;
 
+import java.text.DecimalFormat;
+
 public class HomeListDataModel {
 
     private String mTitle;
     private String mImageRessource;
-    private String mDistance;
+    private double mDistance;
+    private AlterraPoint mPoint;
 
-    public HomeListDataModel(String txt, String image, String distance){
-        mTitle = txt;
-        mImageRessource = image;
+    public HomeListDataModel(AlterraPoint point, double distance){
+        mPoint = point;
+        mTitle = point.getTitle();
+        mImageRessource = point.getThumbnail();
         mDistance = distance;
     }
 
@@ -21,6 +25,31 @@ public class HomeListDataModel {
     }
 
     public String getDistance() {
-        return mDistance;
+
+        String distanceString;
+
+        if(mDistance < 1000){
+            distanceString = new DecimalFormat("#.##").format(mDistance) + " m";
+        }
+        else if(mDistance < 1000000){
+            distanceString = new DecimalFormat("#.#").format(mDistance / 1000) + " km";
+        }
+        else {
+            distanceString = "+999 km";
+        }
+
+        return distanceString;
+    }
+
+    public boolean isUnlocked(){
+        return mPoint.isUnlocked();
+    }
+
+    public boolean isUnlockable(){
+        return (mDistance < HomeActivity.MINIMUM_UNLOCK_DISTANCE);
+    }
+
+    public AlterraPoint getAlterraPoint(){
+        return mPoint;
     }
 }
