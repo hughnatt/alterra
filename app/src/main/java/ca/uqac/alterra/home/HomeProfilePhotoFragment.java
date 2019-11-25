@@ -46,39 +46,7 @@ public class HomeProfilePhotoFragment extends Fragment{
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
-
-
                 mScaleGestureDetector.onTouchEvent(motionEvent);
-
-
-                Point size = new Point();
-                getActivity().getWindowManager().getDefaultDisplay().getSize(size);
-                float xClicked = 0f;
-                float yClicked = 0f;
-
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        xClicked = motionEvent.getRawX();
-                        yClicked = motionEvent.getRawY();
-
-                        System.out.println("PRINT X CLICKED : " + xClicked);
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        if(mScaleFactor > 1.0f && !mScaleGestureDetector.isInProgress()){
-                            view.animate().translationX(motionEvent.getRawX()-xClicked).setDuration(0).start();
-                            view.animate().translationY(motionEvent.getRawY()-yClicked).setDuration(0).start();
-
-                            xClicked = motionEvent.getRawX();
-                            yClicked = motionEvent.getRawY();
-                        }
-                        break;
-                }
-
-
-
-
                 return true;
             }
         });
