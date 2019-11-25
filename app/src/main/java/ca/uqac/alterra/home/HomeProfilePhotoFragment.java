@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 
 import ca.uqac.alterra.R;
 
-public class HomeProfilePhotoFragment extends Fragment implements IOnBackPressed {
+public class HomeProfilePhotoFragment extends Fragment{
 
 
     private static String urlArgument = "url";
@@ -61,12 +61,6 @@ public class HomeProfilePhotoFragment extends Fragment implements IOnBackPressed
                 .fitCenter()
                 .into(imageToShow);
 
-    }
-
-    @Override
-    public boolean onBackPressed()
-    {
-        return (getContext() instanceof HomeActivity);
     }
 
     private class ScaleListener extends ScaleGestureDetector.
