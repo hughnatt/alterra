@@ -2,6 +2,8 @@ package ca.uqac.alterra.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +20,8 @@ public class HomeProfilePhotoFragment extends Fragment implements IOnBackPressed
     private static String urlArgument = "url";
     private String mUrl;
     private ImageView imageToShow;
+    private ScaleGestureDetector mScaleGestureDetector;
+    private float mScaleFactor = 1.0f;
 
     public static HomeProfilePhotoFragment newInstance(String imageUrl){
         Bundle args = new Bundle();
@@ -30,7 +34,19 @@ public class HomeProfilePhotoFragment extends Fragment implements IOnBackPressed
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_home_profile_photos,container,false);
+
+        View fragmentView = inflater.inflate(R.layout.fragment_home_profile_photos,container,false);
+
+        fragmentView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                mScaleGestureDetector.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
+
+        mScaleGestureDetector = new ScaleGestureDetector(fragmentView.getContext(),new ScaleListener());
+        return fragmentView ;
     }
 
     @Override
@@ -50,8 +66,19 @@ public class HomeProfilePhotoFragment extends Fragment implements IOnBackPressed
     @Override
     public boolean onBackPressed()
     {
-
         return (getContext() instanceof HomeActivity);
+    }
 
+    private class ScaleListener extends ScaleGestureDetector.
+            SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+            mScaleFactor = Math.max(1.0f,
+                    Math.min(mScaleFactor, 10.0f));
+            imageToShow.setScaleX(mScaleFactor);
+            imageToShow.setScaleY(mScaleFactor);
+            return true;
+        }
     }
 }

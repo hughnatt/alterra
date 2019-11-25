@@ -525,7 +525,7 @@ public class HomeActivity extends AppCompatActivity {
         this.mImageUrl = url;
         updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE_PHOTO);
     }
-    
+
     @Override public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
         if ((fragment instanceof IOnBackPressed) && ((IOnBackPressed) fragment).onBackPressed()) {
