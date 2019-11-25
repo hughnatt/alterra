@@ -1,7 +1,8 @@
 package ca.uqac.alterra.home;
 
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.os.Bundle;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -39,39 +40,44 @@ public class HomeProfilePhotoFragment extends Fragment{
         View fragmentView = inflater.inflate(R.layout.fragment_home_profile_photos,container,false);
 
         fragmentView.setOnTouchListener(new View.OnTouchListener() {
+
+            PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
+            PointF StartPT = new PointF(); // Record Start Position of 'img'
+
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+
+
+
                 mScaleGestureDetector.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
 
-        fragmentView.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View mainView, DragEvent e) {
-                View view = (View) e.getLocalState();
-                switch (e.getAction()) {
-                    case DragEvent.ACTION_DROP:
-                        view.setX(e.getX() - (view.getWidth() / 2));
-                        view.setY(e.getY() - (view.getHeight() / 2));
-                        view.invalidate();
-                        mainView.invalidate();
-                        return true;
-                    case DragEvent.ACTION_DRAG_STARTED:
-                        return true;
 
-                    case DragEvent.ACTION_DRAG_EXITED:
+                Point size = new Point();
+                getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+                float xClicked = 0f;
+                float yClicked = 0f;
+
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        xClicked = motionEvent.getRawX();
+                        yClicked = motionEvent.getRawY();
+
+                        System.out.println("PRINT X CLICKED : " + xClicked);
                         break;
 
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        mainView.invalidate();
-                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        if(mScaleFactor > 1.0f && !mScaleGestureDetector.isInProgress()){
+                            view.animate().translationX(motionEvent.getRawX()-xClicked).setDuration(0).start();
+                            view.animate().translationY(motionEvent.getRawY()-yClicked).setDuration(0).start();
 
-                    default:
-
-
+                            xClicked = motionEvent.getRawX();
+                            yClicked = motionEvent.getRawY();
+                        }
                         break;
                 }
+
+
+
 
                 return true;
             }
