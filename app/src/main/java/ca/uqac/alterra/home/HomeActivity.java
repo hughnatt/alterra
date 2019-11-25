@@ -244,8 +244,8 @@ public class HomeActivity extends AppCompatActivity {
         Iterator<AlterraPoint> iter = mAlterraLocations.iterator();
         while (iter.hasNext()){
             AlterraPoint p = iter.next();
-            System.out.println("Distance = " + distanceFrom(p));
-            if (distanceFrom(p) < MINIMUM_UNLOCK_DISTANCE){
+            System.out.println("Distance = " + AlterraGeolocator.distanceFrom(p));
+            if (AlterraGeolocator.distanceFrom(p) < MINIMUM_UNLOCK_DISTANCE){
                 validLocations.add(p);
             }
         }
@@ -300,7 +300,7 @@ public class HomeActivity extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK){
                     //Check if user is still located near the selected point
-                    if (distanceFrom(mCurrentImagePoint) < MINIMUM_UNLOCK_DISTANCE){
+                    if (AlterraGeolocator.distanceFrom(mCurrentImagePoint) < MINIMUM_UNLOCK_DISTANCE){
                         mPhotoUploader.uploadPhoto(mCurrentImagePath,mCurrentImagePoint);
                     } else {
                         //TODO tell user he moved too far away from its initial position
@@ -490,23 +490,6 @@ public class HomeActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.gps_alert_button_positive, null)
                 .setCancelable(true)
                 .show();
-    }
-
-    /**
-     * Return the distance between current user location and the given Alterra Point
-     * @param alterraPoint an alterra location descriptor
-     * @return distance in meters
-     */
-    public double distanceFrom(AlterraPoint alterraPoint){
-        Location currentPosition = AlterraGeolocator.getCurrentLocation();
-        if (currentPosition == null) {
-            return Double.MAX_VALUE;
-        } else {
-            Location temp = new Location(LocationManager.GPS_PROVIDER);
-            temp.setLatitude(alterraPoint.getLatitude());
-            temp.setLongitude(alterraPoint.getLongitude());
-            return currentPosition.distanceTo(temp);
-        }
     }
 
     /**
