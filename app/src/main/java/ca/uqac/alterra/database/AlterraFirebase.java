@@ -112,7 +112,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location, WriteListener writeListener) {
+    public void unlockAlterraLocation(AlterraUser user, AlterraPoint location, @Nullable WriteListener writeListener) {
         //Add user to location document
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .document(location.getId())
@@ -123,32 +123,56 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                     .document(user.getUID())
                                     .update("locations"+location.getId(),true);
                 })
-                .addOnCompleteListener((voidTask) -> writeListener.onSuccess())
-                .addOnFailureListener((voidTask) -> writeListener.onError());
+                .addOnCompleteListener((voidTask) -> {
+                    if (writeListener != null) {
+                        writeListener.onSuccess();
+                    }
+                })
+                .addOnFailureListener((voidTask) -> {
+                    if (writeListener != null) {
+                        writeListener.onError();
+                    }
+                });
     }
 
     @Override
-    public void registerAlterraUser(String userID, String userEmail, WriteListener writeListener) {
+    public void registerAlterraUser(String userID, String userEmail, @Nullable WriteListener writeListener) {
         //Add user document in database
         HashMap<String, Object> data = new HashMap<>();
         data.put("displayName", userEmail);
         mFirestore.collection(COLLECTION_PATH_USERS)
                 .document(userID)
                 .set(data)
-                .addOnSuccessListener((voidTask) -> writeListener.onSuccess())
-                .addOnFailureListener((voidTask) -> writeListener.onError());
+                .addOnSuccessListener((voidTask) -> {
+                    if (writeListener!=null) {
+                        writeListener.onSuccess();
+                    }
+                })
+                .addOnFailureListener((voidTask) -> {
+                    if (writeListener != null){
+                        writeListener.onError();
+                    }
+                });
     }
 
     @Override
-    public void addPhoto(String userID, String locationID, String remoteLink, long timestamp, WriteListener writeListener) {
+    public void addPhoto(String userID, String locationID, String remoteLink, long timestamp,  @Nullable WriteListener writeListener) {
         HashMap<String, Object> data = new HashMap<>();
         data.put("link", remoteLink);
         data.put("date",timestamp);
         data.put("owner", userID);
         data.put("location",locationID);
         mFirestore.collection("photos").add(data)
-                .addOnCompleteListener((voidTask) -> writeListener.onSuccess())
-                .addOnFailureListener((voidTask) -> writeListener.onError());
+                .addOnCompleteListener((voidTask) -> {
+                    if (writeListener != null) {
+                        writeListener.onSuccess();
+                    }
+                })
+                .addOnFailureListener((voidTask) -> {
+                    if (writeListener != null){
+                        writeListener.onError();
+                    }
+                });
     }
 
     @Override
