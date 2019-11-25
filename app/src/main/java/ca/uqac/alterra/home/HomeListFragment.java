@@ -99,7 +99,7 @@ public class HomeListFragment extends Fragment {
 
                     double distance = ((HomeActivity) getActivity()).distanceFrom(p);
 
-                    recyclerAdapter.addData(new HomeListDataModel(p.getTitle(), p.getThumbnail(), distance, p.isUnlocked()));
+                    recyclerAdapter.addData(new HomeListDataModel(p, distance));
                     recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
 
                 }

@@ -49,16 +49,20 @@ public class HomeListAdapter extends RecyclerView.Adapter {
             this.distanceView.setText(dm.getDistance());
 
             if(dm.isUnlocked()){
-                button.setText("détails");
-            }
-            else {
-                button.setText("déverrouiller");
-            }
-
-            if(dm.isUnlockable()){
+                button.setText(mContext.getString(R.string.alterra_point_unlocked));
                 button.setClickable(true);
             }
+            else if(dm.isUnlockable()){
+                button.setText(mContext.getString(R.string.alterra_point_unlockable));
+                button.setClickable(true);
+
+                button.setOnClickListener(view -> {
+                    dm.getAlterraPoint().unlock();
+                    notifyItemChanged(getAdapterPosition());
+                });
+            }
             else{
+                button.setText(mContext.getString(R.string.alterra_point_locked));
                 button.setClickable(false);
                 button.setAlpha(.5f);
             }
