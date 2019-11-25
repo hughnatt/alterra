@@ -9,7 +9,7 @@ import ca.uqac.alterra.R;
 
 public class AlterraDetailsActivity extends AppCompatActivity {
 
-    private AlterraPoint mAlterraPoint;
+    private String mAlterraPoint;
     private TextView mTitle;
 
 
@@ -17,11 +17,12 @@ public class AlterraDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alterra_details);
-       /* mAlterraPoint = (AlterraPoint) getIntent().getSerializableExtra("AlterraPoint");
 
-        mTitle = findViewById(R.id.bottomPanelTitle);
+        mAlterraPoint = this.getIntent().getStringExtra("AlterraPointTitle");
 
-        mTitle.setText(mAlterraPoint.getTitle());*/
+        mTitle = findViewById(R.id.alterraTitle);
+
+        mTitle.setText(mAlterraPoint);
 
     }
 }
