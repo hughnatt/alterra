@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -524,8 +525,14 @@ public class HomeActivity extends AppCompatActivity {
         this.mImageUrl = url;
         updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE_PHOTO);
     }
-
-    public void backToProfil(){
-        updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE); //TODO : find another way to do it !!
+    
+    @Override public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
+        if ((fragment instanceof IOnBackPressed) && ((IOnBackPressed) fragment).onBackPressed()) {
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 }

@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 
 import ca.uqac.alterra.R;
 
-public class HomeProfilePhotoFragment extends Fragment {
+public class HomeProfilePhotoFragment extends Fragment implements IOnBackPressed {
 
 
     private static String urlArgument = "url";
@@ -45,14 +45,13 @@ public class HomeProfilePhotoFragment extends Fragment {
                 .fitCenter()
                 .into(imageToShow);
 
-        imageToShow.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if(getContext() instanceof HomeActivity){
-                    HomeActivity homeActivity =(HomeActivity) getContext();
-                    homeActivity.backToProfil();
-                }
-            }
-        });;
+    }
+
+    @Override
+    public boolean onBackPressed()
+    {
+
+        return (getContext() instanceof HomeActivity);
+
     }
 }
