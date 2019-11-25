@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.JsonReader;
 
 public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener {
