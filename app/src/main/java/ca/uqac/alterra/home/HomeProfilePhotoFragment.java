@@ -1,6 +1,7 @@
 package ca.uqac.alterra.home;
 
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -41,6 +42,37 @@ public class HomeProfilePhotoFragment extends Fragment{
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 mScaleGestureDetector.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
+
+        fragmentView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View mainView, DragEvent e) {
+                View view = (View) e.getLocalState();
+                switch (e.getAction()) {
+                    case DragEvent.ACTION_DROP:
+                        view.setX(e.getX() - (view.getWidth() / 2));
+                        view.setY(e.getY() - (view.getHeight() / 2));
+                        view.invalidate();
+                        mainView.invalidate();
+                        return true;
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        return true;
+
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        break;
+
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        mainView.invalidate();
+                        return true;
+
+                    default:
+
+
+                        break;
+                }
+
                 return true;
             }
         });
