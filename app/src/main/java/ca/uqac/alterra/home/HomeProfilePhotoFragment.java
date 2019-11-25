@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.ortiz.touchview.TouchImageView;
 
 import ca.uqac.alterra.R;
 
@@ -21,9 +22,7 @@ public class HomeProfilePhotoFragment extends Fragment{
 
     private static String urlArgument = "url";
     private String mUrl;
-    private ImageView imageToShow;
-    private ScaleGestureDetector mScaleGestureDetector;
-    private float mScaleFactor = 1.0f;
+    private TouchImageView imageToShow;
 
     public static HomeProfilePhotoFragment newInstance(String imageUrl){
         Bundle args = new Bundle();
@@ -36,22 +35,7 @@ public class HomeProfilePhotoFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-
         View fragmentView = inflater.inflate(R.layout.fragment_home_profile_photos,container,false);
-
-        fragmentView.setOnTouchListener(new View.OnTouchListener() {
-
-            PointF DownPT = new PointF(); // Record Mouse Position When Pressed Down
-            PointF StartPT = new PointF(); // Record Start Position of 'img'
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                mScaleGestureDetector.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
-
-        mScaleGestureDetector = new ScaleGestureDetector(fragmentView.getContext(),new ScaleListener());
         return fragmentView ;
     }
 
@@ -60,25 +44,12 @@ public class HomeProfilePhotoFragment extends Fragment{
         super.onStart();
         mUrl = getArguments().getString(urlArgument);
 
-        imageToShow = (ImageView) getView().findViewById(R.id.imageToShow);
+        imageToShow = (TouchImageView) getView().findViewById(R.id.imageToShow);
 
         Glide.with(getContext())
                 .load(mUrl)
                 .fitCenter()
                 .into(imageToShow);
 
-    }
-
-    private class ScaleListener extends ScaleGestureDetector.
-            SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(1.0f,
-                    Math.min(mScaleFactor, 10.0f));
-            imageToShow.setScaleX(mScaleFactor);
-            imageToShow.setScaleY(mScaleFactor);
-            return true;
-        }
     }
 }
