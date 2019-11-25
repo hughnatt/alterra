@@ -2,6 +2,7 @@ package ca.uqac.alterra.utility;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 
 import androidx.annotation.NonNull;
 
@@ -15,6 +16,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.uqac.alterra.home.AlterraPoint;
 
 public class AlterraGeolocator {
 
@@ -60,6 +63,23 @@ public class AlterraGeolocator {
             return null;
         } else {
             return mCurrentLocation;
+        }
+    }
+
+    /**
+     * Return the distance between current user location and the given Alterra Point
+     * @param alterraPoint an alterra location descriptor
+     * @return distance in meters
+     */
+    public static double distanceFrom(AlterraPoint alterraPoint){
+        Location currentPosition = AlterraGeolocator.getCurrentLocation();
+        if (currentPosition == null) {
+            return Double.MAX_VALUE;
+        } else {
+            Location temp = new Location(LocationManager.GPS_PROVIDER);
+            temp.setLatitude(alterraPoint.getLatitude());
+            temp.setLongitude(alterraPoint.getLongitude());
+            return currentPosition.distanceTo(temp);
         }
     }
 

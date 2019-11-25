@@ -35,6 +35,7 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeListFragment extends Fragment {
 
@@ -97,7 +98,7 @@ public class HomeListFragment extends Fragment {
             if(list != null) {
                 for (AlterraPoint p : list) {
 
-                    double distance = ((HomeActivity) getActivity()).distanceFrom(p);
+                    double distance = AlterraGeolocator.distanceFrom(p);
 
                     recyclerAdapter.addData(new HomeListDataModel(p, distance));
                     recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
