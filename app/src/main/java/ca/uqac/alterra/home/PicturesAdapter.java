@@ -41,6 +41,20 @@ public class PicturesAdapter extends RecyclerView.Adapter{
             .load(mPhotoList.get(position))
             .fitCenter()
             .into(((PlaceViewHolder) holder).mPlace);
+
+       Pholder.mPlace.setOnClickListener(new View.OnClickListener(){
+           @Override
+           public void onClick(View v){
+                switchContext(mPhotoList.get(position));
+           }
+       });
+    }
+
+    public void switchContext(String url){
+        if(mContext instanceof HomeActivity){
+            HomeActivity homeActivity =(HomeActivity) mContext;
+            homeActivity.displayPicture(url);
+        }
     }
 
     @Override

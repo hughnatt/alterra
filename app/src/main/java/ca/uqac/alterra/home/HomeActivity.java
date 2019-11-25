@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -56,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
     public static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
 
-    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
+    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE,FRAGMENT_PROFILE_PHOTO}
     private FRAGMENT_ID mCurrentFragment;
 
     private PhotoUploader mPhotoUploader;
@@ -68,9 +69,12 @@ public class HomeActivity extends AppCompatActivity {
     private HomeMapFragment mHomeMapFragment;
     private HomeListFragment mHomeListFragment;
     private HomeProfileFragment mHomeProfileFragment;
+    private HomeProfilePhotoFragment mHomeProfilePhotoFragment;
 
     private boolean mGpsEnabled = false;
     private boolean mLocationEnabled = false;
+
+    private String mImageUrl;
     /**
      * True if we already requested runtime permissions
      * but we are still waiting user response.
@@ -184,6 +188,14 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeProfileFragment);
+                ft.commit();
+                break;
+
+            case FRAGMENT_PROFILE_PHOTO:
+
+                mHomeProfilePhotoFragment = HomeProfilePhotoFragment.newInstance(mImageUrl);
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_home, mHomeProfilePhotoFragment);
                 ft.commit();
                 break;
         }
@@ -507,5 +519,20 @@ public class HomeActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.pointnotfound_alert_button_positive,null)
                 .setCancelable(true)
                 .show();
+    }
+    
+    public void displayPicture(String url){
+        this.mImageUrl = url;
+        updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE_PHOTO);
+    }
+
+    @Override public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
+        if ((fragment instanceof HomeProfilePhotoFragment)){
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 }
