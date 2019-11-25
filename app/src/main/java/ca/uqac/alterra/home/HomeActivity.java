@@ -10,10 +10,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -27,12 +25,9 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.google.android.gms.maps.model.LatLng;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
@@ -52,6 +47,7 @@ import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -66,7 +62,6 @@ public class HomeActivity extends AppCompatActivity {
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
     private AlterraPoint mCurrentImagePoint;
-    private AlterraGeolocator mGeolocator;
     private AlterraAuth mAuth;
     private NavigationView mNavigationView;
 
@@ -110,6 +105,14 @@ public class HomeActivity extends AppCompatActivity {
         //Get all the alterra location from database
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
         alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> mAlterraLocations = list);
+
+        //Trigger an alert message when GPS is disabled
+        AlterraGeolocator.addOnGPSStatusChangedListener(enabled -> {
+            mGpsEnabled = enabled;
+            if (!enabled) {
+                requestGPSActivation();
+            }
+        });
     }
 
 
@@ -154,9 +157,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 if(mHomeMapFragment == null){
                     mHomeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
-                    if (mGeolocator != null){
-                        mGeolocator.addOnLocationChangedListener(mHomeMapFragment.getMapsHandler());
-                    }
+                    AlterraGeolocator.addOnLocationChangedListener(mHomeMapFragment);
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
@@ -460,21 +461,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * Called when Location Permission are acquired
+     * Callback when location permission is acquired
      */
     private void locationPermissionGranted(){
         mLocationEnabled = true;
-        mGeolocator = new AlterraGeolocator(this);
-        if(mHomeMapFragment != null){
-            mHomeMapFragment.enableGoogleMapsLocation();
-            mGeolocator.addOnLocationChangedListener(mHomeMapFragment.getMapsHandler());
-        }
-        mGeolocator.addOnGPSStatusChangedListener(enabled -> {
-            mGpsEnabled = enabled;
-            if (!enabled) {
-                requestGPSActivation();
-            }
-        });
+        AlterraGeolocator.initGeolocatorForContext(this);
     }
 
     /**
@@ -495,7 +486,7 @@ public class HomeActivity extends AppCompatActivity {
      * @return distance in meters
      */
     public double distanceFrom(AlterraPoint alterraPoint){
-        Location currentPosition = mGeolocator.getCurrentLocation();
+        Location currentPosition = AlterraGeolocator.getCurrentLocation();
         if (currentPosition == null) {
             return Double.MAX_VALUE;
         } else {

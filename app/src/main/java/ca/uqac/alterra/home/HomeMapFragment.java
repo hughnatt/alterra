@@ -1,5 +1,6 @@
 package ca.uqac.alterra.home;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -20,8 +21,9 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraFirebase;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 
-public class HomeMapFragment extends Fragment {
+public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLocationChangedListener {
 
     private MapsHandler mMapsHandler;
     private boolean mEnableLocation;
@@ -83,14 +85,15 @@ public class HomeMapFragment extends Fragment {
         });
     }
 
-    public void enableGoogleMapsLocation(){
+    @Override
+    public void onLocationChanged(Location location) {
+        //Give the location change event to the maps handler
+        if (mMapsHandler != null){
+            mMapsHandler.onLocationChanged(location);
+        }
         mEnableLocation = true;
         if(mMapsHandler != null){
             mMapsHandler.enableMyLocation();
         }
-    }
-
-    public MapsHandler getMapsHandler(){
-        return mMapsHandler;
     }
 }

@@ -18,16 +18,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.JsonReader;
 
-public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener, AlterraGeolocator.OnLocationChangedListener {
+public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnCameraMoveListener, GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     private Activity mActivity;
@@ -135,12 +133,14 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
         mBottomPanel.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
+    /**
+     * Callback for location changes
+     * @param location Current user location
+     */
+    void onLocationChanged(@Nullable Location location) {
         //Update user location and marker position
         mUserLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
-        System.out.println("Hello onLocationChanged");
         for (Marker marker : mMarkers) {
             AlterraPoint alterraPoint = (AlterraPoint) marker.getTag();
             assert alterraPoint != null;
