@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.utility.PrettyPrinter;
 
 public class HomeListAdapter extends RecyclerView.Adapter {
 
@@ -46,7 +47,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
                     .centerCrop()
                     .into(this.imgView);
 
-            this.distanceView.setText(dm.getDistance());
+            this.distanceView.setText(PrettyPrinter.formatDistance(dm.getDistance()));
 
             if(dm.isUnlocked()){
                 button.setText(mContext.getString(R.string.alterra_point_unlocked));
