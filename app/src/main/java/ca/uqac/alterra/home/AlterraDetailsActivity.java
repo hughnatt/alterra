@@ -11,9 +11,7 @@ import ca.uqac.alterra.R;
 
 public class AlterraDetailsActivity extends AppCompatActivity {
 
-    private String mAlterraPoint;
     private TextView mTitle;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +24,7 @@ public class AlterraDetailsActivity extends AppCompatActivity {
             jsonMyObject = extras.getString("AlterraPoint");
             AlterraPoint myObject = new Gson().fromJson(jsonMyObject, AlterraPoint.class);
             mTitle = findViewById(R.id.alterraTitle);
-
             mTitle.setText(myObject.getTitle());
-
         }
-
-
-
-
     }
 }

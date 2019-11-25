@@ -8,12 +8,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -27,7 +25,6 @@ import ca.uqac.alterra.R;
  */
 public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback {
 
-    private FloatingActionButton mCameraButton;
     private TextView mTitle;
     private TextView mDistance;
     private TextView mAddress;
@@ -47,7 +44,6 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     public BottomSheetHandler(Activity activity){
         mActivity = activity;
-        mCameraButton = activity.findViewById(R.id.cameraButton);
         mTitle = activity.findViewById(R.id.bottomPanelTitle);
         mDistance =activity.findViewById(R.id.distance);
         mAddress = activity.findViewById(R.id.locationAddress);
@@ -56,6 +52,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         bsDescriptionLinLayout = activity.findViewById(R.id.BSDescriptionLinLayout);
         mSeeMore =activity.findViewById(R.id.SeeMore);
 
+        //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
             Intent startActivityIntent = new Intent(activity, AlterraDetailsActivity.class);
             startActivityIntent.putExtra("AlterraPoint", new Gson().toJson(mAlterraPoint));
@@ -66,8 +63,6 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         recyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
         recyclerView.setLayoutManager(layoutManager);
-
-
 
     }
 
@@ -80,23 +75,19 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     }
 
     public void updateSheet(AlterraPoint alterraPoint){
-        mAlterraPoint = alterraPoint;
         mImageUrls.clear();
         getImages();
         BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
         recyclerView.setAdapter(adapter);
 
-
-        mTitle.setText(mAlterraPoint.getTitle());
-        if(mAlterraPoint.getDescription().isEmpty())
+        mTitle.setText(alterraPoint.getTitle());
+        if(alterraPoint.getDescription().isEmpty())
             bsDescriptionLinLayout.setVisibility(View.GONE);
         else{
-            mDescription.setText(mAlterraPoint.getDescription());
+            mDescription.setText(alterraPoint.getDescription());
             bsDescriptionLinLayout.setVisibility(View.VISIBLE);
         }
-        mAddress.setText(mAlterraPoint.getLatLng().toString());
-
-
+        mAddress.setText(alterraPoint.getLatLng().toString());
     }
 
     private void getImages(){
@@ -104,6 +95,5 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
-
     }
 }

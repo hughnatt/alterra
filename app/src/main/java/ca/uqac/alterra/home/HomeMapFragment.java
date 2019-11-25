@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
@@ -23,8 +22,11 @@ import java.util.Iterator;
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
+<<<<<<< 9aa935cf4d3c8608048be607155f9f6094dea2ac
 import ca.uqac.alterra.database.AlterraFirebase;
 import ca.uqac.alterra.utility.AlterraGeolocator;
+=======
+>>>>>>> Remove unused code
 
 public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLocationChangedListener {
 
@@ -34,7 +36,6 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     private FloatingActionButton mCameraButton;
     private static String enableLocationArgument = "enableLocation";
     private BottomSheetBehavior bottomSheetBehavior;
-    private LinearLayout bsParentLinLayout;
 
     public static HomeMapFragment newInstance(boolean enableLocation){
         Bundle args = new Bundle();
@@ -60,14 +61,16 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
         mCameraButton = getView().findViewById(R.id.cameraButton);
 
-        bsParentLinLayout = getView().findViewById(R.id.BSLocationInfoParentLayout);
+        initBottomSheet();
+
+        mCameraButton.setOnClickListener((view ) -> {
+            ((HomeActivity) getActivity()).takeAlterraPhoto();
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(mMapsHandler);
-
-        initComponent();
-
 
         DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
@@ -101,24 +104,14 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         }
     }
 
-    private void initComponent() {
-        // get the bottom sheet view
-        LinearLayout llBottomSheet = (LinearLayout) getActivity().findViewById(R.id.bottom_sheet);
-
-        // init the bottom sheet behavior
-        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-
-        // change the state of the bottom sheet
+    private void initBottomSheet() {
+        LinearLayout bottomSheet = getActivity().findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-
-
-        // set callback for changes
         bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
                 switch(newState){
                     case BottomSheetBehavior.STATE_HIDDEN:
                         mCameraButton.setVisibility(View.GONE);
@@ -127,20 +120,10 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
                         mCameraButton.setVisibility(View.VISIBLE);
                         break;
                 }
-
             }
 
             @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
         });
-
-        mCameraButton.setOnClickListener((view ) -> {
-            ((HomeActivity) getActivity()).takeAlterraPhoto();
-               bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-        });
-
     }
 }
