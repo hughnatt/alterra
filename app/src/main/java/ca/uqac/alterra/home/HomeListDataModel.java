@@ -33,7 +33,7 @@ public class HomeListDataModel {
     }
 
     public boolean isUnlockable(){
-        return (mDistance < HomeActivity.MINIMUM_UNLOCK_DISTANCE);
+        return mPoint.isUnlockable();
     }
 
     public AlterraPoint getAlterraPoint(){

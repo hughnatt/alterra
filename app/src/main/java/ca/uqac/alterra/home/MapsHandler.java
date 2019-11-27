@@ -2,8 +2,6 @@ package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.location.Location;
-import android.view.View;
-import android.widget.LinearLayout;
 
 
 import androidx.annotation.Nullable;
@@ -17,7 +15,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,16 +37,10 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
     private List<AlterraPoint> mAlterraPoints;
     private List<Marker> mMarkers;
     //private Marker mUserMarker;
-    private LinearLayout mBsParentLinLayout;
-
-
-    private BottomSheetBehavior mBottomSheetBehavior;
 
     public MapsHandler(Activity activity, boolean enableLocation, BottomSheetHandler bottomSheetHandler){
         mActivity = activity;
 
-        mBsParentLinLayout = mActivity.findViewById(R.id.BSLocationInfoParentLayout);
-        mBottomSheetBehavior = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottom_sheet));
         mBottomSheetHandler = bottomSheetHandler;
 
         mEnableLocation = enableLocation;
@@ -116,8 +107,6 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             @Override
             public void onFinish() {
                 mBottomSheetHandler.updateSheet(alterraPoint);
-                mBsParentLinLayout.setVisibility(View.VISIBLE);
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
             @Override
             public void onCancel() {
@@ -133,14 +122,14 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
 
     @Override
     public void onCameraMove() {
-        if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED )
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+       /* if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED )
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
     }
 
 
     @Override
     public void onMapClick(LatLng latLng) {
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mBottomSheetHandler.unselectSheet();
     }
 
     /**
@@ -155,7 +144,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             AlterraPoint alterraPoint = (AlterraPoint) marker.getTag();
             assert alterraPoint != null;
             if (!alterraPoint.isUnlocked()){
-                if (AlterraGeolocator.distanceFrom(alterraPoint) < HomeActivity.MINIMUM_UNLOCK_DISTANCE) {
+                if (AlterraGeolocator.distanceFrom(alterraPoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE) {
                     marker.setIcon(mMarkerUnlockableBitmap);
                 } else {
                     marker.setIcon(mMarkerLockedBitmap);
