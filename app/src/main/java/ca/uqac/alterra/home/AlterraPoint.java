@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
+
 import ca.uqac.alterra.database.AlterraCloud;
 
-public class AlterraPoint {
+public class AlterraPoint implements Serializable {
     private String mId;
-    private LatLng mLatLng;
+    private double mLatitude;
+    private double mLongitude;
     private String mTitle;
     private String mDescription;
     private boolean mUnlocked;
@@ -16,14 +19,16 @@ public class AlterraPoint {
 
     public AlterraPoint(String id, LatLng latLng, String title, String description){
         mId = id;
-        mLatLng = latLng;
+        mLatitude = latLng.latitude;
+        mLongitude = latLng.longitude;
         mTitle = title;
         mDescription = description;
     }
 
     public AlterraPoint(String id, double lat, double lng, String title, String description, boolean unlocked, String thumbnail){
         mId = id;
-        mLatLng = new LatLng(lat,lng);
+        mLatitude = lat;
+        mLongitude = lng;
         mTitle = title;
         mDescription = description;
         mUnlocked = unlocked;
@@ -43,15 +48,15 @@ public class AlterraPoint {
     }
 
     public LatLng getLatLng(){
-        return mLatLng;
+        return new LatLng(getLatitude(),getLongitude());
     }
 
     public double getLatitude(){
-        return mLatLng.latitude;
+        return mLatitude;
     }
 
     public double getLongitude(){
-        return mLatLng.longitude;
+        return mLongitude;
     }
 
     public boolean isUnlocked() {
