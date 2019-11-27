@@ -144,7 +144,7 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             AlterraPoint alterraPoint = (AlterraPoint) marker.getTag();
             assert alterraPoint != null;
             if (!alterraPoint.isUnlocked()){
-                if (AlterraGeolocator.distanceFrom(alterraPoint) < HomeActivity.MINIMUM_UNLOCK_DISTANCE) {
+                if (AlterraGeolocator.distanceFrom(alterraPoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE) {
                     marker.setIcon(mMarkerUnlockableBitmap);
                 } else {
                     marker.setIcon(mMarkerLockedBitmap);

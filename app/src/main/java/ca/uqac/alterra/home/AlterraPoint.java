@@ -7,8 +7,12 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.Serializable;
 
 import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class AlterraPoint implements Serializable {
+
+    public static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
+
     private String mId;
     private double mLatitude;
     private double mLongitude;
@@ -16,6 +20,7 @@ public class AlterraPoint implements Serializable {
     private String mDescription;
     private boolean mUnlocked;
     private String mThumbnail;
+
 
     public AlterraPoint(String id, LatLng latLng, String title, String description){
         mId = id;
@@ -47,6 +52,10 @@ public class AlterraPoint implements Serializable {
         return mDescription;
     }
 
+    public String getThumbnail(){
+        return mThumbnail;
+    }
+
     public LatLng getLatLng(){
         return new LatLng(getLatitude(),getLongitude());
     }
@@ -59,22 +68,27 @@ public class AlterraPoint implements Serializable {
         return mLongitude;
     }
 
-    public boolean isUnlocked() {
-        return mUnlocked;
-    }
-
-    public String getThumbnail(){
-        return mThumbnail;
-    }
-
     @NonNull
     @Override
     public String toString() {
         return getTitle();
     }
 
-    public void unlock(){
-        mUnlocked = true;
-        AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),this, null);
+    public boolean isUnlocked() {
+        return mUnlocked;
+    }
+
+
+    public boolean isUnlockable() {
+        return AlterraGeolocator.distanceFrom(this) < MINIMUM_UNLOCK_DISTANCE;
+    }
+
+
+    public boolean unlock(){
+        if (isUnlockable()){
+            mUnlocked = true;
+            AlterraCloud.getDatabaseInstance().unlockAlterraLocation(AlterraCloud.getAuthInstance().getCurrentUser(),this, null);
+        }
+        return mUnlocked;
     }
 }

@@ -69,9 +69,18 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
-            Intent startActivityIntent = new Intent(activity, DetailsActivity.class);
-            startActivityIntent.putExtra("AlterraPoint", mAlterraPoint);
-            mActivity.startActivity(startActivityIntent);
+            if (mAlterraPoint != null && mAlterraPoint.isUnlocked()){
+                Intent startActivityIntent = new Intent(activity, DetailsActivity.class);
+                startActivityIntent.putExtra("AlterraPoint", mAlterraPoint);
+                mActivity.startActivity(startActivityIntent);
+            }
+        });
+
+        //Start Camera
+        mCameraButton.setOnClickListener(v -> {
+            if (mAlterraPoint != null){
+                ((HomeActivity) mActivity).takeAlterraPhoto(mAlterraPoint);
+            }
         });
 
 
@@ -118,6 +127,15 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
             mBsParentLinLayout.setVisibility(View.VISIBLE);
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+            if (alterraPoint.isUnlocked()){
+                mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
+            } else if (alterraPoint.isUnlockable()){
+                mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlockable));
+            } else {
+                mSeeMore.setText(mActivity.getString(R.string.alterra_point_locked));
+            }
+
         }
 
     }
@@ -129,14 +147,10 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/alterra-1569341283377.appspot.com/o/thumbnails%2Feiffel_tower.jpg?alt=media&token=3dcc8619-b9b9-4964-bd78-f42cef4ba303");
     }
 
-    protected void retractSheet(){
+    protected void unselectSheet(){
         if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
-    }
-
-    protected void unselectSheet(){
-        retractSheet();
         updateSheet(null);
     }
 }

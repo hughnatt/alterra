@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
@@ -55,7 +56,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
-    public static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE,FRAGMENT_PROFILE_PHOTO}
     private FRAGMENT_ID mCurrentFragment;
@@ -203,6 +203,8 @@ public class HomeActivity extends AppCompatActivity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
 
+
+
     public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -226,6 +228,16 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    public void takeAlterraPhoto(AlterraPoint alterraPoint){
+        assert(alterraPoint != null);
+        if (AlterraGeolocator.distanceFrom(alterraPoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE) {
+            mCurrentImagePoint = alterraPoint;
+            dispatchTakePictureIntent();
+        } else {
+            Toast.makeText(this,getString(R.string.alterra_point_locked),Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void takeAlterraPhoto(){
         //Make sure GPS is enabled
         if (!mGpsEnabled) {
@@ -241,11 +253,9 @@ public class HomeActivity extends AppCompatActivity {
 
         //Look for valid locations
         List<AlterraPoint> validLocations = new ArrayList<>();
-        Iterator<AlterraPoint> iter = mAlterraLocations.iterator();
-        while (iter.hasNext()){
-            AlterraPoint p = iter.next();
+        for (AlterraPoint p : mAlterraLocations) {
             System.out.println("Distance = " + AlterraGeolocator.distanceFrom(p));
-            if (AlterraGeolocator.distanceFrom(p) < MINIMUM_UNLOCK_DISTANCE){
+            if (AlterraGeolocator.distanceFrom(p) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE) {
                 validLocations.add(p);
             }
         }
@@ -269,7 +279,6 @@ public class HomeActivity extends AppCompatActivity {
 
         new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
                 .setAdapter(arrayAdapter, (dialog, which) -> {
-                        System.out.println("Choice = " + arrayAdapter.getItem(which).getTitle());
                         mCurrentImagePoint = arrayAdapter.getItem(which);
                         dispatchTakePictureIntent();
                 })
@@ -280,7 +289,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -300,7 +309,7 @@ public class HomeActivity extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK){
                     //Check if user is still located near the selected point
-                    if (AlterraGeolocator.distanceFrom(mCurrentImagePoint) < MINIMUM_UNLOCK_DISTANCE){
+                    if (AlterraGeolocator.distanceFrom(mCurrentImagePoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE){
                         mPhotoUploader.uploadPhoto(mCurrentImagePath,mCurrentImagePoint);
                     } else {
                         //TODO tell user he moved too far away from its initial position

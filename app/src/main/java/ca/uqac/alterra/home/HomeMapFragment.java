@@ -30,9 +30,7 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     private MapsHandler mMapsHandler;
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
-    private FloatingActionButton mCameraButton;
     private static String enableLocationArgument = "enableLocation";
-    private BottomSheetBehavior bottomSheetBehavior;
 
     public static HomeMapFragment newInstance(boolean enableLocation){
         Bundle args = new Bundle();
@@ -56,16 +54,14 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         }
         mBottomSheetHandler = new BottomSheetHandler(getActivity());
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
-        mCameraButton = getView().findViewById(R.id.cameraButton);
 
-        bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.addBottomSheetCallback(mBottomSheetHandler);
 
-        mCameraButton.setOnClickListener((view ) -> {
+        /*mCameraButton.setOnClickListener((view ) -> {
             ((HomeActivity) getActivity()).takeAlterraPhoto();
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        });
+        });*/
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
