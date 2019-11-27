@@ -58,7 +58,9 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
         mCameraButton = getView().findViewById(R.id.cameraButton);
 
-        initBottomSheet();
+        bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.addBottomSheetCallback(mBottomSheetHandler);
 
         mCameraButton.setOnClickListener((view ) -> {
             ((HomeActivity) getActivity()).takeAlterraPhoto();
@@ -80,12 +82,10 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
             alterraDatabase.getAllAlterraLocations(AlterraCloud.getAuthInstance().getCurrentUser(),(list) -> {
             if (list == null) return;
-            Iterator<AlterraPoint> iter = list.iterator();
-            while (iter.hasNext()){
-                AlterraPoint p = iter.next();
-                System.out.println(p.getTitle());
-                mMapsHandler.addAlterraPoint(p);
-            }
+                for (AlterraPoint p : list) {
+                    System.out.println(p.getTitle());
+                    mMapsHandler.addAlterraPoint(p);
+                }
         });
     }
 
@@ -99,28 +99,5 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         if(mMapsHandler != null){
             mMapsHandler.enableMyLocation();
         }
-    }
-
-    private void initBottomSheet() {
-        LinearLayout bottomSheet = getActivity().findViewById(R.id.bottom_sheet);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-        /*bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                switch(newState){
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        mCameraButton.setVisibility(View.GONE);
-                        break;
-                    default:
-                        mCameraButton.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
-        });*/
     }
 }
