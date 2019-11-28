@@ -406,7 +406,7 @@ public class HomeActivity extends AppCompatActivity {
 
         HomeProfileFragment homeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().findFragmentByTag("HomeProfileFragment");
         if (homeProfileFragment != null){
-            getSupportFragmentManager().putFragment(outState,"HomeProfileFragment",homeMapFragment);
+            getSupportFragmentManager().putFragment(outState,"HomeProfileFragment",homeProfileFragment);
         }
     }
 
