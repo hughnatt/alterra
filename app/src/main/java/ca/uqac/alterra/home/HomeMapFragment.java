@@ -1,5 +1,7 @@
 package ca.uqac.alterra.home;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -49,11 +51,14 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null){
-            mMapLat = savedInstanceState.getFloat("LAT");
-            mMapLng = savedInstanceState.getFloat("LNG");
-            mMapZoom = savedInstanceState.getFloat("ZOOM");
             mAlterraPoint = (AlterraPoint) savedInstanceState.getSerializable("POINT");
         }
+
+        assert(getActivity() != null);
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        mMapLat = sharedPref.getFloat("LAT",0.0F);
+        mMapLng = sharedPref.getFloat("LNG",0.0F);
+        mMapZoom = sharedPref.getFloat("ZOOM",0.0F);
     }
 
     @Override
@@ -116,17 +121,18 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     @Override
     public void onPause() {
         super.onPause();
-        mMapLat = mMapsHandler.getLatitude();
-        mMapLng = mMapsHandler.getLongitude();
-        mMapZoom = mMapsHandler.getZoom();
+        assert(getActivity() != null);
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putFloat("LAT",mMapsHandler.getLatitude());
+        editor.putFloat("LNG",mMapsHandler.getLongitude());
+        editor.putFloat("ZOOM",mMapsHandler.getZoom());
+        editor.apply();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putFloat("LAT",mMapsHandler.getLatitude());
-        outState.putFloat("LNG",mMapsHandler.getLongitude());
-        outState.putFloat("ZOOM",mMapsHandler.getZoom());
         outState.putSerializable("POINT",mBottomSheetHandler.getAlterraPoint());
     }
 }
