@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -15,9 +15,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.Iterator;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
@@ -31,8 +28,10 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
     private static String enableLocationArgument = "enableLocation";
+    private float mMapLat,mMapLng,mMapZoom;
+    private AlterraPoint mAlterraPoint;
 
-    public static HomeMapFragment newInstance(boolean enableLocation){
+    protected static HomeMapFragment newInstance(boolean enableLocation){
         Bundle args = new Bundle();
         args.putBoolean(enableLocationArgument, enableLocation);
         HomeMapFragment homeMapFragment = new HomeMapFragment();
@@ -47,13 +46,29 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null){
+            mMapLat = savedInstanceState.getFloat("LAT");
+            mMapLng = savedInstanceState.getFloat("LNG");
+            mMapZoom = savedInstanceState.getFloat("ZOOM");
+            mAlterraPoint = (AlterraPoint) savedInstanceState.getSerializable("POINT");
+        }
+    }
+
+    @Override
     public void onStart(){
+        assert(getActivity() != null);
         super.onStart();
         if (!mEnableLocation){
-            mEnableLocation = getArguments().getBoolean(enableLocationArgument);
+            Bundle args = getArguments();
+            if (args != null){
+                mEnableLocation = args.getBoolean(enableLocationArgument);
+            }
         }
-        mBottomSheetHandler = new BottomSheetHandler(getActivity());
-        mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
+        mBottomSheetHandler = new BottomSheetHandler(getActivity(),mAlterraPoint);
+        mMapsHandler = new MapsHandler(getContext(),mEnableLocation, mBottomSheetHandler,mMapLat,mMapLng,mMapZoom);
+
 
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
         bottomSheetBehavior.addBottomSheetCallback(mBottomSheetHandler);
@@ -65,10 +80,11 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        assert(mapFragment != null);
         mapFragment.getMapAsync(mMapsHandler);
 
         DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -95,5 +111,22 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         if(mMapsHandler != null){
             mMapsHandler.enableMyLocation();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapLat = mMapsHandler.getLatitude();
+        mMapLng = mMapsHandler.getLongitude();
+        mMapZoom = mMapsHandler.getZoom();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putFloat("LAT",mMapsHandler.getLatitude());
+        outState.putFloat("LNG",mMapsHandler.getLongitude());
+        outState.putFloat("ZOOM",mMapsHandler.getZoom());
+        outState.putSerializable("POINT",mBottomSheetHandler.getAlterraPoint());
     }
 }
