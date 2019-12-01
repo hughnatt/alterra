@@ -23,13 +23,26 @@ public interface AlterraDatabase {
         void onSuccess(@Nullable List<AlterraPoint> alterraPoints);
     }
 
-    void unlockAlterraLocation(AlterraUser user, AlterraPoint location, @Nullable WriteListener writeListener);
+    void getAlterraPointFromUID(String UID, @Nullable OnGetAlterraPointFromUIDListener onGetAlterraPointFromUIDListener);
+    interface OnGetAlterraPointFromUIDListener {
+        void onSuccess(AlterraPoint alterraPoint);
+        void onError(Exception e);
+    }
+
+    void unlockAlterraLocation(AlterraUser user, AlterraPoint location, @Nullable AlterraWriteListener alterraWriteListener);
+
+
 
 
     /*
      * USER SECTION
      */
-    void registerAlterraUser(String UID, String userEmail, @Nullable WriteListener writeListener);
+    void registerAlterraUser(String UID, String userEmail, @Nullable AlterraWriteListener alterraWriteListener);
+    void getAlterraUserFromUID(String UID, @Nullable OnGetAlterraUserFromUIDListener onGetAlterraUserFromUIDListener);
+    interface OnGetAlterraUserFromUIDListener{
+        void onSuccess(AlterraUser alterraUser);
+        void onError(Exception e);
+    }
 
     /*
      * PHOTO SECTION
@@ -42,11 +55,21 @@ public interface AlterraDatabase {
      * @param remoteLink The direct download link for this photo
      * @param timestamp Date when the photo was taken
      */
-    void addPhoto(String userID, String locationID, String remoteLink, long timestamp, @Nullable WriteListener writeListener);
+    void addPhoto(String userID, String locationID, String remoteLink, long timestamp, @Nullable AlterraWriteListener alterraWriteListener);
+
+    void getAlterraPictures(@NonNull AlterraPoint location, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener);
+
+    void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener);
+
+    interface OnGetAlterraPicturesListener {
+        void onSuccess(@NonNull List<AlterraPicture> alterraPictures);
+        void onError(Exception e);
+    }
 
 
-    interface WriteListener {
+
+    interface AlterraWriteListener {
         void onSuccess();
-        void onError();
+        void onError(Exception e);
     }
 }
