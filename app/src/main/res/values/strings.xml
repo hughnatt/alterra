@@ -48,4 +48,6 @@
     <string name="alterra_point_unlockable">Unlock</string>
 
     <string name="profile_photos">My Pictures</string>
+    <string name="profile_photos_dialog_box_title">Delete picture</string>
+    <string name="profile_photos_dialog_box_message">Do you want to delete this picture ?</string>
 </resources>

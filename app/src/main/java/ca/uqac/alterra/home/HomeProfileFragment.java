@@ -1,5 +1,6 @@
 package ca.uqac.alterra.home;
 
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -64,7 +66,7 @@ public class HomeProfileFragment extends Fragment {
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
-        PicturesAdapter myAdapter = new PicturesAdapter(getContext());
+        PicturesAdapter myAdapter = new PicturesAdapter(getContext(), url -> switchContext(url), (url, position) -> showDeleteAlertDialog(url,position));
         mRecyclerView.setAdapter(myAdapter);
 
         mFirestore.collection("photos")
@@ -85,5 +87,32 @@ public class HomeProfileFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+
+    public void switchContext(String url){
+        if(getActivity() instanceof HomeActivity){
+            HomeActivity homeActivity =(HomeActivity) getActivity();
+            homeActivity.displayPicture(url);
+        }
+    }
+
+    public void showDeleteAlertDialog(String url,int position){
+        new MaterialAlertDialogBuilder(getActivity())
+                       .setTitle(R.string.profile_photos_dialog_box_title)
+                       .setMessage(R.string.profile_photos_dialog_box_message)
+
+                       // Specifying a listener allows you to take an action before dismissing the dialog.
+                       // The dialog is automatically dismissed when a dialog button is clicked.
+                       .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                           public void onClick(DialogInterface dialog, int which) {
+                               // Continue with delete operation
+                           }
+                       })
+
+                       // A null listener allows the button to dismiss the dialog and take no further action.
+                       .setNegativeButton(android.R.string.no, null)
+                       .setIcon(android.R.drawable.ic_dialog_alert)
+                       .show();
     }
 }
