@@ -110,6 +110,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     public void updateSheet(@Nullable AlterraPoint alterraPoint){
         if (alterraPoint == null){
             mBsParentLinLayout.setVisibility(View.GONE);
+            mSeeMore.setVisibility(View.GONE);
             mTitle.setText(R.string.maps_first_marker_click);
             mDistance.setText("");
         } else {
@@ -130,6 +131,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
             mAddress.setText(alterraPoint.getLatLng().toString());
 
             mBsParentLinLayout.setVisibility(View.VISIBLE);
+            mSeeMore.setVisibility(View.VISIBLE);
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
             if (alterraPoint.isUnlocked()){
