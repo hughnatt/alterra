@@ -59,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
-    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE,FRAGMENT_PROFILE_PHOTO}
+    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE,FRAGMENT_PROFILE_PHOTO, FRAGMENT_DETAILS}
     private FRAGMENT_ID mCurrentFragment;
 
     private PhotoUploader mPhotoUploader;
@@ -72,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
     private HomeListFragment mHomeListFragment;
     private HomeProfileFragment mHomeProfileFragment;
     private HomeProfilePhotoFragment mHomeProfilePhotoFragment;
+    private HomeDetailsFragment mHomeDetailsFragment;
 
     private boolean mGpsEnabled = false;
     private boolean mLocationEnabled = false;
@@ -99,6 +100,7 @@ public class HomeActivity extends AppCompatActivity {
             mHomeMapFragment = (HomeMapFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeMapFragment");
             mHomeListFragment = (HomeListFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeListFragment");
             mHomeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeProfileFragment");
+            mHomeDetailsFragment = (HomeDetailsFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeDetailsFragment");
         }
 
         //Not restoring from previous state, use default fragment
@@ -173,6 +175,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeMapFragment,"HomeMapFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
 
@@ -184,6 +187,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeListFragment,"HomeListFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
 
@@ -195,6 +199,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeProfileFragment,"HomeProfileFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
 
@@ -203,6 +208,16 @@ public class HomeActivity extends AppCompatActivity {
                 mHomeProfilePhotoFragment = HomeProfilePhotoFragment.newInstance(mImageUrl);
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeProfilePhotoFragment);
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
+                ft.commit();
+                break;
+            case FRAGMENT_DETAILS:
+                if (mHomeDetailsFragment == null){
+                    mHomeDetailsFragment = new HomeDetailsFragment();
+                }
+                ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.fragment_home,mHomeDetailsFragment,"HomeDetailsFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
         }
@@ -410,6 +425,10 @@ public class HomeActivity extends AppCompatActivity {
         if (homeProfileFragment != null){
             getSupportFragmentManager().putFragment(outState,"HomeProfileFragment",homeProfileFragment);
         }
+        HomeDetailsFragment homeDetailsFragment = (HomeDetailsFragment) getSupportFragmentManager().findFragmentByTag("HomeDetailsFragment");
+        if (homeDetailsFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeDetailsFragment",homeDetailsFragment);
+        }
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
@@ -540,10 +559,17 @@ public class HomeActivity extends AppCompatActivity {
         updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE_PHOTO);
     }
 
+    public void showPlaceDetails(AlterraPoint alterraPoint){
+        mHomeDetailsFragment = HomeDetailsFragment.newInstance(alterraPoint);
+        updateWorkflow(FRAGMENT_ID.FRAGMENT_DETAILS);
+    }
+
     @Override public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
         if ((fragment instanceof HomeProfilePhotoFragment)){
             updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+        } else if (fragment instanceof  HomeDetailsFragment){
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
         }
         else{
             super.onBackPressed();
