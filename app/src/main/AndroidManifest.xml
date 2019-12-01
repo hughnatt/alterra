@@ -61,10 +61,6 @@
             android:name=".home.HomeActivity"
             android:label="@string/app_title">
         </activity>
-        <activity
-            android:name=".home.PicturesActivity"
-            android:label="@string/app_title">
-        </activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
