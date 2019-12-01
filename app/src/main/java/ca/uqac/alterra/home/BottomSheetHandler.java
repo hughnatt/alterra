@@ -87,7 +87,11 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
         mRecyclerView.setLayoutManager(layoutManager);
+    }
 
+    protected BottomSheetHandler(Activity activity, @Nullable AlterraPoint alterraPoint){
+        this(activity);
+        updateSheet(alterraPoint);
     }
 
     @Override
@@ -152,5 +156,13 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
         updateSheet(null);
+    }
+
+    /**
+     * @return Currently displayed Alterra Point
+     */
+    @Nullable
+    protected AlterraPoint getAlterraPoint(){
+        return mAlterraPoint;
     }
 }

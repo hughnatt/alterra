@@ -13,7 +13,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -93,6 +95,10 @@ public class HomeActivity extends AppCompatActivity {
             mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
             mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
             startFragment = (FRAGMENT_ID) savedInstanceState.getSerializable("mCurrentFragment");
+
+            mHomeMapFragment = (HomeMapFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeMapFragment");
+            mHomeListFragment = (HomeListFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeListFragment");
+            mHomeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeProfileFragment");
         }
 
         //Not restoring from previous state, use default fragment
@@ -117,6 +123,8 @@ public class HomeActivity extends AppCompatActivity {
                 requestGPSActivation();
             }
         });
+
+
     }
 
 
@@ -158,14 +166,13 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction ft;
         switch (mCurrentFragment){
             case FRAGMENT_MAP:
-
                 if(mHomeMapFragment == null){
                     mHomeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
                     AlterraGeolocator.addOnLocationChangedListener(mHomeMapFragment);
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeMapFragment);
+                ft.replace(R.id.fragment_home, mHomeMapFragment,"HomeMapFragment");
                 ft.commit();
                 break;
 
@@ -176,7 +183,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeListFragment);
+                ft.replace(R.id.fragment_home, mHomeListFragment,"HomeListFragment");
                 ft.commit();
                 break;
 
@@ -187,7 +194,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeProfileFragment);
+                ft.replace(R.id.fragment_home, mHomeProfileFragment,"HomeProfileFragment");
                 ft.commit();
                 break;
 
@@ -388,6 +395,21 @@ public class HomeActivity extends AppCompatActivity {
         outState.putString("mCurrentImagePath",mCurrentImagePath);
         outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
         outState.putSerializable("mCurrentFragment",mCurrentFragment);
+
+        HomeListFragment homeListFragment = (HomeListFragment) getSupportFragmentManager().findFragmentByTag("HomeListFragment");
+        if (homeListFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeListFragment",homeListFragment);
+        }
+
+        HomeMapFragment homeMapFragment = (HomeMapFragment) getSupportFragmentManager().findFragmentByTag("HomeMapFragment");
+        if (homeMapFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeMapFragment",homeMapFragment);
+        }
+
+        HomeProfileFragment homeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().findFragmentByTag("HomeProfileFragment");
+        if (homeProfileFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeProfileFragment",homeProfileFragment);
+        }
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
