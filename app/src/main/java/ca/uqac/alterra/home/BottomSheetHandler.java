@@ -20,6 +20,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -64,7 +65,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private LinearLayout mBsParentLinLayout;
-    private RelativeLayout mBsHeaderLinLayout;
+    private NestedScrollView mBsHeaderLinLayout;
 
     private ImageView mThumbnail;
 
