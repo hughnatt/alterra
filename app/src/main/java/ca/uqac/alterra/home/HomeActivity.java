@@ -175,6 +175,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeMapFragment,"HomeMapFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
 
@@ -186,6 +187,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeListFragment,"HomeListFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
 
@@ -197,6 +199,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeProfileFragment,"HomeProfileFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
 
@@ -205,6 +208,7 @@ public class HomeActivity extends AppCompatActivity {
                 mHomeProfilePhotoFragment = HomeProfilePhotoFragment.newInstance(mImageUrl);
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home, mHomeProfilePhotoFragment);
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
                 ft.commit();
                 break;
             case FRAGMENT_DETAILS:
@@ -213,6 +217,9 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 ft = getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.fragment_home,mHomeDetailsFragment,"HomeDetailsFragment");
+                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
+                ft.commit();
+                break;
         }
     }
 
@@ -561,6 +568,8 @@ public class HomeActivity extends AppCompatActivity {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
         if ((fragment instanceof HomeProfilePhotoFragment)){
             updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+        } else if (fragment instanceof  HomeDetailsFragment){
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
         }
         else{
             super.onBackPressed();
