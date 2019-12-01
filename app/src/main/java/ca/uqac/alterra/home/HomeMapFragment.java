@@ -1,11 +1,15 @@
 package ca.uqac.alterra.home;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -13,25 +17,23 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.Iterator;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
-import ca.uqac.alterra.database.AlterraFirebase;
 import ca.uqac.alterra.utility.AlterraGeolocator;
+
 
 public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLocationChangedListener {
 
     private MapsHandler mMapsHandler;
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
-    private FloatingActionButton mCameraButton;
     private static String enableLocationArgument = "enableLocation";
+    private float mMapLat,mMapLng,mMapZoom;
+    private AlterraPoint mAlterraPoint;
 
-    public static HomeMapFragment newInstance(boolean enableLocation){
+    protected static HomeMapFragment newInstance(boolean enableLocation){
         Bundle args = new Bundle();
         args.putBoolean(enableLocationArgument, enableLocation);
         HomeMapFragment homeMapFragment = new HomeMapFragment();
@@ -46,27 +48,48 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null){
+            mAlterraPoint = (AlterraPoint) savedInstanceState.getSerializable("POINT");
+        }
+
+        assert(getActivity() != null);
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        mMapLat = sharedPref.getFloat("LAT",0.0F);
+        mMapLng = sharedPref.getFloat("LNG",0.0F);
+        mMapZoom = sharedPref.getFloat("ZOOM",0.0F);
+    }
+
+    @Override
     public void onStart(){
+        assert(getActivity() != null);
         super.onStart();
         if (!mEnableLocation){
-            mEnableLocation = getArguments().getBoolean(enableLocationArgument);
+            Bundle args = getArguments();
+            if (args != null){
+                mEnableLocation = args.getBoolean(enableLocationArgument);
+            }
         }
-        mBottomSheetHandler = new BottomSheetHandler(getActivity());
-        mMapsHandler = new MapsHandler(getActivity(),mEnableLocation, mBottomSheetHandler);
-        mCameraButton = getView().findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).takeAlterraPhoto());
+        mBottomSheetHandler = new BottomSheetHandler(getActivity(),mAlterraPoint);
+        mMapsHandler = new MapsHandler(getContext(),mEnableLocation, mBottomSheetHandler,mMapLat,mMapLng,mMapZoom);
 
-        //Monitoring the bottom panel movements
-        BottomSheetBehavior bottomPanelBehavior = BottomSheetBehavior.from(getView().findViewById(R.id.bottomPanel));
-        bottomPanelBehavior.addBottomSheetCallback(mBottomSheetHandler);
+
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.addBottomSheetCallback(mBottomSheetHandler);
+
+        /*mCameraButton.setOnClickListener((view ) -> {
+            ((HomeActivity) getActivity()).takeAlterraPhoto();
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        });*/
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        assert(mapFragment != null);
         mapFragment.getMapAsync(mMapsHandler);
 
-
         DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
@@ -76,12 +99,10 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
             alterraDatabase.getAllAlterraLocations(AlterraCloud.getAuthInstance().getCurrentUser(),(list) -> {
             if (list == null) return;
-            Iterator<AlterraPoint> iter = list.iterator();
-            while (iter.hasNext()){
-                AlterraPoint p = iter.next();
-                System.out.println(p.getTitle());
-                mMapsHandler.addAlterraPoint(p);
-            }
+                for (AlterraPoint p : list) {
+                    System.out.println(p.getTitle());
+                    mMapsHandler.addAlterraPoint(p);
+                }
         });
     }
 
@@ -95,5 +116,23 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         if(mMapsHandler != null){
             mMapsHandler.enableMyLocation();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        assert(getActivity() != null);
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putFloat("LAT",mMapsHandler.getLatitude());
+        editor.putFloat("LNG",mMapsHandler.getLongitude());
+        editor.putFloat("ZOOM",mMapsHandler.getZoom());
+        editor.apply();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("POINT",mBottomSheetHandler.getAlterraPoint());
     }
 }

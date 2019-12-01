@@ -43,7 +43,7 @@
 
     <string name="maps_first_marker_click">Click on a marker to begin</string>
 
-    <string name="alterra_point_locked">Can\'t unlock</string>
+    <string name="alterra_point_locked">Too far</string>
     <string name="alterra_point_unlocked">Details</string>
     <string name="alterra_point_unlockable">Unlock</string>
 

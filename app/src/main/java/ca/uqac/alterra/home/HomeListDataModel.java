@@ -24,21 +24,8 @@ public class HomeListDataModel {
         return mImageRessource;
     }
 
-    public String getDistance() {
-
-        String distanceString;
-
-        if(mDistance < 1000){
-            distanceString = new DecimalFormat("#.##").format(mDistance) + " m";
-        }
-        else if(mDistance < 1000000){
-            distanceString = new DecimalFormat("#.#").format(mDistance / 1000) + " km";
-        }
-        else {
-            distanceString = "+999 km";
-        }
-
-        return distanceString;
+    public double getDistance() {
+        return mDistance;
     }
 
     public boolean isUnlocked(){
@@ -46,7 +33,7 @@ public class HomeListDataModel {
     }
 
     public boolean isUnlockable(){
-        return (mDistance < HomeActivity.MINIMUM_UNLOCK_DISTANCE);
+        return mPoint.isUnlockable();
     }
 
     public AlterraPoint getAlterraPoint(){

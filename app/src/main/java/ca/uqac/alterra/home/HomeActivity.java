@@ -13,7 +13,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.auth.AuthActivity;
@@ -55,7 +58,6 @@ public class HomeActivity extends AppCompatActivity {
 
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
-    public static final double MINIMUM_UNLOCK_DISTANCE = 1000; //in meters, obviously too big, will be reduced later
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE,FRAGMENT_PROFILE_PHOTO}
     private FRAGMENT_ID mCurrentFragment;
@@ -93,6 +95,10 @@ public class HomeActivity extends AppCompatActivity {
             mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
             mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
             startFragment = (FRAGMENT_ID) savedInstanceState.getSerializable("mCurrentFragment");
+
+            mHomeMapFragment = (HomeMapFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeMapFragment");
+            mHomeListFragment = (HomeListFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeListFragment");
+            mHomeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeProfileFragment");
         }
 
         //Not restoring from previous state, use default fragment
@@ -117,6 +123,8 @@ public class HomeActivity extends AppCompatActivity {
                 requestGPSActivation();
             }
         });
+
+
     }
 
 
@@ -158,14 +166,13 @@ public class HomeActivity extends AppCompatActivity {
         FragmentTransaction ft;
         switch (mCurrentFragment){
             case FRAGMENT_MAP:
-
                 if(mHomeMapFragment == null){
                     mHomeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
                     AlterraGeolocator.addOnLocationChangedListener(mHomeMapFragment);
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeMapFragment);
+                ft.replace(R.id.fragment_home, mHomeMapFragment,"HomeMapFragment");
                 ft.commit();
                 break;
 
@@ -176,7 +183,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeListFragment);
+                ft.replace(R.id.fragment_home, mHomeListFragment,"HomeListFragment");
                 ft.commit();
                 break;
 
@@ -187,7 +194,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
 
                 ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeProfileFragment);
+                ft.replace(R.id.fragment_home, mHomeProfileFragment,"HomeProfileFragment");
                 ft.commit();
                 break;
 
@@ -202,6 +209,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     static final int REQUEST_TAKE_PHOTO = 1;
+
+
 
     public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -226,6 +235,16 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+    public void takeAlterraPhoto(AlterraPoint alterraPoint){
+        assert(alterraPoint != null);
+        if (AlterraGeolocator.distanceFrom(alterraPoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE) {
+            mCurrentImagePoint = alterraPoint;
+            dispatchTakePictureIntent();
+        } else {
+            Toast.makeText(this,getString(R.string.alterra_point_locked),Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void takeAlterraPhoto(){
         //Make sure GPS is enabled
         if (!mGpsEnabled) {
@@ -241,11 +260,9 @@ public class HomeActivity extends AppCompatActivity {
 
         //Look for valid locations
         List<AlterraPoint> validLocations = new ArrayList<>();
-        Iterator<AlterraPoint> iter = mAlterraLocations.iterator();
-        while (iter.hasNext()){
-            AlterraPoint p = iter.next();
-            System.out.println("Distance = " + distanceFrom(p));
-            if (distanceFrom(p) < MINIMUM_UNLOCK_DISTANCE){
+        for (AlterraPoint p : mAlterraLocations) {
+            System.out.println("Distance = " + AlterraGeolocator.distanceFrom(p));
+            if (AlterraGeolocator.distanceFrom(p) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE) {
                 validLocations.add(p);
             }
         }
@@ -269,7 +286,6 @@ public class HomeActivity extends AppCompatActivity {
 
         new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
                 .setAdapter(arrayAdapter, (dialog, which) -> {
-                        System.out.println("Choice = " + arrayAdapter.getItem(which).getTitle());
                         mCurrentImagePoint = arrayAdapter.getItem(which);
                         dispatchTakePictureIntent();
                 })
@@ -280,7 +296,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -300,7 +316,7 @@ public class HomeActivity extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO:
                 if (resultCode == RESULT_OK){
                     //Check if user is still located near the selected point
-                    if (distanceFrom(mCurrentImagePoint) < MINIMUM_UNLOCK_DISTANCE){
+                    if (AlterraGeolocator.distanceFrom(mCurrentImagePoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE){
                         mPhotoUploader.uploadPhoto(mCurrentImagePath,mCurrentImagePoint);
                     } else {
                         //TODO tell user he moved too far away from its initial position
@@ -379,6 +395,21 @@ public class HomeActivity extends AppCompatActivity {
         outState.putString("mCurrentImagePath",mCurrentImagePath);
         outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
         outState.putSerializable("mCurrentFragment",mCurrentFragment);
+
+        HomeListFragment homeListFragment = (HomeListFragment) getSupportFragmentManager().findFragmentByTag("HomeListFragment");
+        if (homeListFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeListFragment",homeListFragment);
+        }
+
+        HomeMapFragment homeMapFragment = (HomeMapFragment) getSupportFragmentManager().findFragmentByTag("HomeMapFragment");
+        if (homeMapFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeMapFragment",homeMapFragment);
+        }
+
+        HomeProfileFragment homeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().findFragmentByTag("HomeProfileFragment");
+        if (homeProfileFragment != null){
+            getSupportFragmentManager().putFragment(outState,"HomeProfileFragment",homeProfileFragment);
+        }
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
@@ -490,23 +521,6 @@ public class HomeActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.gps_alert_button_positive, null)
                 .setCancelable(true)
                 .show();
-    }
-
-    /**
-     * Return the distance between current user location and the given Alterra Point
-     * @param alterraPoint an alterra location descriptor
-     * @return distance in meters
-     */
-    public double distanceFrom(AlterraPoint alterraPoint){
-        Location currentPosition = AlterraGeolocator.getCurrentLocation();
-        if (currentPosition == null) {
-            return Double.MAX_VALUE;
-        } else {
-            Location temp = new Location(LocationManager.GPS_PROVIDER);
-            temp.setLatitude(alterraPoint.getLatitude());
-            temp.setLongitude(alterraPoint.getLongitude());
-            return currentPosition.distanceTo(temp);
-        }
     }
 
     /**
