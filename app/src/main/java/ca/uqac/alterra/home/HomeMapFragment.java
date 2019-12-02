@@ -133,6 +133,8 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("POINT",mBottomSheetHandler.getAlterraPoint());
+        if (mBottomSheetHandler != null){
+            outState.putSerializable("POINT",mBottomSheetHandler.getAlterraPoint());
+        }
     }
 }

@@ -7,7 +7,7 @@
         android:id="@+id/ivPlace"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_margin="5dp"
+        android:layout_margin="2dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/content_description_unknown"/>
 

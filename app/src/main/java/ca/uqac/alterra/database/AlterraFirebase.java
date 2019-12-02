@@ -176,6 +176,11 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
+    public void getUnlockedUsers(AlterraPoint location, @Nullable OnGetUsersListener onGetUsersListener) {
+        //TODO
+    }
+
+    @Override
     public void registerAlterraUser(String userID, String userEmail, @Nullable AlterraWriteListener writeListener) {
         //Add user document in database
         HashMap<String, Object> data = new HashMap<>();
@@ -239,6 +244,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         if (onGetAlterraPicturesListener != null){
             mFirestore.collection(COLLECTION_PATH_PHOTOS)
                     .whereEqualTo("location",location.getId())
+                    .orderBy("date", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                             List<AlterraPicture> pictures = new ArrayList<>();

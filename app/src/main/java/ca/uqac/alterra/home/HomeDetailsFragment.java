@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 import java.util.List;
@@ -29,6 +30,7 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraPicture;
+import ca.uqac.alterra.database.AlterraUser;
 
 public class HomeDetailsFragment extends Fragment {
 
@@ -43,6 +45,7 @@ public class HomeDetailsFragment extends Fragment {
     private TextView mTotalPhotos;
     private View mHeader;
     private SwipeRefreshLayout mRefresher;
+    private FloatingActionButton mCameraButton;
 
     private float mInitialScrollY;
 
@@ -66,9 +69,11 @@ public class HomeDetailsFragment extends Fragment {
 
         mRefresher = v.findViewById(R.id.detailsRefresher);
 
+        mCameraButton = v.findViewById(R.id.detailsCameraButton);
+
         mPicturesRecyclerView = v.findViewById(R.id.detailsRecyclerView);
         mPicturesRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),COLUMN_COUNT));
-        /*mPicturesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mPicturesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             private static final int HIDE_THRESHOLD = 20;
             private int scrolledDistance = 0;
             private boolean controlsVisible = true;
@@ -102,13 +107,15 @@ public class HomeDetailsFragment extends Fragment {
             }
 
             private void onHide(){
-                mHeader.animate().translationY(-mHeader.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+                //mHeader.animate().translationY(-mHeader.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+                mCameraButton.hide();
             }
 
             private void onShow(){
-                mHeader.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+                //mHeader.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+                mCameraButton.show();
             }
-        });*/
+        });
 
         mThumbnail = v.findViewById(R.id.detailsLocationThumbnail);
         mTitle = v.findViewById(R.id.detailsLocationName);
@@ -121,6 +128,9 @@ public class HomeDetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         assert(getContext() != null);
+
+        mCameraButton.setOnClickListener((v) -> ((HomeActivity) Objects.requireNonNull(getActivity())).takeAlterraPhoto(mAlterraPoint));
+
         mAlterraPoint = (AlterraPoint) Objects.requireNonNull(getArguments()).getSerializable(ARGS_ALTERRA_POINT);
 
 
@@ -131,7 +141,7 @@ public class HomeDetailsFragment extends Fragment {
                 .into(mThumbnail);
         mTitle.setText(mAlterraPoint.getTitle());
 
-        PicturesAdapter picturesAdapter = new PicturesAdapter(getContext(),null,null);
+        PicturesAdapter picturesAdapter = new PicturesAdapter(getContext(), url -> ((HomeActivity) Objects.requireNonNull(getActivity())).displayPicture(url), null);
         mPicturesRecyclerView.setAdapter(picturesAdapter);
 
         AlterraCloud.getDatabaseInstance().getAlterraPictures(mAlterraPoint, new AlterraDatabase.OnGetAlterraPicturesListener() {
@@ -140,7 +150,6 @@ public class HomeDetailsFragment extends Fragment {
                 if (alterraPictures != null){
                     for (AlterraPicture picture : alterraPictures){
                         picturesAdapter.addPicture(picture.getURL());
-                        picturesAdapter.notifyItemInserted(picturesAdapter.getItemCount());
                     }
                     mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
                 }
@@ -152,6 +161,19 @@ public class HomeDetailsFragment extends Fragment {
             }
         });
 
+        AlterraCloud.getDatabaseInstance().getUnlockedUsers(mAlterraPoint, new AlterraDatabase.OnGetUsersListener() {
+            @Override
+            public void onSuccess(List<AlterraUser> users) {
+                mTotalUsers.setText(String.valueOf(users.size()));
+            }
+
+            @Override
+            public void onError(Exception e) {
+                System.out.println(e);
+                Toast.makeText(getContext(), R.string.details_users_loading_failed, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         mRefresher.setOnRefreshListener(() -> {
             picturesAdapter.clear();
             AlterraCloud.getDatabaseInstance().getAlterraPictures(mAlterraPoint, new AlterraDatabase.OnGetAlterraPicturesListener() {
@@ -159,8 +181,7 @@ public class HomeDetailsFragment extends Fragment {
                 public void onSuccess(@Nullable List<AlterraPicture> alterraPictures) {
                     if (alterraPictures != null){
                         for (AlterraPicture picture : alterraPictures){
-                            picturesAdapter.addPicture(picture.getURL());
-                            picturesAdapter.notifyItemInserted(picturesAdapter.getItemCount());
+                            picturesAdapter.addPicture(picture);
                         }
                         mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
                     }
@@ -170,6 +191,7 @@ public class HomeDetailsFragment extends Fragment {
                 @Override
                 public void onError(Exception e) {
                     Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+                    mRefresher.setRefreshing(false);
                 }
             });
         });
