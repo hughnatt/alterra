@@ -147,7 +147,7 @@ public class HomeProfileFragment extends Fragment {
                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                            public void onClick(DialogInterface dialog, int which) {
                                // Continue with delete operation
-
+                               AlterraCloud.getDatabaseInstance().deleteAlterraPictureFromFirestore();
                            }
                        })
 
