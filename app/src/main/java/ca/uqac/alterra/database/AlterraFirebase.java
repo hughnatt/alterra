@@ -60,6 +60,8 @@ import ca.uqac.alterra.home.AlterraPoint;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 
+    private static AlterraFirebase mAlterraFirebase;
+
     private static String COLLECTION_PATH_LOCATIONS = "locations";
     private static String COLLECTION_PATH_USERS = "users";
     private static String COLLECTION_PATH_PHOTOS = "photos";
@@ -77,10 +79,19 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     private AlterraAuthListener mFacebookAuthCallback;
     private AlterraAuthListener mGoogleAuthCallback;
 
-    AlterraFirebase(){
+
+
+    private AlterraFirebase(){
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance(STORAGE_BUCKET);
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    public static AlterraFirebase getInstance(){
+        if (mAlterraFirebase == null){
+            mAlterraFirebase = new AlterraFirebase();
+        }
+        return mAlterraFirebase;
     }
 
     @Override
