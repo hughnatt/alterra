@@ -239,6 +239,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         if (onGetAlterraPicturesListener != null){
             mFirestore.collection(COLLECTION_PATH_PHOTOS)
                     .whereEqualTo("location",location.getId())
+                    .orderBy("date", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                             List<AlterraPicture> pictures = new ArrayList<>();
