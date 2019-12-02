@@ -161,7 +161,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                     //Add location to user document
                     return mFirestore.collection(COLLECTION_PATH_USERS)
                                     .document(user.getUID())
-                                    .update("locations"+location.getId(),true);
+                                    .update("locations."+location.getId(),true);
                 })
                 .addOnCompleteListener((voidTask) -> {
                     if (writeListener != null) {
