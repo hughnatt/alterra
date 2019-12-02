@@ -106,6 +106,27 @@ public class HomeProfileFragment extends Fragment {
             }
         });
 
+
+        mRefresher.setOnRefreshListener(() -> {
+            myAdapter.clear();
+            AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
+                @Override
+                public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
+                    if(alterraPictures != null){
+                        for(AlterraPicture currentPicture : alterraPictures){
+                            myAdapter.addPicture(currentPicture.getURL());
+                        }
+                        mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
+                    }
+                    mRefresher.setRefreshing(false);
+                }
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+
     }
 
 
@@ -117,7 +138,7 @@ public class HomeProfileFragment extends Fragment {
     }
 
     public void showDeleteAlertDialog(String url,int position){
-        new MaterialAlertDialogBuilder(getActivity())
+        new MaterialAlertDialogBuilder(getActivity(),R.style.DialogStyle)
                        .setTitle(R.string.profile_photos_dialog_box_title)
                        .setMessage(R.string.profile_photos_dialog_box_message)
 
@@ -126,6 +147,7 @@ public class HomeProfileFragment extends Fragment {
                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                            public void onClick(DialogInterface dialog, int which) {
                                // Continue with delete operation
+
                            }
                        })
 

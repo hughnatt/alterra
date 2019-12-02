@@ -538,4 +538,9 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
             }
         });
     }
+
+    @Override
+    public void deleteAlterraPictureFromFirestore(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener){
+
+    }
 }

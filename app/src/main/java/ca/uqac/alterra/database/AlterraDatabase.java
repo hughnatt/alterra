@@ -65,6 +65,8 @@ public interface AlterraDatabase {
 
     void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener);
 
+    void deleteAlterraPictureFromFirestore(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener);
+
     interface OnGetAlterraPicturesListener {
         void onSuccess(@NonNull List<AlterraPicture> alterraPictures);
         void onError(Exception e);
