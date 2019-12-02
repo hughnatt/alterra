@@ -176,6 +176,11 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
+    public void getUnlockedUsers(AlterraPoint location, @Nullable OnGetUsersListener onGetUsersListener) {
+        //TODO
+    }
+
+    @Override
     public void registerAlterraUser(String userID, String userEmail, @Nullable AlterraWriteListener writeListener) {
         //Add user document in database
         HashMap<String, Object> data = new HashMap<>();
