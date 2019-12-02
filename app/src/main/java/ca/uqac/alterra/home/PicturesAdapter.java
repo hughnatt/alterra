@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraPicture;
 
 public class PicturesAdapter extends RecyclerView.Adapter{
 
@@ -69,6 +70,11 @@ public class PicturesAdapter extends RecyclerView.Adapter{
 
     public void addPicture(String pictureUrl){
         mPhotoList.add(pictureUrl);
+        notifyItemInserted(getItemCount());
+    }
+
+    public void addPicture(AlterraPicture alterraPicture){
+        addPicture(alterraPicture.getURL());
     }
 
     class PlaceViewHolder extends RecyclerView.ViewHolder {
@@ -85,10 +91,7 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     public void clear() {
         int size = mPhotoList.size();
         if (size > 0) {
-            for (int i = 0; i < size; i++) {
-                mPhotoList.remove(0);
-            }
-
+            mPhotoList.clear();
             notifyItemRangeRemoved(0, size);
         }
     }
