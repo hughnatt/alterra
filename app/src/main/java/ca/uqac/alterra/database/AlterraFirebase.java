@@ -253,7 +253,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 String owner = (String) document.get("owner");
                                 String url = (String) document.get("link");
                                 long timestamp = (long) document.get("date");
-                                pictures.add(new AlterraPicture(id,url,owner,timestamp,location));
+                                pictures.add(new AlterraPicture(id,url,owner,timestamp,location.getId()));
                             }
                             onGetAlterraPicturesListener.onSuccess(pictures);
                     })
@@ -276,7 +276,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                             String url = (String) document.get("link");
                             long timestamp = (long) document.get("date");
                             String location = (String) document.get("location");
-                            pictures.add(new AlterraPicture(id,url,owner,timestamp,location));
+                            pictures.add(new AlterraPicture(id,url,owner.getUID(),timestamp,location));
                         }
                         onGetAlterraPicturesListener.onSuccess(pictures);
                     })
