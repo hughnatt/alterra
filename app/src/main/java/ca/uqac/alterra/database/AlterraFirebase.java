@@ -60,6 +60,8 @@ import ca.uqac.alterra.home.AlterraPoint;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 
+    private static AlterraFirebase mAlterraFirebase;
+
     private static String COLLECTION_PATH_LOCATIONS = "locations";
     private static String COLLECTION_PATH_USERS = "users";
     private static String COLLECTION_PATH_PHOTOS = "photos";
@@ -77,10 +79,19 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     private AlterraAuthListener mFacebookAuthCallback;
     private AlterraAuthListener mGoogleAuthCallback;
 
-    AlterraFirebase(){
+
+
+    private AlterraFirebase(){
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance(STORAGE_BUCKET);
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    public static AlterraFirebase getInstance(){
+        if (mAlterraFirebase == null){
+            mAlterraFirebase = new AlterraFirebase();
+        }
+        return mAlterraFirebase;
     }
 
     @Override
@@ -253,7 +264,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 String owner = (String) document.get("owner");
                                 String url = (String) document.get("link");
                                 long timestamp = (long) document.get("date");
-                                pictures.add(new AlterraPicture(id,url,owner,timestamp,location));
+                                pictures.add(new AlterraPicture(id,url,owner,timestamp,location.getId()));
                             }
                             onGetAlterraPicturesListener.onSuccess(pictures);
                     })
@@ -276,7 +287,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                             String url = (String) document.get("link");
                             long timestamp = (long) document.get("date");
                             String location = (String) document.get("location");
-                            pictures.add(new AlterraPicture(id,url,owner,timestamp,location));
+                            pictures.add(new AlterraPicture(id,url,owner.getUID(),timestamp,location));
                         }
                         onGetAlterraPicturesListener.onSuccess(pictures);
                     })
