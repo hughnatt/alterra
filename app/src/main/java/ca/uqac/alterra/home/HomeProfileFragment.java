@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +18,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -26,9 +30,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.List;
+
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraDatabase;
+import ca.uqac.alterra.database.AlterraPicture;
 import ca.uqac.alterra.database.AlterraUser;
 
 public class HomeProfileFragment extends Fragment {
@@ -40,10 +48,29 @@ public class HomeProfileFragment extends Fragment {
 
     RecyclerView mRecyclerView;
 
+
+    private TextView mTotalLocation;
+    private TextView mTotalPhotos;
+    private View mHeader;
+    private SwipeRefreshLayout mRefresher;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_home_profile,container,false);
+
+        View myView = inflater.inflate(R.layout.fragment_home_profile,container,false);
+
+        mRecyclerView = myView.findViewById(R.id.recyclerview);
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mHeader = myView.findViewById(R.id.profileHeader);
+        mRefresher = myView.findViewById(R.id.profileRefresher);
+
+        mTotalPhotos = myView.findViewById(R.id.profileTotalPhotos);
+        mTotalLocation = myView.findViewById(R.id.profileTotalLocation);
+
+        return myView;
     }
 
     @Override
@@ -62,31 +89,23 @@ public class HomeProfileFragment extends Fragment {
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
-        mRecyclerView = getView().findViewById(R.id.recyclerview);
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
-        mRecyclerView.setLayoutManager(mGridLayoutManager);
-
         PicturesAdapter myAdapter = new PicturesAdapter(getContext(), url -> switchContext(url), (url, position) -> showDeleteAlertDialog(url,position));
         mRecyclerView.setAdapter(myAdapter);
 
-        mFirestore.collection("photos")
-                .whereEqualTo("owner", mCurrentUser.getUID())
-                .orderBy("date", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String link = (String) document.getData().get("link");
-                                myAdapter.addPicture(link);
-                                myAdapter.notifyItemInserted(myAdapter.getItemCount());
-                            }
+        AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
+            @Override
+            public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
+                for(AlterraPicture currentPicture : alterraPictures){
+                    myAdapter.addPicture(currentPicture.getURL());
+                }
+                mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
+            }
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+            }
+        });
 
-                            toolbar.setTitle(getResources().getString(R.string.profile_photos) + " (" + myAdapter.getItemCount() + ")");
-                        }
-                    }
-                });
     }
 
 

@@ -69,6 +69,7 @@ public class PicturesAdapter extends RecyclerView.Adapter{
 
     public void addPicture(String pictureUrl){
         mPhotoList.add(pictureUrl);
+        notifyItemChanged(getItemCount());
     }
 
     class PlaceViewHolder extends RecyclerView.ViewHolder {

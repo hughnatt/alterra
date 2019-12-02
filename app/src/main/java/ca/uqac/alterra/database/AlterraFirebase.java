@@ -260,7 +260,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     public void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener) {
         if (onGetAlterraPicturesListener != null){
             mFirestore.collection("photos")
-                    .whereEqualTo("owner", mCurrentUser.getUID())
+                    .whereEqualTo("owner", owner.getUID())
                     .orderBy("date", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
