@@ -1,20 +1,10 @@
 package ca.uqac.alterra.home;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +27,6 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraPicture;
-import ca.uqac.alterra.details.DetailsActivity;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
@@ -65,7 +54,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     private AppCompatImageButton mHandleButton;
 
     private BottomSheetBehavior mBottomSheetBehavior;
-    private LinearLayout mBsParentLinLayout;
+    private LinearLayout mBsDescriptionLinearLayout;
     private NestedScrollView mBsHeaderLinLayout;
     private CardView mCardView;
 
@@ -73,18 +62,18 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     public BottomSheetHandler(Activity activity){
         mActivity = activity;
-        mTitle = activity.findViewById(R.id.bottomPanelTitle);
-        mDistance =activity.findViewById(R.id.distance);
-        mDescription = activity.findViewById(R.id.locationDescription);
-        mSeeMore =activity.findViewById(R.id.SeeMore);
+        mTitle = activity.findViewById(R.id.btmTitleLocation);
+        mDistance =activity.findViewById(R.id.btmDistance);
+        mDescription = activity.findViewById(R.id.btmDescription);
+        mSeeMore =activity.findViewById(R.id.btmButton);
         mCameraButton = activity.findViewById(R.id.cameraButton);
         mBottomSheetBehavior = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottom_sheet));
-        mBsHeaderLinLayout = activity.findViewById(R.id.headerBottomSheet);
-        mBsParentLinLayout = mActivity.findViewById(R.id.BSLocationInfoParentLayout);
+        mBsHeaderLinLayout = activity.findViewById(R.id.btmScrollView);
+        mBsDescriptionLinearLayout = activity.findViewById(R.id.btmLinLayoutDescription);
         mHandleButton = activity.findViewById(R.id.bottomSheetHandle);
         mHandleButton.setOnClickListener((View v) -> mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
-        mThumbnail = activity.findViewById(R.id.bottomSheetThumbnail);
-        mCardView = activity.findViewById(R.id.bottomSheetCardViewThumbnail);
+        mThumbnail = activity.findViewById(R.id.btmThumbnail);
+        mCardView = activity.findViewById(R.id.btmCardView);
 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
@@ -102,7 +91,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView = activity.findViewById(R.id.recyclerViewBottomSheet);
+        mRecyclerView = activity.findViewById(R.id.btmRecyclerView);
         mRecyclerView.setLayoutManager(layoutManager);
     }
 
@@ -126,15 +115,16 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     public void updateSheet(@Nullable AlterraPoint alterraPoint){
         if (alterraPoint == null){
-            mBsParentLinLayout.setVisibility(View.GONE);
-            mBsHeaderLinLayout.setVisibility(View.GONE);
-            mSeeMore.setVisibility(View.GONE);
             mTitle.setText(R.string.maps_first_marker_click);
-            mDistance.setText("");
-            mBsHeaderLinLayout.setBackground(null);
+            mBsHeaderLinLayout.setVisibility(View.GONE);
+            mBsDescriptionLinearLayout.setVisibility(View.GONE);
+            mSeeMore.setVisibility(View.GONE);
+            mDistance.setVisibility(View.GONE);
             mCardView.setVisibility(View.GONE);
         } else {
             mAlterraPoint = alterraPoint;
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
             Glide.with(mActivity)
                     .asBitmap()
                     .load(alterraPoint.getThumbnail())
@@ -142,6 +132,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
             mTitle.setText(alterraPoint.getTitle());
             mDistance.setText(PrettyPrinter.formatDistance(AlterraGeolocator.distanceFrom(alterraPoint)));
+            mDistance.setVisibility(View.VISIBLE);
 
 
 
@@ -151,12 +142,10 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
                 mDescription.setText(alterraPoint.getDescription());
             }
 
-            mBsParentLinLayout.setVisibility(View.VISIBLE);
+            mBsDescriptionLinearLayout.setVisibility(View.VISIBLE);
             mBsHeaderLinLayout.setVisibility(View.VISIBLE);
             mCardView.setVisibility(View.VISIBLE);
             mSeeMore.setVisibility(View.VISIBLE);
-
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
             if (alterraPoint.isUnlocked()){
                 mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
@@ -171,6 +160,8 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
             }
 
         }
+
+
 
     }
 
