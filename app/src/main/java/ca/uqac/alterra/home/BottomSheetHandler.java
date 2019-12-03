@@ -1,10 +1,6 @@
 package ca.uqac.alterra.home;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,12 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.details.DetailsActivity;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
@@ -70,9 +64,6 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
             if (mAlterraPoint != null && mAlterraPoint.isUnlocked()){
-                /*Intent startActivityIntent = new Intent(activity, DetailsActivity.class);
-                startActivityIntent.putExtra("AlterraPoint", mAlterraPoint);
-                mActivity.startActivity(startActivityIntent);*/
                 ((HomeActivity) mActivity).showPlaceDetails(getAlterraPoint());
             }
         });

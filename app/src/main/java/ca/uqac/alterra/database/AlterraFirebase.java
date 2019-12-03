@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
@@ -60,6 +61,8 @@ import ca.uqac.alterra.home.AlterraPoint;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 
+    private static AlterraFirebase mAlterraFirebase;
+
     private static String COLLECTION_PATH_LOCATIONS = "locations";
     private static String COLLECTION_PATH_USERS = "users";
     private static String COLLECTION_PATH_PHOTOS = "photos";
@@ -77,10 +80,19 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     private AlterraAuthListener mFacebookAuthCallback;
     private AlterraAuthListener mGoogleAuthCallback;
 
-    AlterraFirebase(){
+
+
+    private AlterraFirebase(){
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance(STORAGE_BUCKET);
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    public static AlterraFirebase getInstance(){
+        if (mAlterraFirebase == null){
+            mAlterraFirebase = new AlterraFirebase();
+        }
+        return mAlterraFirebase;
     }
 
     @Override
@@ -105,11 +117,11 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 Map descriptions = (Map) documentData.get("description");
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
-                                Map users = (Map) documentData.get("users");
+                                List<String> users = (List<String>) documentData.get("users");
                                 String thumbnail = (String) documentData.get("thumbnail");
-                                boolean unlocked = (users != null && users.containsKey(currentUser.getUID()));
+                                boolean unlocked = (users != null && users.contains(currentUser.getUID()));
                                 alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked, thumbnail));
-                            } catch (NullPointerException ex){
+                            } catch (NullPointerException | ClassCastException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }
                         }
@@ -156,12 +168,12 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         //Add user to location document
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .document(location.getId())
-                .update("users."+user.getUID(),true)
+                .update("users", FieldValue.arrayUnion(user.getUID()))
                 .continueWithTask(task -> {
                     //Add location to user document
                     return mFirestore.collection(COLLECTION_PATH_USERS)
                                     .document(user.getUID())
-                                    .update("locations."+location.getId(),true);
+                                    .update("locations",FieldValue.arrayUnion(location.getId()));
                 })
                 .addOnCompleteListener((voidTask) -> {
                     if (writeListener != null) {
@@ -173,6 +185,26 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                         writeListener.onError(new AlterraWriteFailureException());
                     }
                 });
+    }
+
+    @Override
+    public void getUnlockedUsers(AlterraPoint location, @Nullable OnGetUsersListener onGetUsersListener) {
+        if (onGetUsersListener != null){
+            mFirestore.collection(COLLECTION_PATH_USERS)
+                    .whereArrayContains("locations",location.getId())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        List<AlterraUser> alterraUsers = new ArrayList<>();
+                        if (queryDocumentSnapshots != null){
+                            for (QueryDocumentSnapshot document : queryDocumentSnapshots){
+                                String email = (String) document.get("email");
+                                AlterraUser alterraUser = new AlterraUser(document.getId(),email,null);
+                                alterraUsers.add(alterraUser);
+                            }
+                        }
+                        onGetUsersListener.onSuccess(alterraUsers);
+                    }).addOnFailureListener(onGetUsersListener::onError);
+        }
     }
 
     @Override
@@ -239,6 +271,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         if (onGetAlterraPicturesListener != null){
             mFirestore.collection(COLLECTION_PATH_PHOTOS)
                     .whereEqualTo("location",location.getId())
+                    .orderBy("date", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                             List<AlterraPicture> pictures = new ArrayList<>();
@@ -247,7 +280,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 String owner = (String) document.get("owner");
                                 String url = (String) document.get("link");
                                 long timestamp = (long) document.get("date");
-                                pictures.add(new AlterraPicture(id,url,owner,timestamp,location));
+                                pictures.add(new AlterraPicture(id,url,owner,timestamp,location.getId()));
                             }
                             onGetAlterraPicturesListener.onSuccess(pictures);
                     })
@@ -270,7 +303,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                             String url = (String) document.get("link");
                             long timestamp = (long) document.get("date");
                             String location = (String) document.get("location");
-                            pictures.add(new AlterraPicture(id,url,owner,timestamp,location));
+                            pictures.add(new AlterraPicture(id,url,owner.getUID(),timestamp,location));
                         }
                         onGetAlterraPicturesListener.onSuccess(pictures);
                     })

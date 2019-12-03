@@ -39,6 +39,7 @@
     <!-- Image Content Description -->
     <string name="content_description_profile_picture">Profile picture</string>
     <string name="content_description_alterra_logo">Alterra Logo</string>
+    <string name="content_description_thumbnail">Thumbnail</string>
     <string name="content_description_unknown">Undefined picture</string>
 
     <string name="maps_first_marker_click">Click on a marker to begin</string>
@@ -52,4 +53,5 @@
     <string name="profile_photos_dialog_box_message">Do you want to delete this picture ?</string>
 
     <string name="details_loading_failed">Failed to load location details</string>
+    <string name="details_users_loading_failed">Failed to load users</string>
 </resources>

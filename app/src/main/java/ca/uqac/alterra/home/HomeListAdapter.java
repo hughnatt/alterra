@@ -51,12 +51,16 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
             if(dm.isUnlocked()){
                 button.setText(mContext.getString(R.string.alterra_point_unlocked));
+                button.setAlpha(1);
                 button.setClickable(true);
+                button.setOnClickListener(view -> {
+                    ((HomeActivity) mContext).showPlaceDetails(dm.getAlterraPoint());
+                });
             }
             else if(dm.isUnlockable()){
                 button.setText(mContext.getString(R.string.alterra_point_unlockable));
+                button.setAlpha(1);
                 button.setClickable(true);
-
                 button.setOnClickListener(view -> {
                     dm.getAlterraPoint().unlock();
                     notifyItemChanged(getAdapterPosition());
