@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
@@ -116,11 +117,11 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                                 Map descriptions = (Map) documentData.get("description");
                                 String title = (String) titles.get("default");
                                 String description = (String) descriptions.get("default");
-                                Map users = (Map) documentData.get("users");
+                                List<String> users = (List<String>) documentData.get("users");
                                 String thumbnail = (String) documentData.get("thumbnail");
-                                boolean unlocked = (users != null && users.containsKey(currentUser.getUID()));
+                                boolean unlocked = (users != null && users.contains(currentUser.getUID()));
                                 alterraPoints.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked, thumbnail));
-                            } catch (NullPointerException ex){
+                            } catch (NullPointerException | ClassCastException ex){
                                 System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
                             }
                         }
@@ -167,12 +168,12 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
         //Add user to location document
         mFirestore.collection(COLLECTION_PATH_LOCATIONS)
                 .document(location.getId())
-                .update("users."+user.getUID(),true)
+                .update("users", FieldValue.arrayUnion(user.getUID()))
                 .continueWithTask(task -> {
                     //Add location to user document
                     return mFirestore.collection(COLLECTION_PATH_USERS)
                                     .document(user.getUID())
-                                    .update("locations."+location.getId(),true);
+                                    .update("locations",FieldValue.arrayUnion(location.getId()));
                 })
                 .addOnCompleteListener((voidTask) -> {
                     if (writeListener != null) {
@@ -188,7 +189,22 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
     @Override
     public void getUnlockedUsers(AlterraPoint location, @Nullable OnGetUsersListener onGetUsersListener) {
-        //TODO
+        if (onGetUsersListener != null){
+            mFirestore.collection(COLLECTION_PATH_USERS)
+                    .whereArrayContains("locations",location.getId())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        List<AlterraUser> alterraUsers = new ArrayList<>();
+                        if (queryDocumentSnapshots != null){
+                            for (QueryDocumentSnapshot document : queryDocumentSnapshots){
+                                String email = (String) document.get("email");
+                                AlterraUser alterraUser = new AlterraUser(document.getId(),email,null);
+                                alterraUsers.add(alterraUser);
+                            }
+                        }
+                        onGetUsersListener.onSuccess(alterraUsers);
+                    }).addOnFailureListener(onGetUsersListener::onError);
+        }
     }
 
     @Override
