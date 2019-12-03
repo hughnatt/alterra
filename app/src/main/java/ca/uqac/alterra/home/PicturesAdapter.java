@@ -22,7 +22,7 @@ import ca.uqac.alterra.database.AlterraPicture;
 public class PicturesAdapter extends RecyclerView.Adapter{
 
     private Context mContext;
-    private ArrayList<String> mPhotoList;
+    private ArrayList<AlterraPicture> mPhotoList;
     private OnPictureClickListener mPictureClickListener;
     private OnPictureLongClickListener mPictureLongClickListener;
 
@@ -45,13 +45,13 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
        PlaceViewHolder Pholder =(PlaceViewHolder) holder;
        Glide.with(mContext)
-            .load(mPhotoList.get(position))
+            .load(mPhotoList.get(position).getURL())
             .fitCenter()
             .into(((PlaceViewHolder) holder).mPlace);
 
         Pholder.mPlace.setOnClickListener(view -> {
             if(mPictureClickListener != null){
-                mPictureClickListener.onClick(mPhotoList.get(position));
+                mPictureClickListener.onClick(mPhotoList.get(position).getURL());
             }
         });
         Pholder.mPlace.setOnLongClickListener(view -> {
@@ -68,13 +68,15 @@ public class PicturesAdapter extends RecyclerView.Adapter{
         return mPhotoList.size();
     }
 
-    public void addPicture(String pictureUrl){
-        mPhotoList.add(pictureUrl);
+    public void addPicture(AlterraPicture alterraPicture){
+        mPhotoList.add(alterraPicture);
         notifyItemInserted(getItemCount());
     }
 
-    public void addPicture(AlterraPicture alterraPicture){
-        addPicture(alterraPicture.getURL());
+    public void deleteItem(int position) {
+        mPhotoList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mPhotoList.size());
     }
 
     class PlaceViewHolder extends RecyclerView.ViewHolder {
@@ -101,6 +103,6 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     }
 
     public interface OnPictureLongClickListener{
-        void onLongClick(String url,int position);
+        void onLongClick(AlterraPicture alterraPicture,int position);
     }
 }

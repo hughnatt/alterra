@@ -149,7 +149,7 @@ public class HomeDetailsFragment extends Fragment {
             public void onSuccess(@Nullable List<AlterraPicture> alterraPictures) {
                 if (alterraPictures != null){
                     for (AlterraPicture picture : alterraPictures){
-                        picturesAdapter.addPicture(picture.getURL());
+                        picturesAdapter.addPicture(picture);
                     }
                     mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
                 }

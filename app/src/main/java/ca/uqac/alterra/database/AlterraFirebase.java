@@ -552,20 +552,48 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
 
     @Override
     public void deleteAlterraPictureFromFirestore(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener){
-        mFirestore.collection(COLLECTION_PATH_PHOTOS).document(picture.getId())
+        mFirestore.collection(COLLECTION_PATH_PHOTOS)
+                .document(picture.getId())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-
-                }
+                        deleteAlterraPictureFromStorage(picture,alterraWriteListener);
+                    }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-
+                        if(alterraWriteListener != null){
+                            alterraWriteListener.onError(e);
+                        }
                     }
                 });
 
+    }
+
+    @Override
+    public void deleteAlterraPictureFromStorage(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener){
+        StorageReference pictureToDelete = mStorage.getReferenceFromUrl(picture.getURL());
+        pictureToDelete
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                if(alterraWriteListener != null){
+                    alterraWriteListener.onSuccess();
+                }
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                if(alterraWriteListener != null) {
+                    //TODO : try to undo the delete from firestore
+                    alterraWriteListener.onError(exception);
+                }
+            }
+        });
     }
 }

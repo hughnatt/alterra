@@ -47,6 +47,7 @@ public class HomeProfileFragment extends Fragment {
     FirebaseStorage mStorage;
 
     RecyclerView mRecyclerView;
+    PicturesAdapter mAdapter;
 
 
     private TextView mTotalLocation;
@@ -64,11 +65,13 @@ public class HomeProfileFragment extends Fragment {
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
+
         mHeader = myView.findViewById(R.id.profileHeader);
         mRefresher = myView.findViewById(R.id.profileRefresher);
 
         mTotalPhotos = myView.findViewById(R.id.profileTotalPhotos);
         mTotalLocation = myView.findViewById(R.id.profileTotalLocation);
+
 
         return myView;
     }
@@ -89,14 +92,14 @@ public class HomeProfileFragment extends Fragment {
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
-        PicturesAdapter myAdapter = new PicturesAdapter(getContext(), url -> switchContext(url), (url, position) -> showDeleteAlertDialog(url,position));
-        mRecyclerView.setAdapter(myAdapter);
+        mAdapter = new PicturesAdapter(getContext(), url -> switchContext(url), (alterraPicture, position) -> showDeleteAlertDialog(alterraPicture,position));
+        mRecyclerView.setAdapter(mAdapter);
 
         AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
             @Override
             public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
                 for(AlterraPicture currentPicture : alterraPictures){
-                    myAdapter.addPicture(currentPicture.getURL());
+                    mAdapter.addPicture(currentPicture);
                 }
                 mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
             }
@@ -108,13 +111,13 @@ public class HomeProfileFragment extends Fragment {
 
 
         mRefresher.setOnRefreshListener(() -> {
-            myAdapter.clear();
+            mAdapter.clear();
             AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
                 @Override
                 public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
                     if(alterraPictures != null){
                         for(AlterraPicture currentPicture : alterraPictures){
-                            myAdapter.addPicture(currentPicture.getURL());
+                            mAdapter.addPicture(currentPicture);
                         }
                         mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
                     }
@@ -137,7 +140,7 @@ public class HomeProfileFragment extends Fragment {
         }
     }
 
-    public void showDeleteAlertDialog(String url,int position){
+    public void showDeleteAlertDialog(AlterraPicture picture,int position){
         new MaterialAlertDialogBuilder(getActivity(),R.style.DialogStyle)
                        .setTitle(R.string.profile_photos_dialog_box_title)
                        .setMessage(R.string.profile_photos_dialog_box_message)
@@ -147,7 +150,19 @@ public class HomeProfileFragment extends Fragment {
                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                            public void onClick(DialogInterface dialog, int which) {
                                // Continue with delete operation
-                               AlterraCloud.getDatabaseInstance().deleteAlterraPictureFromFirestore();
+                               AlterraCloud.getDatabaseInstance().deleteAlterraPictureFromFirestore(picture, new AlterraDatabase.AlterraWriteListener() {
+                                   @Override
+                                   public void onSuccess() {
+                                        mAdapter.deleteItem(position);
+                                        mTotalPhotos.setText(String.valueOf(mAdapter.getItemCount()));
+                                   }
+
+                                   @Override
+                                   public void onError(Exception e) {
+                                       String error = getResources().getString(R.string.profile_deletion_fail)+e;
+                                       Toast.makeText(getContext(),error,Toast.LENGTH_LONG).show();
+                                   }
+                               });
                            }
                        })
 
