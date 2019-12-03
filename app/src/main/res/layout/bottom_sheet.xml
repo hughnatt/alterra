@@ -80,14 +80,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimaryDark" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btmButton"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@android:color/white"/>
+                        android:backgroundTint="@android:color/white"
+                        android:textColor="@color/colorPrimary"/>
 
                 </LinearLayout>
 

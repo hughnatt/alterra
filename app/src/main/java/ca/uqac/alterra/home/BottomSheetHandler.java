@@ -113,7 +113,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mHandleButton.animate().scaleX(scale).scaleY(scale).setDuration(0).start();
     }
 
-    public void updateSheet(@Nullable AlterraPoint alterraPoint){
+    protected void updateSheet(@Nullable AlterraPoint alterraPoint){
         if (alterraPoint == null){
             mTitle.setText(R.string.maps_first_marker_click);
             mBsHeaderLinLayout.setVisibility(View.GONE);
@@ -149,13 +149,16 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
             if (alterraPoint.isUnlocked()){
                 mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
+                mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimary));
                 getImages();
 
             } else if (alterraPoint.isUnlockable()){
                 mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlockable));
+                mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
                 mRecyclerView.setVisibility(View.GONE);
             } else {
                 mSeeMore.setText(mActivity.getString(R.string.alterra_point_locked));
+                mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
                 mRecyclerView.setVisibility(View.GONE);
             }
 
