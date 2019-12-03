@@ -144,6 +144,18 @@ public class HomeDetailsFragment extends Fragment {
         PicturesAdapter picturesAdapter = new PicturesAdapter(getContext(), url -> ((HomeActivity) Objects.requireNonNull(getActivity())).displayPicture(url), null);
         mPicturesRecyclerView.setAdapter(picturesAdapter);
 
+        AlterraCloud.getDatabaseInstance().getUnlockedUsers(mAlterraPoint, new AlterraDatabase.OnGetUsersListener() {
+            @Override
+            public void onSuccess(List<AlterraUser> users) {
+                mTotalUsers.setText(String.valueOf(users.size()));
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getContext(),R.string.details_users_loading_failed,Toast.LENGTH_LONG).show();
+            }
+        });
+
         AlterraCloud.getDatabaseInstance().getAlterraPictures(mAlterraPoint, new AlterraDatabase.OnGetAlterraPicturesListener() {
             @Override
             public void onSuccess(@Nullable List<AlterraPicture> alterraPictures) {
