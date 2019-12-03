@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -59,7 +60,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
 
-    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE,FRAGMENT_PROFILE_PHOTO, FRAGMENT_DETAILS}
+    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
     private FRAGMENT_ID mCurrentFragment;
 
     private PhotoUploader mPhotoUploader;
@@ -68,16 +69,9 @@ public class HomeActivity extends AppCompatActivity {
     private AlterraAuth mAuth;
     private NavigationView mNavigationView;
 
-    private HomeMapFragment mHomeMapFragment;
-    private HomeListFragment mHomeListFragment;
-    private HomeProfileFragment mHomeProfileFragment;
-    private HomeProfilePhotoFragment mHomeProfilePhotoFragment;
-    private HomeDetailsFragment mHomeDetailsFragment;
-
     private boolean mGpsEnabled = false;
     private boolean mLocationEnabled = false;
 
-    private String mImageUrl;
     /**
      * True if we already requested runtime permissions
      * but we are still waiting user response.
@@ -91,28 +85,19 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FRAGMENT_ID startFragment = null;
-        if (savedInstanceState != null){
+        setContentView(R.layout.activity_home);
+
+        if (savedInstanceState == null){
+            //Not restoring from previous state, use default fragment
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
+        } else {
             mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
             mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
-            startFragment = (FRAGMENT_ID) savedInstanceState.getSerializable("mCurrentFragment");
-
-            mHomeMapFragment = (HomeMapFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeMapFragment");
-            mHomeListFragment = (HomeListFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeListFragment");
-            mHomeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeProfileFragment");
-            mHomeDetailsFragment = (HomeDetailsFragment) getSupportFragmentManager().getFragment(savedInstanceState,"HomeDetailsFragment");
         }
 
-        //Not restoring from previous state, use default fragment
-        if (startFragment == null) {
-            startFragment = FRAGMENT_ID.FRAGMENT_MAP;
-        }
-
-        setContentView(R.layout.activity_home);
         setNavigationViewListener();
         mAuth = AlterraCloud.getAuthInstance();
 
-        updateWorkflow(startFragment);
 
         //Get all the alterra location from database
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
@@ -121,9 +106,9 @@ public class HomeActivity extends AppCompatActivity {
         //Trigger an alert message when GPS is disabled
         AlterraGeolocator.addOnGPSStatusChangedListener(enabled -> {
             mGpsEnabled = enabled;
-            if (!enabled) {
+            /*if (!enabled) {
                 requestGPSActivation();
-            }
+            }*/
         });
 
 
@@ -165,60 +150,45 @@ public class HomeActivity extends AppCompatActivity {
             return;
         }
         mCurrentFragment = nextFragment;
-        FragmentTransaction ft;
+        FragmentManager fragmentManager = getSupportFragmentManager();
         switch (mCurrentFragment){
             case FRAGMENT_MAP:
-                if(mHomeMapFragment == null){
-                    mHomeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
-                    AlterraGeolocator.addOnLocationChangedListener(mHomeMapFragment);
+                HomeMapFragment homeMapFragment = (HomeMapFragment) fragmentManager.findFragmentByTag("HomeMapFragment");
+                if(homeMapFragment == null){
+                    homeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
+                    AlterraGeolocator.addOnLocationChangedListener(homeMapFragment);
                 }
-
-                ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeMapFragment,"HomeMapFragment");
-                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
-                ft.commit();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_home, homeMapFragment,"HomeMapFragment")
+                        .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                        .addToBackStack(null)
+                        .commit();
                 break;
 
             case FRAGMENT_LIST:
-
-                if(mHomeListFragment == null){
-                    mHomeListFragment = new HomeListFragment();
+                HomeListFragment homeListFragment = (HomeListFragment) fragmentManager.findFragmentByTag("HomeListFragment");
+                if(homeListFragment == null){
+                    homeListFragment = new HomeListFragment();
                 }
 
-                ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeListFragment,"HomeListFragment");
-                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
-                ft.commit();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_home, homeListFragment,"HomeListFragment")
+                        .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                        .addToBackStack(null)
+                        .commit();
                 break;
 
             case FRAGMENT_PROFILE:
-
-                if(mHomeProfileFragment == null){
-                    mHomeProfileFragment = new HomeProfileFragment();
+                HomeProfileFragment homeProfileFragment = (HomeProfileFragment) fragmentManager.findFragmentByTag("HomeProfileFragment");
+                if(homeProfileFragment == null){
+                    homeProfileFragment = new HomeProfileFragment();
                 }
 
-                ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeProfileFragment,"HomeProfileFragment");
-                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
-                ft.commit();
-                break;
-
-            case FRAGMENT_PROFILE_PHOTO:
-
-                mHomeProfilePhotoFragment = HomeProfilePhotoFragment.newInstance(mImageUrl);
-                ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home, mHomeProfilePhotoFragment);
-                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
-                ft.commit();
-                break;
-            case FRAGMENT_DETAILS:
-                if (mHomeDetailsFragment == null){
-                    mHomeDetailsFragment = new HomeDetailsFragment();
-                }
-                ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_home,mHomeDetailsFragment,"HomeDetailsFragment");
-                ft.setCustomAnimations(R.anim.faded_in,R.anim.faded_out);
-                ft.commit();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_home, homeProfileFragment,"HomeProfileFragment")
+                        .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                        .addToBackStack(null)
+                        .commit();
                 break;
         }
     }
@@ -409,26 +379,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putString("mCurrentImagePath",mCurrentImagePath);
         outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
-        outState.putSerializable("mCurrentFragment",mCurrentFragment);
-
-        HomeListFragment homeListFragment = (HomeListFragment) getSupportFragmentManager().findFragmentByTag("HomeListFragment");
-        if (homeListFragment != null){
-            getSupportFragmentManager().putFragment(outState,"HomeListFragment",homeListFragment);
-        }
-
-        HomeMapFragment homeMapFragment = (HomeMapFragment) getSupportFragmentManager().findFragmentByTag("HomeMapFragment");
-        if (homeMapFragment != null){
-            getSupportFragmentManager().putFragment(outState,"HomeMapFragment",homeMapFragment);
-        }
-
-        HomeProfileFragment homeProfileFragment = (HomeProfileFragment) getSupportFragmentManager().findFragmentByTag("HomeProfileFragment");
-        if (homeProfileFragment != null){
-            getSupportFragmentManager().putFragment(outState,"HomeProfileFragment",homeProfileFragment);
-        }
-        HomeDetailsFragment homeDetailsFragment = (HomeDetailsFragment) getSupportFragmentManager().findFragmentByTag("HomeDetailsFragment");
-        if (homeDetailsFragment != null){
-            getSupportFragmentManager().putFragment(outState,"HomeDetailsFragment",homeDetailsFragment);
-        }
     }
 
     private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
@@ -555,24 +505,30 @@ public class HomeActivity extends AppCompatActivity {
     }
     
     public void displayPicture(String url){
-        this.mImageUrl = url;
-        updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE_PHOTO);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_home, HomeProfilePhotoFragment.newInstance(url))
+                .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void showPlaceDetails(AlterraPoint alterraPoint){
-        mHomeDetailsFragment = HomeDetailsFragment.newInstance(alterraPoint);
-        updateWorkflow(FRAGMENT_ID.FRAGMENT_DETAILS);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_home,HomeDetailsFragment.newInstance(alterraPoint))
+                .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_home);
         if ((fragment instanceof HomeProfilePhotoFragment)){
-            updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+            fragmentManager.popBackStack();
         } else if (fragment instanceof  HomeDetailsFragment){
-            updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
-        }
-        else{
-            super.onBackPressed();
+            fragmentManager.popBackStack();
         }
     }
 }

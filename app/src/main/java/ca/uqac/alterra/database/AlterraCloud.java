@@ -8,21 +8,21 @@ public class AlterraCloud {
 
     public static AlterraDatabase getDatabaseInstance(){
         if (mDatabase == null){
-            mDatabase = new AlterraFirebase();
+            mDatabase = AlterraFirebase.getInstance();
         }
         return mDatabase;
     }
 
     public static AlterraAuth getAuthInstance(){
         if (mAuth == null){
-            mAuth = new AlterraFirebase();
+            mAuth = AlterraFirebase.getInstance();
         }
         return mAuth;
     }
 
     public static AlterraStorage getStorageInstance(){
         if (mStorage == null){
-            mStorage = new AlterraFirebase();
+            mStorage = AlterraFirebase.getInstance();
         }
         return mStorage;
     }

@@ -31,7 +31,11 @@ public interface AlterraDatabase {
 
     void unlockAlterraLocation(AlterraUser user, AlterraPoint location, @Nullable AlterraWriteListener alterraWriteListener);
 
-
+    void getUnlockedUsers(AlterraPoint location, @Nullable OnGetUsersListener onGetUsersListener);
+    interface OnGetUsersListener {
+        void onSuccess(List<AlterraUser> users);
+        void onError(Exception e);
+    }
 
 
     /*
