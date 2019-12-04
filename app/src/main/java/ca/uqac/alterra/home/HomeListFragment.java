@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,34 +40,20 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeListFragment extends Fragment {
 
-    FloatingActionButton mCameraButton;
-
     private RecyclerView mRecyclerView;
     private AlterraAuth mAuth;
+    private SwipeRefreshLayout mRefresher;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_list,container,false);
-    }
 
-//    private String distancePrettyPrint(double distance){
-//
-//        String distanceString;
-//
-//        if(distance < 1000){
-//            distanceString = new DecimalFormat("#.##").format(distance) + " m";
-//        }
-//        else if(distance < 1000000){
-//            distance /= 1000;
-//            distanceString = new DecimalFormat("#.#").format(distance) + " km";
-//        }
-//        else {
-//            distanceString = "+999 km";
-//        }
-//
-//        return distanceString;
-//    }
+        View myview = inflater.inflate(R.layout.fragment_home_list,container,false);
+
+        mRefresher = myview.findViewById(R.id.homeListRefresher);
+
+        return myview;
+    }
 
     @Override
     public void onStart() {
@@ -81,14 +68,39 @@ public class HomeListFragment extends Fragment {
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        mCameraButton = getView().findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).takeAlterraPhoto());
         mRecyclerView = getView().findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext());
+        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext(), new HomeListAdapter.OnButtonClickListener() {
+            @Override
+            public void onClick(AlterraPoint point) {
+                takePicture(point);
+            }
+        });
+
         mRecyclerView.setAdapter(recyclerAdapter);
+        mRefresher.setOnRefreshListener(() -> {
+            recyclerAdapter.clear();
+
+            AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
+            alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> {
+
+                if(list != null) {
+                    for (AlterraPoint p : list) {
+
+                        double distance = AlterraGeolocator.distanceFrom(p);
+
+                        recyclerAdapter.addData(new HomeListDataModel(p, distance));
+                        recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
+
+                    }
+                }
+            });
+
+            mRefresher.setRefreshing(false);
+
+        });
 
 
         //Get Alterra locations
@@ -106,5 +118,10 @@ public class HomeListFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void takePicture(AlterraPoint point){
+        HomeActivity mainActivity = (HomeActivity) getActivity();
+        mainActivity.takeAlterraPhoto(point);
     }
 }
