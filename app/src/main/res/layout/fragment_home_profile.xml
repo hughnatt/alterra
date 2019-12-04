@@ -68,7 +68,8 @@ android:layout_height="match_parent">
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:onClick="locationsView"/>
 
 
     </LinearLayout>

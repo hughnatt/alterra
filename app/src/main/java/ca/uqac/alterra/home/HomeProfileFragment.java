@@ -40,6 +40,11 @@ import ca.uqac.alterra.database.AlterraPicture;
 import ca.uqac.alterra.database.AlterraUser;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 
+enum ADAPTER {
+    PICTURES,
+    LOCATIONS
+}
+
 public class HomeProfileFragment extends Fragment {
 
     AlterraAuth mAuth;
@@ -56,6 +61,7 @@ public class HomeProfileFragment extends Fragment {
     private TextView mTotalPhotos;
     private View mHeader;
     private SwipeRefreshLayout mRefresher;
+    private ADAPTER mCurrentAdapter = ADAPTER.PICTURES;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -151,6 +157,11 @@ public class HomeProfileFragment extends Fragment {
 
     }
 
+
+    public void locationView(View v){
+        mRecyclerView.setAdapter(mAdapterLocation);
+
+    }
 
     public void switchContext(String url){
         if(getActivity() instanceof HomeActivity){
