@@ -67,7 +67,7 @@ public interface AlterraDatabase {
 
     void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener);
 
-    void getUserLocation(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation onGetAlterraUserLocationListener);
+    void getUserUnlockedLocations(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation onGetAlterraUserLocationListener);
 
     void deleteAlterraPictureFromFirestore(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener);
 
@@ -79,7 +79,7 @@ public interface AlterraDatabase {
     }
 
     interface OnGetAlterraUserLocation{
-        void onSuccess(@NonNull List<HomeListDataModel> userLocations);
+        void onSuccess(@NonNull List<AlterraPoint> userLocations);
         void onError(Exception e);
     }
 

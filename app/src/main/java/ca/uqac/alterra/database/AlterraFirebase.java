@@ -58,6 +58,7 @@ import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 import ca.uqac.alterra.database.exceptions.AlterraAuthWeakPasswordException;
 import ca.uqac.alterra.database.exceptions.AlterraWriteFailureException;
 import ca.uqac.alterra.home.AlterraPoint;
+import ca.uqac.alterra.home.HomeListDataModel;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 
@@ -292,7 +293,7 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     @Override
     public void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener) {
         if (onGetAlterraPicturesListener != null){
-            mFirestore.collection("photos")
+            mFirestore.collection(COLLECTION_PATH_PHOTOS)
                     .whereEqualTo("owner", owner.getUID())
                     .orderBy("date", Query.Direction.DESCENDING)
                     .get()
@@ -312,7 +313,35 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
-    public void getUserLocation(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation alterraUserLocation){
+    public void getUserUnlockedLocations(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation onAlterraUserLocation){
+        if (onAlterraUserLocation != null){
+            mFirestore.collection(COLLECTION_PATH_LOCATIONS)
+                    .whereArrayContains("users",owner.getUID())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        List<AlterraPoint> locations = new ArrayList<>();
+                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                            Map<String,Object> documentData = document.getData();
+                            try {
+                                GeoPoint coordinates = (GeoPoint) documentData.get("coordinates");
+                                double latitude = coordinates.getLatitude();
+                                double longitude = coordinates.getLongitude();
+                                Map titles = (Map) documentData.get("name");
+                                Map descriptions = (Map) documentData.get("description");
+                                String title = (String) titles.get("default");
+                                String description = (String) descriptions.get("default");
+                                List<String> users = (List<String>) documentData.get("users");
+                                String thumbnail = (String) documentData.get("thumbnail");
+                                boolean unlocked = (users != null && users.contains(owner.getUID()));
+                                locations.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked, thumbnail));
+                            } catch (NullPointerException | ClassCastException ex){
+                                System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
+                            }
+                        }
+                        onAlterraUserLocation.onSuccess(locations);
+                    })
+                    .addOnFailureListener(onAlterraUserLocation::onError);
+        }
 
     }
 

@@ -38,6 +38,7 @@ import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraPicture;
 import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeProfileFragment extends Fragment {
 
@@ -108,15 +109,16 @@ public class HomeProfileFragment extends Fragment {
             }
             @Override
             public void onError(Exception e) {
-                Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),R.string.profile_loading_fail,Toast.LENGTH_LONG).show();
             }
         });
 
-        AlterraCloud.getDatabaseInstance().getUserLocation(mCurrentUser, new AlterraDatabase.OnGetAlterraUserLocation() {
+        AlterraCloud.getDatabaseInstance().getUserUnlockedLocations(mCurrentUser, new AlterraDatabase.OnGetAlterraUserLocation() {
             @Override
-            public void onSuccess(@NonNull List<HomeListDataModel> userLocations) {
-                for(HomeListDataModel currentLocation : userLocations){
-                    mAdapterLocation.addData(currentLocation);
+            public void onSuccess(@NonNull List<AlterraPoint> userLocations) {
+                for(AlterraPoint currentLocation : userLocations){
+                    double distance = AlterraGeolocator.distanceFrom(currentLocation);
+                    mAdapterLocation.addData(new HomeListDataModel(currentLocation,distance));
                 }
                 mTotalLocation.setText(String.valueOf(userLocations.size()));
             }
