@@ -72,6 +72,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
                 button.setAlpha(.5f);
             }
         }
+
     }
 
     public  HomeListAdapter(Context context){
@@ -101,5 +102,12 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
     public void addData(HomeListDataModel data){
         mDataList.add(data);
+    }
+
+    public void clear(){
+        if(mDataList.size() > 0){
+            mDataList.clear();
+            notifyItemRangeRemoved(0, mDataList.size());
+        }
     }
 }

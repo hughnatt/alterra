@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,11 +44,17 @@ public class HomeListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private AlterraAuth mAuth;
+    private SwipeRefreshLayout mRefresher;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home_list,container,false);
+
+        View myview = inflater.inflate(R.layout.fragment_home_list,container,false);
+
+        mRefresher = myview.findViewById(R.id.homeListRefresher);
+
+        return myview;
     }
 
 //    private String distancePrettyPrint(double distance){
@@ -89,6 +96,27 @@ public class HomeListFragment extends Fragment {
 
         HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext());
         mRecyclerView.setAdapter(recyclerAdapter);
+        mRefresher.setOnRefreshListener(() -> {
+            recyclerAdapter.clear();
+
+            AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
+            alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> {
+
+                if(list != null) {
+                    for (AlterraPoint p : list) {
+
+                        double distance = AlterraGeolocator.distanceFrom(p);
+
+                        recyclerAdapter.addData(new HomeListDataModel(p, distance));
+                        recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
+
+                    }
+                }
+            });
+
+            mRefresher.setRefreshing(false);
+
+        });
 
 
         //Get Alterra locations
