@@ -40,12 +40,15 @@ import ca.uqac.alterra.database.AlterraPicture;
 import ca.uqac.alterra.database.AlterraUser;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 
-enum ADAPTER {
+enum Adapter {
     PICTURES,
     LOCATIONS
 }
 
 public class HomeProfileFragment extends Fragment {
+
+    public static int SPAN_COUNT_PICTURES = 2;
+    public static int SPAN_COUNT_LOCATIONS = 1;
 
     AlterraAuth mAuth;
     AlterraUser mCurrentUser;
@@ -56,12 +59,14 @@ public class HomeProfileFragment extends Fragment {
     PicturesAdapter mAdapterPictures;
     HomeListAdapter mAdapterLocation;
 
+    GridLayoutManager mGridLayoutManager;
+
 
     private TextView mTotalLocation;
     private TextView mTotalPhotos;
     private View mHeader;
     private SwipeRefreshLayout mRefresher;
-    private ADAPTER mCurrentAdapter = ADAPTER.PICTURES;
+    private Adapter mCurrentAdapter = Adapter.PICTURES;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +75,8 @@ public class HomeProfileFragment extends Fragment {
         View myView = inflater.inflate(R.layout.fragment_home_profile,container,false);
 
         mRecyclerView = myView.findViewById(R.id.recyclerview);
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mGridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT_PICTURES);
+
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
 
@@ -78,7 +84,10 @@ public class HomeProfileFragment extends Fragment {
         mRefresher = myView.findViewById(R.id.profileRefresher);
 
         mTotalPhotos = myView.findViewById(R.id.profileTotalPhotos);
+        mTotalPhotos.setOnClickListener(view -> picturesView(view));
+
         mTotalLocation = myView.findViewById(R.id.profileTotalLocation);
+        mTotalLocation.setOnClickListener(view -> locationView(view));
 
 
         return myView;
@@ -159,8 +168,19 @@ public class HomeProfileFragment extends Fragment {
 
 
     public void locationView(View v){
-        mRecyclerView.setAdapter(mAdapterLocation);
+        if(mCurrentAdapter != Adapter.LOCATIONS) {
+            mRecyclerView.setAdapter(mAdapterLocation);
+            mGridLayoutManager.setSpanCount(SPAN_COUNT_LOCATIONS);
+            mCurrentAdapter = Adapter.LOCATIONS;
+        }
+    }
 
+    public void picturesView(View v){
+        if(mCurrentAdapter != Adapter.PICTURES){
+            mRecyclerView.setAdapter(mAdapterPictures);
+            mGridLayoutManager.setSpanCount(SPAN_COUNT_PICTURES);
+            mCurrentAdapter = Adapter.PICTURES;
+        }
     }
 
     public void switchContext(String url){
