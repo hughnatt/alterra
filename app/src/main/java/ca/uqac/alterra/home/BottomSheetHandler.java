@@ -2,6 +2,7 @@ package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,6 +61,8 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     private ImageView mThumbnail;
 
+    private Boolean isSelected = false;
+
     public BottomSheetHandler(Activity activity){
         mActivity = activity;
         mTitle = activity.findViewById(R.id.btmTitleLocation);
@@ -74,6 +77,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mHandleButton.setOnClickListener((View v) -> mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
         mThumbnail = activity.findViewById(R.id.btmThumbnail);
         mCardView = activity.findViewById(R.id.btmCardView);
+
 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
@@ -90,6 +94,7 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         });
 
 
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView = activity.findViewById(R.id.btmRecyclerView);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -102,6 +107,10 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     @Override
     public void onStateChanged(@NonNull View view, int newState) {
+
+        if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_DRAGGING && !isSelected){
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
     }
 
     @Override
@@ -115,15 +124,23 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
 
     protected void updateSheet(@Nullable AlterraPoint alterraPoint){
         if (alterraPoint == null){
+            isSelected = false;
             mTitle.setText(R.string.maps_first_marker_click);
             mBsHeaderLinLayout.setVisibility(View.GONE);
             mBsDescriptionLinearLayout.setVisibility(View.GONE);
             mSeeMore.setVisibility(View.GONE);
             mDistance.setVisibility(View.GONE);
             mCardView.setVisibility(View.GONE);
+            mBottomSheetBehavior.setPeekHeight(70);
+
+
+
         } else {
+            isSelected = true;
             mAlterraPoint = alterraPoint;
             mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            mBottomSheetBehavior.setPeekHeight(450);
+
 
             Glide.with(mActivity)
                     .asBitmap()
