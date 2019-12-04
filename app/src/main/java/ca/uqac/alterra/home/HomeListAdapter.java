@@ -1,46 +1,63 @@
 package ca.uqac.alterra.home;
 
 import android.content.Context;
+import android.net.sip.SipSession;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
 public class HomeListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<HomeListDataModel> mDataList;
-    public Context mContext;
+    private Context mContext;
+    private OnButtonClickListener mOnButtonClickListener;
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView imgView;
-        public TextView titleView;
-        public TextView distanceView;
-        public Button button;
+        private ImageView imgView;
+        private TextView titleView;
+        private TextView distanceView;
+        private Button button;
+        private ImageButton photoButton;
 
-        public MyViewHolder(View v) {
+
+        private MyViewHolder(View v) {
             super(v);
             imgView = v.findViewById(R.id.recyclerviewImage);
             titleView = v.findViewById(R.id.listRecyclerviewTitle);
             distanceView = v.findViewById(R.id.listRecyclerviewDistance);
             button = v.findViewById(R.id.listRecyclerviewButton);
+            photoButton = v.findViewById(R.id.homeListPhotoButton);
         }
 
-        public void setData(HomeListDataModel dm){
+        private void setData(HomeListDataModel dm){
             this.titleView.setText(dm.getText());
+
+            photoButton.setOnClickListener(view -> {
+                if(mOnButtonClickListener != null){
+                    mOnButtonClickListener.onClick(dm.getAlterraPoint());
+                }
+            });
 
             Glide.with(mContext)
                     .load(dm.getImage())
@@ -63,6 +80,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
                 button.setClickable(true);
                 button.setOnClickListener(view -> {
                     dm.getAlterraPoint().unlock();
+                    button.setAlpha(1);
                     notifyItemChanged(getAdapterPosition());
                 });
             }
@@ -72,11 +90,13 @@ public class HomeListAdapter extends RecyclerView.Adapter {
                 button.setAlpha(.5f);
             }
         }
+
     }
 
-    public  HomeListAdapter(Context context){
+    public  HomeListAdapter(Context context, @Nullable OnButtonClickListener onClickListener){
         mDataList = new ArrayList<>();
         mContext = context;
+        mOnButtonClickListener = onClickListener;
     }
 
     @NonNull
@@ -91,6 +111,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder vh = (MyViewHolder) holder;
+        Collections.sort(mDataList, (homeListDataModel, t1) -> Double.compare(homeListDataModel.getDistance(), t1.getDistance()));
         vh.setData(mDataList.get(position));
     }
 
@@ -101,5 +122,19 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
     public void addData(HomeListDataModel data){
         mDataList.add(data);
+    }
+
+    public void clear(){
+
+        int size = mDataList.size();
+
+        if(size > 0){
+            mDataList.clear();
+            notifyItemRangeRemoved(0, size);
+        }
+    }
+
+    interface OnButtonClickListener{
+        public void onClick(AlterraPoint point);
     }
 }
