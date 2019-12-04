@@ -105,9 +105,12 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     }
 
     public void clear(){
-        if(mDataList.size() > 0){
+
+        int size = mDataList.size();
+
+        if(size > 0){
             mDataList.clear();
-            notifyItemRangeRemoved(0, mDataList.size());
+            notifyItemRangeRemoved(0, size);
         }
     }
 }
