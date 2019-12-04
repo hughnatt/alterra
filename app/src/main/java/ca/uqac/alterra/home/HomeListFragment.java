@@ -40,8 +40,6 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeListFragment extends Fragment {
 
-    FloatingActionButton mCameraButton;
-
     private RecyclerView mRecyclerView;
     private AlterraAuth mAuth;
     private SwipeRefreshLayout mRefresher;
@@ -88,8 +86,6 @@ public class HomeListFragment extends Fragment {
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        mCameraButton = getView().findViewById(R.id.cameraButton);
-        mCameraButton.setOnClickListener((view) -> ((HomeActivity) getActivity()).takeAlterraPhoto());
         mRecyclerView = getView().findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
