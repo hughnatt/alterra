@@ -55,24 +55,6 @@ public class HomeListFragment extends Fragment {
         return myview;
     }
 
-//    private String distancePrettyPrint(double distance){
-//
-//        String distanceString;
-//
-//        if(distance < 1000){
-//            distanceString = new DecimalFormat("#.##").format(distance) + " m";
-//        }
-//        else if(distance < 1000000){
-//            distance /= 1000;
-//            distanceString = new DecimalFormat("#.#").format(distance) + " km";
-//        }
-//        else {
-//            distanceString = "+999 km";
-//        }
-//
-//        return distanceString;
-//    }
-
     @Override
     public void onStart() {
         super.onStart();

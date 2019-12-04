@@ -26,18 +26,20 @@ import ca.uqac.alterra.utility.PrettyPrinter;
 public class HomeListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<HomeListDataModel> mDataList;
-    public Context mContext;
-    public OnButtonClickListener mOnButtonClickListener;
+    private Context mContext;
+    private OnButtonClickListener mOnButtonClickListener;
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView imgView;
-        public TextView titleView;
-        public TextView distanceView;
-        public Button button;
-        public ImageButton photoButton;
-        public MyViewHolder(View v) {
+        private ImageView imgView;
+        private TextView titleView;
+        private TextView distanceView;
+        private Button button;
+        private ImageButton photoButton;
+
+
+        private MyViewHolder(View v) {
             super(v);
             imgView = v.findViewById(R.id.recyclerviewImage);
             titleView = v.findViewById(R.id.listRecyclerviewTitle);
@@ -46,13 +48,13 @@ public class HomeListAdapter extends RecyclerView.Adapter {
             photoButton = v.findViewById(R.id.homeListPhotoButton);
         }
 
-        public void setData(HomeListDataModel dm){
+        private void setData(HomeListDataModel dm){
             this.titleView.setText(dm.getText());
 
             photoButton.setOnClickListener(view -> {
-                //if(mOnButtonClickListener != null){
+                if(mOnButtonClickListener != null){
                     mOnButtonClickListener.onClick(dm.getAlterraPoint());
-                //}
+                }
             });
 
             Glide.with(mContext)
