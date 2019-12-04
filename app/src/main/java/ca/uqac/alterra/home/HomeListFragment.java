@@ -90,7 +90,13 @@ public class HomeListFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext());
+        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext(), new HomeListAdapter.OnButtonClickListener() {
+            @Override
+            public void onClick(AlterraPoint point) {
+                takePicture(point);
+            }
+        });
+
         mRecyclerView.setAdapter(recyclerAdapter);
         mRefresher.setOnRefreshListener(() -> {
             recyclerAdapter.clear();
@@ -130,5 +136,10 @@ public class HomeListFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void takePicture(AlterraPoint point){
+        HomeActivity mainActivity = (HomeActivity) getActivity();
+        mainActivity.takeAlterraPhoto(point);
     }
 }

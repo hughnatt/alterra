@@ -1,15 +1,18 @@
 package ca.uqac.alterra.home;
 
 import android.content.Context;
+import android.net.sip.SipSession;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,12 +20,15 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
 public class HomeListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<HomeListDataModel> mDataList;
     public Context mContext;
+    public OnButtonClickListener mOnButtonClickListener;
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -30,17 +36,24 @@ public class HomeListAdapter extends RecyclerView.Adapter {
         public TextView titleView;
         public TextView distanceView;
         public Button button;
-
+        public ImageButton photoButton;
         public MyViewHolder(View v) {
             super(v);
             imgView = v.findViewById(R.id.recyclerviewImage);
             titleView = v.findViewById(R.id.listRecyclerviewTitle);
             distanceView = v.findViewById(R.id.listRecyclerviewDistance);
             button = v.findViewById(R.id.listRecyclerviewButton);
+            photoButton = v.findViewById(R.id.homeListPhotoButton);
         }
 
         public void setData(HomeListDataModel dm){
             this.titleView.setText(dm.getText());
+
+            photoButton.setOnClickListener(view -> {
+                //if(mOnButtonClickListener != null){
+                    mOnButtonClickListener.onClick(dm.getAlterraPoint());
+                //}
+            });
 
             Glide.with(mContext)
                     .load(dm.getImage())
@@ -75,9 +88,10 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
     }
 
-    public  HomeListAdapter(Context context){
+    public  HomeListAdapter(Context context, @Nullable OnButtonClickListener onClickListener){
         mDataList = new ArrayList<>();
         mContext = context;
+        mOnButtonClickListener = onClickListener;
     }
 
     @NonNull
@@ -112,5 +126,9 @@ public class HomeListAdapter extends RecyclerView.Adapter {
             mDataList.clear();
             notifyItemRangeRemoved(0, size);
         }
+    }
+
+    interface OnButtonClickListener{
+        public void onClick(AlterraPoint point);
     }
 }
