@@ -312,6 +312,11 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     }
 
     @Override
+    public void getUserLocation(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation alterraUserLocation){
+
+    }
+
+    @Override
     public AlterraUser getCurrentUser() {
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser == null){

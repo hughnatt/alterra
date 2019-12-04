@@ -96,6 +96,8 @@ public class HomeProfileFragment extends Fragment {
         mAdapterPictures = new PicturesAdapter(getContext(), url -> switchContext(url), (alterraPicture, position) -> showDeleteAlertDialog(alterraPicture,position));
         mRecyclerView.setAdapter(mAdapterPictures);
 
+        mAdapterLocation = new HomeListAdapter(getContext());
+
         AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
             @Override
             public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
@@ -110,6 +112,20 @@ public class HomeProfileFragment extends Fragment {
             }
         });
 
+        AlterraCloud.getDatabaseInstance().getUserLocation(mCurrentUser, new AlterraDatabase.OnGetAlterraUserLocation() {
+            @Override
+            public void onSuccess(@NonNull List<HomeListDataModel> userLocations) {
+                for(HomeListDataModel currentLocation : userLocations){
+                    mAdapterLocation.addData(currentLocation);
+                }
+                mTotalLocation.setText(String.valueOf(userLocations.size()));
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+            }
+        });
 
         mRefresher.setOnRefreshListener(() -> {
             mAdapterPictures.clear();
@@ -155,7 +171,7 @@ public class HomeProfileFragment extends Fragment {
                                    @Override
                                    public void onSuccess() {
                                        mAdapterPictures.deleteItem(position);
-                                        mTotalPhotos.setText(String.valueOf(mAdapterPictures.getItemCount()));
+                                       mTotalPhotos.setText(String.valueOf(mAdapterPictures.getItemCount()));
                                    }
 
                                    @Override
