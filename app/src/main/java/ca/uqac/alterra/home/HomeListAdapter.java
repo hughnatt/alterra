@@ -76,6 +76,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
                 button.setClickable(true);
                 button.setOnClickListener(view -> {
                     dm.getAlterraPoint().unlock();
+                    button.setAlpha(1);
                     notifyItemChanged(getAdapterPosition());
                 });
             }
