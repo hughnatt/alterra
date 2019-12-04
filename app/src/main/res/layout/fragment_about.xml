@@ -3,13 +3,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white"
     tools:context=".about.AboutFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="HELLO" />
+        >
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="200dp"
+        android:layout_height="350dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="1dp"
+        android:backgroundTint="#fafafa"
+        android:layout_centerInParent="true"
+
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            >
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/alterra_logo_round"
+                android:layout_gravity="center"
+                >
+            </ImageView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            android:id="@+id/title"
+            android:textAlignment="center"
+            android:textColor="#242B2F"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="by"
+            android:textAlignment="center"
+            android:textColor="#242B2F"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/by"
+            android:textColor="@android:color/black"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:text="LANDI Estelle\n SIBUE Quentin \n SAUTON Tanguy \n VINCENT Mathieu \n 2019 ">
+        </TextView>
+
+        </LinearLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="1dp"
+            android:backgroundTint="#fafafa"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="10dp"
+
+            >
+
+       <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/uqac_logo">
+        </ImageView>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</RelativeLayout>
+
+
 
 </FrameLayout>
