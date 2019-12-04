@@ -47,7 +47,8 @@ public class HomeProfileFragment extends Fragment {
     FirebaseStorage mStorage;
 
     RecyclerView mRecyclerView;
-    PicturesAdapter mAdapter;
+    PicturesAdapter mAdapterPictures;
+    HomeListAdapter mAdapterLocation;
 
 
     private TextView mTotalLocation;
@@ -92,14 +93,14 @@ public class HomeProfileFragment extends Fragment {
         mFirestore = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
 
-        mAdapter = new PicturesAdapter(getContext(), url -> switchContext(url), (alterraPicture, position) -> showDeleteAlertDialog(alterraPicture,position));
-        mRecyclerView.setAdapter(mAdapter);
+        mAdapterPictures = new PicturesAdapter(getContext(), url -> switchContext(url), (alterraPicture, position) -> showDeleteAlertDialog(alterraPicture,position));
+        mRecyclerView.setAdapter(mAdapterPictures);
 
         AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
             @Override
             public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
                 for(AlterraPicture currentPicture : alterraPictures){
-                    mAdapter.addPicture(currentPicture);
+                    mAdapterPictures.addPicture(currentPicture);
                 }
                 mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
             }
@@ -111,13 +112,13 @@ public class HomeProfileFragment extends Fragment {
 
 
         mRefresher.setOnRefreshListener(() -> {
-            mAdapter.clear();
+            mAdapterPictures.clear();
             AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
                 @Override
                 public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
                     if(alterraPictures != null){
                         for(AlterraPicture currentPicture : alterraPictures){
-                            mAdapter.addPicture(currentPicture);
+                            mAdapterPictures.addPicture(currentPicture);
                         }
                         mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
                     }
@@ -153,8 +154,8 @@ public class HomeProfileFragment extends Fragment {
                                AlterraCloud.getDatabaseInstance().deleteAlterraPictureFromFirestore(picture, new AlterraDatabase.AlterraWriteListener() {
                                    @Override
                                    public void onSuccess() {
-                                        mAdapter.deleteItem(position);
-                                        mTotalPhotos.setText(String.valueOf(mAdapter.getItemCount()));
+                                       mAdapterPictures.deleteItem(position);
+                                        mTotalPhotos.setText(String.valueOf(mAdapterPictures.getItemCount()));
                                    }
 
                                    @Override
