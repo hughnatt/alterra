@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
@@ -109,6 +111,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder vh = (MyViewHolder) holder;
+        Collections.sort(mDataList, (homeListDataModel, t1) -> Double.compare(homeListDataModel.getDistance(), t1.getDistance()));
         vh.setData(mDataList.get(position));
     }
 
