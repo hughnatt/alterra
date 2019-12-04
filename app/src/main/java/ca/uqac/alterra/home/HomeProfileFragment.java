@@ -145,23 +145,45 @@ public class HomeProfileFragment extends Fragment {
         });
 
         mRefresher.setOnRefreshListener(() -> {
-            mAdapterPictures.clear();
-            AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
-                @Override
-                public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
-                    if(alterraPictures != null){
-                        for(AlterraPicture currentPicture : alterraPictures){
-                            mAdapterPictures.addPicture(currentPicture);
+
+            if(mCurrentAdapter == Adapter.PICTURES){
+                mAdapterPictures.clear();
+                AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
+                    @Override
+                    public void onSuccess(@NonNull List<AlterraPicture> alterraPictures) {
+                        if(alterraPictures != null){
+                            for(AlterraPicture currentPicture : alterraPictures){
+                                mAdapterPictures.addPicture(currentPicture);
+                            }
+                            mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
                         }
-                        mTotalPhotos.setText(String.valueOf(alterraPictures.size()));
+                        mRefresher.setRefreshing(false);
                     }
-                    mRefresher.setRefreshing(false);
-                }
-                @Override
-                public void onError(Exception e) {
-                    Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
-                }
-            });
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            else if(mCurrentAdapter == Adapter.LOCATIONS){
+                AlterraCloud.getDatabaseInstance().getUserUnlockedLocations(mCurrentUser, new AlterraDatabase.OnGetAlterraUserLocation() {
+                    @Override
+                    public void onSuccess(@NonNull List<AlterraPoint> userLocations) {
+                        for(AlterraPoint currentLocation : userLocations){
+                            double distance = AlterraGeolocator.distanceFrom(currentLocation);
+                            mAdapterLocation.addData(new HomeListDataModel(currentLocation,distance));
+                        }
+                        mTotalLocation.setText(String.valueOf(userLocations.size()));
+                        mRefresher.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(getContext(),R.string.details_loading_failed,Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
         });
 
     }
