@@ -138,4 +138,11 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     interface OnButtonClickListener{
         public void onClick(AlterraPoint point);
     }
+
+    public void clear(){
+        if(mDataList.size() > 0){
+            mDataList.clear();
+            notifyItemRangeRemoved(0, mDataList.size());
+        }
+    }
 }
