@@ -58,7 +58,7 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 public class HomeActivity extends AppCompatActivity {
 
 
-    public static final String CHANNEL_ID = "ca.uqac.alterra.notifications";
+
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
     private FRAGMENT_ID mCurrentFragment;
@@ -111,7 +111,7 @@ public class HomeActivity extends AppCompatActivity {
             }*/
         });
 
-
+        mPhotoUploader = new PhotoUploader(this);
     }
 
 
@@ -119,12 +119,6 @@ public class HomeActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         AlterraUser currentUser = mAuth.getCurrentUser();
-
-        mPhotoUploader = new PhotoUploader(getResources().getString(R.string.firebaseBucket), this);
-
-
-        //Notification setup
-        createNotificationChannel();
 
         //Make sure a user is logged in. If it's not the case, go back to login screen
         if (currentUser != null) {
@@ -314,22 +308,6 @@ public class HomeActivity extends AppCompatActivity {
                 break;
         }
 
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     private void setNavigationViewListener() {
