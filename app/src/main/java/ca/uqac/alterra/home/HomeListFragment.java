@@ -92,7 +92,6 @@ public class HomeListFragment extends Fragment {
                         double distance = AlterraGeolocator.distanceFrom(p);
 
                         recyclerAdapter.addData(new HomeListDataModel(p, distance));
-                        recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
 
                     }
                 }

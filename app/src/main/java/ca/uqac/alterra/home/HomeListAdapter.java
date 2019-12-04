@@ -122,6 +122,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
     public void addData(HomeListDataModel data){
         mDataList.add(data);
+        notifyItemInserted(getItemCount());
     }
 
     public void clear(){
