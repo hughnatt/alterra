@@ -2,18 +2,14 @@ package ca.uqac.alterra.home;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.cardview.widget.CardView;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +32,7 @@ import ca.uqac.alterra.utility.PrettyPrinter;
  * The main role of this class is to hide/unhide the floating camera action button
  * when the bottom sheet is expanded
  */
-public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback {
+public class BottomSheetHandler  {
 
     private TextView mTitle;
     private TextView mDistance;
@@ -54,14 +50,10 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     private FloatingActionButton mCameraButton;
     private AppCompatImageButton mHandleButton;
 
-    private BottomSheetBehavior mBottomSheetBehavior;
-    private LinearLayout mBsDescriptionLinearLayout;
-    private NestedScrollView mBsHeaderLinLayout;
-    private CardView mCardView;
+    private BottomSheetBehavior mInfoBottomSheet;
+    private BottomSheetBehavior mUnselectedBottomSheet;
 
     private ImageView mThumbnail;
-
-    private Boolean isSelected = false;
 
     public BottomSheetHandler(Activity activity){
         mActivity = activity;
@@ -70,19 +62,38 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         mDescription = activity.findViewById(R.id.btmDescription);
         mSeeMore =activity.findViewById(R.id.btmButton);
         mCameraButton = activity.findViewById(R.id.cameraButton);
-        mBottomSheetBehavior = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottom_sheet));
-        mBsHeaderLinLayout = activity.findViewById(R.id.btmScrollView);
-        mBsDescriptionLinearLayout = activity.findViewById(R.id.btmLinLayoutDescription);
-        mHandleButton = activity.findViewById(R.id.bottomSheetHandle);
-        mHandleButton.setOnClickListener((View v) -> mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
         mThumbnail = activity.findViewById(R.id.btmThumbnail);
-        mCardView = activity.findViewById(R.id.btmCardView);
+
+        mInfoBottomSheet = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottom_sheet));
+        mInfoBottomSheet.addBottomSheetCallback(new InfoSheetCallback());
+
+        mUnselectedBottomSheet = BottomSheetBehavior.from(mActivity.findViewById(R.id.bottom_sheet_nopoint));
+        mUnselectedBottomSheet.addBottomSheetCallback(new UnselectedSheetCallback());
+
+
+        mHandleButton = activity.findViewById(R.id.bottomSheetHandle);
+
+        mHandleButton.setOnClickListener((View v) -> {
+            if (mAlterraPoint == null){
+                mUnselectedBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            } else {
+                mInfoBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+            mHandleButton.animate().scaleX(0F).scaleY(0F).setDuration(1).start();
+        });
 
 
         //Start new activity
         mSeeMore.setOnClickListener((View v) -> {
-            if (mAlterraPoint != null && mAlterraPoint.isUnlocked()){
-                ((HomeActivity) mActivity).showPlaceDetails(getAlterraPoint());
+            if (mAlterraPoint != null) {
+                if (mAlterraPoint.isUnlocked()) {
+                    ((HomeActivity) mActivity).showPlaceDetails(getAlterraPoint());
+                } else if (mAlterraPoint.isUnlockable()){
+                    mAlterraPoint.unlock(); //TODO use the to-be created OnUnlockSuccessfullListener
+                    updateSheet(null); //TODO Better sheet content update
+                } else {
+                    Toast.makeText(mActivity,R.string.alterra_point_locked,Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -92,7 +103,6 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
                 ((HomeActivity) mActivity).takeAlterraPhoto(mAlterraPoint);
             }
         });
-
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
@@ -105,84 +115,49 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
         updateSheet(alterraPoint);
     }
 
-    @Override
-    public void onStateChanged(@NonNull View view, int newState) {
-
-        if(mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_DRAGGING && !isSelected){
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-    }
-
-    @Override
-    public void onSlide(@NonNull View view, float slideOffset) {
-        float scale;
-        scale = (1+slideOffset < 1) ? (1 + slideOffset) : 1;
-        mCameraButton.animate().scaleX(scale).scaleY(scale).setDuration(0).start();
-        scale = ((slideOffset > -0.8) ? 0 : ((slideOffset < -1) ? 1 : -5*slideOffset-4));
-        mHandleButton.animate().scaleX(scale).scaleY(scale).setDuration(0).start();
-    }
-
     protected void updateSheet(@Nullable AlterraPoint alterraPoint){
-        if (alterraPoint == null){
-            isSelected = false;
-            mTitle.setText(R.string.maps_first_marker_click);
-            mBsHeaderLinLayout.setVisibility(View.GONE);
-            mBsDescriptionLinearLayout.setVisibility(View.GONE);
-            mSeeMore.setVisibility(View.GONE);
-            mDistance.setVisibility(View.GONE);
-            mCardView.setVisibility(View.GONE);
-            mBottomSheetBehavior.setPeekHeight(70);
-
-
-
+        if (mAlterraPoint == alterraPoint && alterraPoint != null && mInfoBottomSheet.getState()==BottomSheetBehavior.STATE_COLLAPSED){
+            mInfoBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else {
-            isSelected = true;
             mAlterraPoint = alterraPoint;
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            mBottomSheetBehavior.setPeekHeight(450);
-
-
-            Glide.with(mActivity)
-                    .asBitmap()
-                    .load(alterraPoint.getThumbnail())
-                    .into(mThumbnail);
-
-            mTitle.setText(alterraPoint.getTitle());
-            mDistance.setText(PrettyPrinter.formatDistance(AlterraGeolocator.distanceFrom(alterraPoint)));
-            mDistance.setVisibility(View.VISIBLE);
-
-
-
-            if(alterraPoint.getDescription().isEmpty())
-                mDescription.setText("...");
-            else{
-                mDescription.setText(alterraPoint.getDescription());
-            }
-
-            mBsDescriptionLinearLayout.setVisibility(View.VISIBLE);
-            mBsHeaderLinLayout.setVisibility(View.VISIBLE);
-            mCardView.setVisibility(View.VISIBLE);
-            mSeeMore.setVisibility(View.VISIBLE);
-
-            if (alterraPoint.isUnlocked()){
-                mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
-                mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimary));
-                getImages();
-
-            } else if (alterraPoint.isUnlockable()){
-                mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlockable));
-                mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
-                mRecyclerView.setVisibility(View.GONE);
+            mHandleButton.animate().scaleX(0F).scaleY(0F).setDuration(1).start();
+            if (alterraPoint == null){
+                mInfoBottomSheet.setState(BottomSheetBehavior.STATE_HIDDEN);
+                mUnselectedBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mCameraButton.animate().scaleY(0F).scaleX(0F).setDuration(1).start();
             } else {
-                mSeeMore.setText(mActivity.getString(R.string.alterra_point_locked));
-                mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
-                mRecyclerView.setVisibility(View.GONE);
+                mUnselectedBottomSheet.setState(BottomSheetBehavior.STATE_HIDDEN);
+                mInfoBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                Glide.with(mActivity)
+                        .asBitmap()
+                        .load(alterraPoint.getThumbnail())
+                        .into(mThumbnail);
+
+                mTitle.setText(alterraPoint.getTitle());
+                mDistance.setText(PrettyPrinter.formatDistance(AlterraGeolocator.distanceFrom(alterraPoint)));
+
+                if(alterraPoint.getDescription().isEmpty())
+                    mDescription.setText("...");
+                else{
+                    mDescription.setText(alterraPoint.getDescription());
+                }
+
+                if (alterraPoint.isUnlocked()){
+                    mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
+                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimary));
+                    getImages();
+                } else if (alterraPoint.isUnlockable()){
+                    mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlockable));
+                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
+                    mRecyclerView.setAdapter(null);
+                } else {
+                    mSeeMore.setText(mActivity.getString(R.string.alterra_point_locked));
+                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
+                    mRecyclerView.setAdapter(null);
+                }
             }
-
         }
-
-
-
     }
 
     private void getImages(){
@@ -211,11 +186,9 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     }
 
     protected void unselectSheet(){
-        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED){
+        if (mAlterraPoint != null){
             updateSheet(null);
-            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }else
-            updateSheet(null);
+        }
     }
 
     /**
@@ -224,5 +197,46 @@ public class BottomSheetHandler extends BottomSheetBehavior.BottomSheetCallback 
     @Nullable
     protected AlterraPoint getAlterraPoint(){
         return mAlterraPoint;
+    }
+
+
+    private class UnselectedSheetCallback extends BottomSheetBehavior.BottomSheetCallback {
+
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            if (newState == BottomSheetBehavior.STATE_HIDDEN && mAlterraPoint == null){
+                mHandleButton.animate().scaleX(1F).scaleY(1F).setDuration(1).start();
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            /*float scale = ((slideOffset > -0.8) ? 0 : ((slideOffset < -1) ? 1 : -5*slideOffset-4));
+            mHandleButton.animate().scaleX(scale).scaleY(scale).setDuration(0).start();*/
+        }
+    }
+
+    private class InfoSheetCallback extends BottomSheetBehavior.BottomSheetCallback {
+
+        @Override
+        public void onStateChanged(@NonNull View bottomSheet, int newState) {
+            /*if(mInfoBottomSheet.getState() == BottomSheetBehavior.STATE_DRAGGING && !isSelected){
+                mInfoBottomSheet.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }*/
+            if (newState == BottomSheetBehavior.STATE_HIDDEN && mAlterraPoint != null){
+                mHandleButton.animate().scaleX(1F).scaleY(1F).setDuration(1).start();
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            if (mAlterraPoint != null && mAlterraPoint.isUnlocked()){
+                float scale;
+                scale = (1+slideOffset < 1) ? (1 + slideOffset) : 1;
+                mCameraButton.animate().scaleX(scale).scaleY(scale).setDuration(0).start();
+            }
+            /*scale = ((slideOffset > -0.8) ? 0 : ((slideOffset < -1) ? 1 : -5*slideOffset-4));
+            mHandleButton.animate().scaleX(scale).scaleY(scale).setDuration(0).start();*/
+        }
     }
 }
