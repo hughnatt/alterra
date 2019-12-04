@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.about.AboutFragment;
 import ca.uqac.alterra.auth.AuthActivity;
 
 import ca.uqac.alterra.database.AlterraCloud;
@@ -60,7 +61,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE}
+    private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE, FRAGMENT_ABOUT}
     private FRAGMENT_ID mCurrentFragment;
 
     private PhotoUploader mPhotoUploader;
@@ -179,6 +180,19 @@ public class HomeActivity extends AppCompatActivity {
 
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_home, homeProfileFragment,"HomeProfileFragment")
+                        .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                        .addToBackStack(null)
+                        .commit();
+                break;
+
+            case FRAGMENT_ABOUT:
+                AboutFragment aboutFragment = (AboutFragment) fragmentManager.findFragmentByTag("AboutFragment");
+                if(aboutFragment == null){
+                    aboutFragment = new AboutFragment();
+                }
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_home, aboutFragment,"AboutFragment")
                         .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
                         .addToBackStack(null)
                         .commit();
@@ -336,6 +350,7 @@ public class HomeActivity extends AppCompatActivity {
                 case R.id.nav_item_about :
                     Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
                     toastAbout.show();
+                    updateWorkflow(FRAGMENT_ID.FRAGMENT_ABOUT);
                     break;
                 case R.id.nav_item_logout :
                     mAuth.logOut();
