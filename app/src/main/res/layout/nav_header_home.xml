@@ -16,7 +16,7 @@
         android:layout_height="70dp"
         app:cardCornerRadius="70dp"
         android:backgroundTint="#fafafa"
-        android:layout_marginStart="15dp"
+        android:layout_gravity="center"
 
         >
 
@@ -38,8 +38,9 @@
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
         android:textColor="#fafafa"
+        android:layout_gravity="center"
+
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
     />
 
