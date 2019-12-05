@@ -85,7 +85,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="LANDI Estelle">
+                    android:text="Estelle LANDI">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
@@ -106,7 +106,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="SIBUE Quentin">
+                    android:text="Quentin SIBUE">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
@@ -128,7 +128,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="SAUTON Tanguy">
+                    android:text="Tanguy SAUTON">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
@@ -149,7 +149,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="VINCENT Mathieu">
+                    android:text="Mathieu VINCENT">
                 </TextView>
             </androidx.cardview.widget.CardView>
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,6 +7,10 @@
     android:background="#fafafb"
     tools:context=".about.AboutFragment">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -18,12 +22,12 @@
 
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_below="@id/toolbar"
-        android:gravity="center">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_below="@id/toolbar"
+    android:gravity="center">
 
 
         <LinearLayout
@@ -36,32 +40,39 @@
             >
 
 
-            <ImageView
-                android:id="@+id/btmThumbnail"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/alterra_logo_round"
-                android:layout_gravity="center"
-                android:contentDescription="@string/content_description_alterra_logo"
-                />
+                <ImageView
+                    android:id="@+id/btmThumbnail"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/alterra_logo_round"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/content_description_alterra_logo"
+                    />
 
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_title"
-                android:id="@+id/title"
-                android:textAlignment="center"
-                android:textColor="#242B2F"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            android:id="@+id/title"
+            android:textAlignment="center"
+            android:textColor="#242B2F"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            />
 
         </LinearLayout>
+
+
+
+
 
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/toolbar"
             android:rowCount="2"
             android:columnCount="2"
             android:padding="14dp">
@@ -71,7 +82,8 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:backgroundTint="#fafafb"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -81,7 +93,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="@string/estelle">
+                    android:text="Estelle LANDI">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
@@ -90,7 +102,9 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:backgroundTint="#fafafb"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -100,7 +114,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="@string/quentin">
+                    android:text="Quentin SIBUE">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
@@ -110,7 +124,9 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:backgroundTint="#fafafb"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -120,7 +136,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="@string/tanguy">
+                    android:text="Tanguy SAUTON">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
@@ -129,7 +145,9 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:backgroundTint="#fafafb"
-                android:layout_margin="16dp">
+                android:layout_margin="16dp"
+
+                >
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -139,17 +157,28 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/black"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:text="@string/mathieu">
+                    android:text="Mathieu VINCENT">
                 </TextView>
             </androidx.cardview.widget.CardView>
 
         </GridLayout>
 
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/uqac_logo"
-            android:contentDescription="@string/content_description_uqac_logo">
-        </ImageView>
-    </LinearLayout>
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/uqac_logo"
+        >
+    </ImageView>
+
+
+</LinearLayout>
+
+
+
+
+
 </RelativeLayout>
+
+
+
+</FrameLayout>
