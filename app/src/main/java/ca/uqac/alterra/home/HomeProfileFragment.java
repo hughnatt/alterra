@@ -109,7 +109,7 @@ public class HomeProfileFragment extends Fragment {
     public void onStart() {
         super.onStart();
         DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+        Toolbar toolbar = getView().findViewById(R.id.profileToolbar);
         ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
         navDrawer.addDrawerListener(toggle);
@@ -215,7 +215,7 @@ public class HomeProfileFragment extends Fragment {
 
     }
 
-    
+
     public void changeAdapter(Adapter adapter){
         switch (adapter){
             case LOCATIONS:
