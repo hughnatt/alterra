@@ -96,10 +96,10 @@ public class HomeProfileFragment extends Fragment {
         mRefresher = myView.findViewById(R.id.profileRefresher);
 
         mTotalPhotos = myView.findViewById(R.id.profileTotalPhotos);
-        mTotalPhotos.setOnClickListener(view -> picturesView(view));
+        mTotalPhotos.setOnClickListener(view -> changeAdapter(Adapter.PICTURES));
 
         mTotalLocation = myView.findViewById(R.id.profileTotalLocation);
-        mTotalLocation.setOnClickListener(view -> locationView(view));
+        mTotalLocation.setOnClickListener(view -> changeAdapter(Adapter.LOCATIONS));
 
 
         return myView;
@@ -215,25 +215,29 @@ public class HomeProfileFragment extends Fragment {
 
     }
 
-
-    public void locationView(View v){
-        if(mCurrentAdapter != Adapter.LOCATIONS) {
-            mRecyclerView.setAdapter(mAdapterLocation);
-            mCurrentSpanCount = SPAN_COUNT_LOCATIONS;
-            mGridLayoutManager.setSpanCount(mCurrentSpanCount);
-            mCurrentAdapter = Adapter.LOCATIONS;
-        }
-    }
-
-    public void picturesView(View v){
-        if(mCurrentAdapter != Adapter.PICTURES){
-            mRecyclerView.setAdapter(mAdapterPictures);
-            mCurrentSpanCount = SPAN_COUNT_PICTURES;
-            mGridLayoutManager.setSpanCount(mCurrentSpanCount);
-            mCurrentAdapter = Adapter.PICTURES;
-        }
-    }
     
+    public void changeAdapter(Adapter adapter){
+        switch (adapter){
+            case LOCATIONS:
+                if(mCurrentAdapter != Adapter.LOCATIONS) {
+                    mRecyclerView.setAdapter(mAdapterLocation);
+                    mCurrentSpanCount = SPAN_COUNT_LOCATIONS;
+                    mGridLayoutManager.setSpanCount(mCurrentSpanCount);
+                    mCurrentAdapter = Adapter.LOCATIONS;
+                }
+                break;
+            case PICTURES:
+                if(mCurrentAdapter != Adapter.PICTURES){
+                    mRecyclerView.setAdapter(mAdapterPictures);
+                    mCurrentSpanCount = SPAN_COUNT_PICTURES;
+                    mGridLayoutManager.setSpanCount(mCurrentSpanCount);
+                    mCurrentAdapter = Adapter.PICTURES;
+                }
+                break;
+        }
+    }
+
+
     public void switchContext(String url){
         if(getActivity() instanceof HomeActivity){
             HomeActivity homeActivity =(HomeActivity) getActivity();
