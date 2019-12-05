@@ -2,8 +2,8 @@
     <string name="app_name">Alterra</string>
     <string name="hello_world">Hello World</string>
     <string name="app_title">Alterra</string>
-    <string name="channel_name">Alterra Notification</string>
-    <string name="channel_description">Channel for handling notifications from the Alterra app</string>
+    <string name="notification_channel_upload_title">Photo uploads</string>
+    <string name="notification_channel_upload_description">Alterra upload-related notifications</string>
     <string name="notification_upload_inprogress">Uploading</string>
     <string name="notification_upload_success">Upload successful</string>
     <string name="notification_upload_button_pause">Pause</string>
