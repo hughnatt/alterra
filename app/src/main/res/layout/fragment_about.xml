@@ -4,8 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/white"
+    android:background="#fafafb"
     tools:context=".about.AboutFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -16,39 +21,33 @@
     </androidx.appcompat.widget.Toolbar>
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
 
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="200dp"
-        android:layout_height="350dp"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="1dp"
-        android:backgroundTint="#fafafa"
-        android:layout_centerInParent="true"
-
-        >
 
         <LinearLayout
+            android:id="@+id/app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/toolbar"
+
             >
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/alterra_logo_round"
-                android:layout_gravity="center"
-                >
-            </ImageView>
 
-        <TextView
-            android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/btmThumbnail"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/alterra_logo_round"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/content_description_alterra_logo"
+                    />
+
+
+            <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_title"
             android:id="@+id/title"
@@ -58,55 +57,117 @@
             android:textStyle="bold"
             />
 
-        <TextView
-            android:id="@+id/by"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="by"
-            android:textAlignment="center"
-            android:textColor="#242B2F"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-
-        <TextView
-            android:layout_marginTop="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:layout_centerInParent="true"
-            android:layout_below="@id/by"
-            android:textColor="@android:color/black"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:text="LANDI Estelle\n SIBUE Quentin \n SAUTON Tanguy \n VINCENT Mathieu \n 2019 ">
-        </TextView>
-
         </LinearLayout>
 
 
-    </com.google.android.material.card.MaterialCardView>
-
-
-        <com.google.android.material.card.MaterialCardView
+        <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="1dp"
-            android:backgroundTint="#fafafa"
-            android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:layout_marginBottom="10dp"
+            android:layout_below="@id/app_name"
+            android:rowCount="2"
+            android:columnCount="2"
+            android:padding="14dp">
 
-            >
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="LANDI Estelle">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="SIBUE Quentin">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="SAUTON Tanguy">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp"
+
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="VINCENT Mathieu">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+        </GridLayout>
+
+
+
 
        <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/uqac_logo">
+            android:src="@drawable/uqac_logo"
+           android:layout_alignParentBottom="true"
+           android:layout_centerInParent="true"
+           android:layout_marginBottom="10dp">
         </ImageView>
 
 
-    </com.google.android.material.card.MaterialCardView>
 
 
 </RelativeLayout>
