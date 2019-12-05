@@ -23,6 +23,9 @@
         android:fitsSystemWindows="false"
         app:headerLayout="@layout/nav_header_home"
         android:background="#fafafb"
+        app:itemIconTint="@color/colorPrimaryDark"
+        app:itemTextColor="@color/colorPrimaryDark"
+        app:insetForeground="@color/colorPrimaryDark"
         app:menu="@menu/navigation_drawer_menu">
     </com.google.android.material.navigation.NavigationView>
 
