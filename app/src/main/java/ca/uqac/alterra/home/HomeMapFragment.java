@@ -28,17 +28,8 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     private MapsHandler mMapsHandler;
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
-    private static String enableLocationArgument = "enableLocation";
     private float mMapLat,mMapLng,mMapZoom;
     private AlterraPoint mAlterraPoint;
-
-    protected static HomeMapFragment newInstance(boolean enableLocation){
-        Bundle args = new Bundle();
-        args.putBoolean(enableLocationArgument, enableLocation);
-        HomeMapFragment homeMapFragment = new HomeMapFragment();
-        homeMapFragment.setArguments(args);
-        return homeMapFragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,14 +55,11 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     public void onStart(){
         assert(getActivity() != null);
         super.onStart();
-        if (!mEnableLocation){
-            Bundle args = getArguments();
-            if (args != null){
-                mEnableLocation = args.getBoolean(enableLocationArgument);
-            }
-        }
 
-        //TODO, move these 2 in newInstance()
+        //Never enable location subsystem at start, it can crash the app if location permission are not granted, wait for geolocator to provide location updates to enable button
+        mEnableLocation = false;
+        AlterraGeolocator.addOnLocationChangedListener(this);
+
         mBottomSheetHandler = new BottomSheetHandler(getActivity(),mAlterraPoint);
         mMapsHandler = new MapsHandler(getContext(),mEnableLocation, mBottomSheetHandler,mMapLat,mMapLng,mMapZoom);
 
@@ -117,6 +105,7 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     public void onPause() {
         super.onPause();
         assert(getActivity() != null);
+        AlterraGeolocator.removeOnLocationChangedListener(this);
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putFloat("LAT",mMapsHandler.getLatitude());
