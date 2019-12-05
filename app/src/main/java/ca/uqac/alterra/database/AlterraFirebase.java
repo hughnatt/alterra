@@ -58,6 +58,7 @@ import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 import ca.uqac.alterra.database.exceptions.AlterraAuthWeakPasswordException;
 import ca.uqac.alterra.database.exceptions.AlterraWriteFailureException;
 import ca.uqac.alterra.home.AlterraPoint;
+import ca.uqac.alterra.home.HomeListDataModel;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 
@@ -292,8 +293,8 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
     @Override
     public void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener) {
         if (onGetAlterraPicturesListener != null){
-            mFirestore.collection("photos")
-                    .whereEqualTo("owner", mCurrentUser.getUID())
+            mFirestore.collection(COLLECTION_PATH_PHOTOS)
+                    .whereEqualTo("owner", owner.getUID())
                     .orderBy("date", Query.Direction.DESCENDING)
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -309,6 +310,39 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                     })
                     .addOnFailureListener(onGetAlterraPicturesListener::onError);
         }
+    }
+
+    @Override
+    public void getUserUnlockedLocations(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation onAlterraUserLocation){
+        if (onAlterraUserLocation != null){
+            mFirestore.collection(COLLECTION_PATH_LOCATIONS)
+                    .whereArrayContains("users",owner.getUID())
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        List<AlterraPoint> locations = new ArrayList<>();
+                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                            Map<String,Object> documentData = document.getData();
+                            try {
+                                GeoPoint coordinates = (GeoPoint) documentData.get("coordinates");
+                                double latitude = coordinates.getLatitude();
+                                double longitude = coordinates.getLongitude();
+                                Map titles = (Map) documentData.get("name");
+                                Map descriptions = (Map) documentData.get("description");
+                                String title = (String) titles.get("default");
+                                String description = (String) descriptions.get("default");
+                                List<String> users = (List<String>) documentData.get("users");
+                                String thumbnail = (String) documentData.get("thumbnail");
+                                boolean unlocked = (users != null && users.contains(owner.getUID()));
+                                locations.add(new AlterraPoint(document.getId(), latitude, longitude, title, description, unlocked, thumbnail));
+                            } catch (NullPointerException | ClassCastException ex){
+                                System.out.println("Invalid Alterra location was skipped : [ID]=" + document.getId());
+                            }
+                        }
+                        onAlterraUserLocation.onSuccess(locations);
+                    })
+                    .addOnFailureListener(onAlterraUserLocation::onError);
+        }
+
     }
 
     @Override
@@ -562,6 +596,53 @@ public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraSto
                 uploadListener.onSuccess(task.getResult().toString());
             } else {
                 uploadListener.onFailure(task.getException());
+            }
+        });
+    }
+
+    @Override
+    public void deleteAlterraPictureFromFirestore(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener){
+        mFirestore.collection(COLLECTION_PATH_PHOTOS)
+                .document(picture.getId())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        deleteAlterraPictureFromStorage(picture,alterraWriteListener);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(alterraWriteListener != null){
+                            alterraWriteListener.onError(e);
+                        }
+                    }
+                });
+
+    }
+
+    @Override
+    public void deleteAlterraPictureFromStorage(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener){
+        StorageReference pictureToDelete = mStorage.getReferenceFromUrl(picture.getURL());
+        pictureToDelete
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                if(alterraWriteListener != null){
+                    alterraWriteListener.onSuccess();
+                }
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                if(alterraWriteListener != null) {
+                    //TODO : try to undo the delete from firestore
+                    alterraWriteListener.onError(exception);
+                }
             }
         });
     }

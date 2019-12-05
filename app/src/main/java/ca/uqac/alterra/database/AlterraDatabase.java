@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import ca.uqac.alterra.home.AlterraPoint;
+import ca.uqac.alterra.home.HomeListAdapter;
+import ca.uqac.alterra.home.HomeListDataModel;
 
 /**
  * Alterra interface for cloud interactions
@@ -65,8 +67,19 @@ public interface AlterraDatabase {
 
     void getAlterraPictures(@NonNull AlterraUser owner, @Nullable OnGetAlterraPicturesListener onGetAlterraPicturesListener);
 
+    void getUserUnlockedLocations(@NonNull AlterraUser owner, @Nullable OnGetAlterraUserLocation onGetAlterraUserLocationListener);
+
+    void deleteAlterraPictureFromFirestore(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener);
+
+    void deleteAlterraPictureFromStorage(@NonNull AlterraPicture picture, @Nullable AlterraWriteListener alterraWriteListener);
+
     interface OnGetAlterraPicturesListener {
         void onSuccess(@NonNull List<AlterraPicture> alterraPictures);
+        void onError(Exception e);
+    }
+
+    interface OnGetAlterraUserLocation{
+        void onSuccess(@NonNull List<AlterraPoint> userLocations);
         void onError(Exception e);
     }
 
