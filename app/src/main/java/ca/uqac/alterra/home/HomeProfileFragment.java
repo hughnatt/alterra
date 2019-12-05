@@ -67,18 +67,27 @@ public class HomeProfileFragment extends Fragment {
     private View mHeader;
     private SwipeRefreshLayout mRefresher;
     private Adapter mCurrentAdapter;
+    private int mCurrentSpanCount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
 
-        mCurrentAdapter = Adapter.PICTURES;
+        if (savedInstanceState != null) {
+            mCurrentAdapter = (Adapter) savedInstanceState.getSerializable("currentAdapter");
+            mCurrentSpanCount = savedInstanceState.getInt("currentSpanCount");
+        }
+        else{
+            mCurrentAdapter = Adapter.PICTURES;
+            mCurrentSpanCount = SPAN_COUNT_PICTURES;
+        }
+
+
 
         View myView = inflater.inflate(R.layout.fragment_home_profile,container,false);
 
         mRecyclerView = myView.findViewById(R.id.recyclerview);
-        mGridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT_PICTURES);
-
+        mGridLayoutManager = new GridLayoutManager(getContext(),mCurrentSpanCount);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
 
@@ -113,7 +122,6 @@ public class HomeProfileFragment extends Fragment {
         mStorage = FirebaseStorage.getInstance();
 
         mAdapterPictures = new PicturesAdapter(getContext(), url -> switchContext(url), (alterraPicture, position) -> showDeleteAlertDialog(alterraPicture,position));
-        mRecyclerView.setAdapter(mAdapterPictures);
 
         mAdapterLocation = new HomeListAdapter(getContext(), new HomeListAdapter.OnButtonClickListener() {
             @Override
@@ -121,6 +129,13 @@ public class HomeProfileFragment extends Fragment {
                 takePicture(point);
             }
         });
+
+        if(mCurrentAdapter == Adapter.PICTURES){
+            mRecyclerView.setAdapter(mAdapterPictures);
+        }
+        else{
+            mRecyclerView.setAdapter(mAdapterLocation);
+        }
 
 
 
@@ -204,7 +219,8 @@ public class HomeProfileFragment extends Fragment {
     public void locationView(View v){
         if(mCurrentAdapter != Adapter.LOCATIONS) {
             mRecyclerView.setAdapter(mAdapterLocation);
-            mGridLayoutManager.setSpanCount(SPAN_COUNT_LOCATIONS);
+            mCurrentSpanCount = SPAN_COUNT_LOCATIONS;
+            mGridLayoutManager.setSpanCount(mCurrentSpanCount);
             mCurrentAdapter = Adapter.LOCATIONS;
         }
     }
@@ -212,11 +228,12 @@ public class HomeProfileFragment extends Fragment {
     public void picturesView(View v){
         if(mCurrentAdapter != Adapter.PICTURES){
             mRecyclerView.setAdapter(mAdapterPictures);
-            mGridLayoutManager.setSpanCount(SPAN_COUNT_PICTURES);
+            mCurrentSpanCount = SPAN_COUNT_PICTURES;
+            mGridLayoutManager.setSpanCount(mCurrentSpanCount);
             mCurrentAdapter = Adapter.PICTURES;
         }
     }
-
+    
     public void switchContext(String url){
         if(getActivity() instanceof HomeActivity){
             HomeActivity homeActivity =(HomeActivity) getActivity();
@@ -229,6 +246,13 @@ public class HomeProfileFragment extends Fragment {
             HomeActivity homeActivity =(HomeActivity) getActivity();
             homeActivity.takeAlterraPhoto(point);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle saveInstanceState) {
+        super.onSaveInstanceState(saveInstanceState);
+        saveInstanceState.putSerializable("currentAdapter",mCurrentAdapter);
+        saveInstanceState.putInt("currentSpanCount",mCurrentSpanCount);
     }
 
     public void showDeleteAlertDialog(AlterraPicture picture,int position){
