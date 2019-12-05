@@ -3,24 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
+    android:layout_height="300dp"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="60dp"
+    app:behavior_peekHeight="140dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="1dp"
-        app:cardElevation="20dp">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="-20dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp"
+        app:cardBackgroundColor="#fafafa"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#fafafa"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             >
 
             <View
@@ -28,137 +32,120 @@
                 android:layout_height="5dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/swipe_up_handle" />
 
-            <LinearLayout
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/btmScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_marginBottom="30dp">
 
-                <TextView
-                    android:id="@+id/bottomPanelTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="25dp"
-                    android:gravity="center"
-                    android:text="@string/maps_first_marker_click"
-                    android:textSize="20sp"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/black"/>
-
-                <TextView
-                    android:id="@+id/distance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:layout_marginEnd="25dp"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorPrimary" />
-
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:id="@+id/BSLocationInfoParentLayout"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#fafafa">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lightGrey" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/SeeMore"
-                    style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@android:color/white"
-                    android:text="See more"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lightGrey" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="10dp"
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/BSAddressLinLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="?attr/actionBarSize"
-                            android:background="@android:color/transparent"
-                            android:src="@drawable/ic_location" />
 
-                        <TextView
-                            android:id="@+id/locationAddress"
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/btmCardView"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            app:cardCornerRadius="100dp"
+                            android:layout_gravity="center"
+                            >
+
+                            <ImageView
+                                android:id="@+id/btmThumbnail"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:contentDescription="@string/content_description_unknown"
+                                />
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:layout_marginStart="25dp"
-                            android:gravity="center_vertical"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                            android:textColor="@android:color/black" />
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            >
+
+                            <TextView
+                                android:id="@+id/btmTitleLocation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/maps_first_marker_click"
+                                android:textSize="20sp"
+                                android:textAlignment="center"
+                                android:textColor="@android:color/black"/>
+
+                            <TextView
+                                android:id="@+id/btmDistance"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="12sp"
+                                android:textColor="@color/colorPrimaryDark" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btmButton"
+                                style="@style/Widget.MaterialComponents.Button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorPrimary"
+                                app:backgroundTint="@android:color/white"/>
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/BSDescriptionLinLayout"
+                        android:id="@+id/btmLinLayoutDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:layout_width="wrap_content"
-                            android:layout_height="?attr/actionBarSize"
+                            android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
-                            android:src="@drawable/ic_info" />
+                            android:src="@drawable/ic_info"
+                            android:contentDescription="@string/content_description_unknown" />
 
                         <TextView
-                            android:id="@+id/locationDescription"
+                            android:id="@+id/btmDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
                             android:layout_marginStart="25dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                             android:textColor="@android:color/black" />
 
                     </LinearLayout>
 
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/btmRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:orientation="horizontal" />
+
                 </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lightGrey" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewBottomSheet"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
-                </androidx.recyclerview.widget.RecyclerView>
-            </LinearLayout>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
