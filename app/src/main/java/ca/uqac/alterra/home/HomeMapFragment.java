@@ -16,7 +16,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
@@ -71,23 +70,13 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
                 mEnableLocation = args.getBoolean(enableLocationArgument);
             }
         }
+
+        //TODO, move these 2 in newInstance()
         mBottomSheetHandler = new BottomSheetHandler(getActivity(),mAlterraPoint);
         mMapsHandler = new MapsHandler(getContext(),mEnableLocation, mBottomSheetHandler,mMapLat,mMapLng,mMapZoom);
 
 
-        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(getActivity().findViewById(R.id.bottom_sheet));
-        bottomSheetBehavior.addBottomSheetCallback(mBottomSheetHandler);
-
-        /*mCameraButton.setOnClickListener((view ) -> {
-            ((HomeActivity) getActivity()).takeAlterraPhoto();
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        });*/
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        assert(mapFragment != null);
-        mapFragment.getMapAsync(mMapsHandler);
-
+        //TODO, see if there is any way to simplify this block
         DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
@@ -95,6 +84,12 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
+
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        assert(mapFragment != null);
+        mapFragment.getMapAsync(mMapsHandler);
 
         AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
             alterraDatabase.getAllAlterraLocations(AlterraCloud.getAuthInstance().getCurrentUser(),(list) -> {
