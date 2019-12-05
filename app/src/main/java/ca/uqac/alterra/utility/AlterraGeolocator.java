@@ -91,6 +91,10 @@ public class AlterraGeolocator {
         mOnLocationChangedListeners.add(onLocationChangedListener);
     }
 
+    public static void removeOnLocationChangedListener(@NonNull OnLocationChangedListener onLocationChangedListener){
+        mOnLocationChangedListeners.remove(onLocationChangedListener);
+    }
+
     /**
      * Add a new listener that will receive update when GPS status changes
      * @param onGPSStatusChangedListener callback for GPS status changes

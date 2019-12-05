@@ -149,8 +149,7 @@ public class HomeActivity extends AppCompatActivity {
             case FRAGMENT_MAP:
                 HomeMapFragment homeMapFragment = (HomeMapFragment) fragmentManager.findFragmentByTag("HomeMapFragment");
                 if(homeMapFragment == null){
-                    homeMapFragment = HomeMapFragment.newInstance(mLocationEnabled);
-                    AlterraGeolocator.addOnLocationChangedListener(homeMapFragment);
+                    homeMapFragment = new HomeMapFragment();
                 }
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_home, homeMapFragment,"HomeMapFragment")
