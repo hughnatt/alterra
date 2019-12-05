@@ -112,6 +112,7 @@ public class HomeProfileFragment extends Fragment {
         Toolbar toolbar = getView().findViewById(R.id.profileToolbar);
         ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
         navDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
