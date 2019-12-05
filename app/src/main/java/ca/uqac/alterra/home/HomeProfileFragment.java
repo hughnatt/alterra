@@ -66,11 +66,13 @@ public class HomeProfileFragment extends Fragment {
     private TextView mTotalPhotos;
     private View mHeader;
     private SwipeRefreshLayout mRefresher;
-    private Adapter mCurrentAdapter = Adapter.PICTURES;
+    private Adapter mCurrentAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
+
+        mCurrentAdapter = Adapter.PICTURES;
 
         View myView = inflater.inflate(R.layout.fragment_home_profile,container,false);
 
@@ -78,6 +80,7 @@ public class HomeProfileFragment extends Fragment {
         mGridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT_PICTURES);
 
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+
 
 
         mHeader = myView.findViewById(R.id.profileHeader);
@@ -112,7 +115,14 @@ public class HomeProfileFragment extends Fragment {
         mAdapterPictures = new PicturesAdapter(getContext(), url -> switchContext(url), (alterraPicture, position) -> showDeleteAlertDialog(alterraPicture,position));
         mRecyclerView.setAdapter(mAdapterPictures);
 
-        mAdapterLocation = new HomeListAdapter(getContext(),null);
+        mAdapterLocation = new HomeListAdapter(getContext(), new HomeListAdapter.OnButtonClickListener() {
+            @Override
+            public void onClick(AlterraPoint point) {
+                takePicture(point);
+            }
+        });
+
+
 
         AlterraCloud.getDatabaseInstance().getAlterraPictures(mCurrentUser, new AlterraDatabase.OnGetAlterraPicturesListener() {
             @Override
@@ -214,6 +224,13 @@ public class HomeProfileFragment extends Fragment {
         }
     }
 
+    public void takePicture(AlterraPoint point){ //TODO : need to avoid reuse of code w\ HomeListFragment
+        if(getActivity() instanceof HomeActivity){
+            HomeActivity homeActivity =(HomeActivity) getActivity();
+            homeActivity.takeAlterraPhoto(point);
+        }
+    }
+
     public void showDeleteAlertDialog(AlterraPicture picture,int position){
         new MaterialAlertDialogBuilder(getActivity(),R.style.DialogStyle)
                        .setTitle(R.string.profile_photos_dialog_box_title)
@@ -245,4 +262,5 @@ public class HomeProfileFragment extends Fragment {
                        .setIcon(android.R.drawable.ic_dialog_alert)
                        .show();
     }
+
 }
