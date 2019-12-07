@@ -1,6 +1,6 @@
 package ca.uqac.alterra.home;
 
-import java.text.DecimalFormat;
+import ca.uqac.alterra.database.AlterraPoint;
 
 public class HomeListDataModel {
 

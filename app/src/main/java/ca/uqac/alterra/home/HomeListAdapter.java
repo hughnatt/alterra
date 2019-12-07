@@ -1,14 +1,12 @@
 package ca.uqac.alterra.home;
 
 import android.content.Context;
-import android.net.sip.SipSession;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,10 +17,9 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.database.AlterraPoint;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
 public class HomeListAdapter extends RecyclerView.Adapter {

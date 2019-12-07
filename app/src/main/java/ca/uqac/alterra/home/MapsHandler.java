@@ -1,7 +1,6 @@
 package ca.uqac.alterra.home;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.location.Location;
 
 import androidx.annotation.Nullable;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.database.AlterraPoint;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.JsonReader;
 

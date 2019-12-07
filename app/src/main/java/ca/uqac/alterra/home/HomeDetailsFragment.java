@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +28,7 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraPicture;
+import ca.uqac.alterra.database.AlterraPoint;
 import ca.uqac.alterra.database.AlterraUser;
 
 public class HomeDetailsFragment extends Fragment {

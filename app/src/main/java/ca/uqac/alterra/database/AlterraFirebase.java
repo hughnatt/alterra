@@ -21,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,14 +32,11 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.model.value.TimestampValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -57,8 +53,6 @@ import ca.uqac.alterra.database.exceptions.AlterraAuthInvalidCredentialsExceptio
 import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 import ca.uqac.alterra.database.exceptions.AlterraAuthWeakPasswordException;
 import ca.uqac.alterra.database.exceptions.AlterraWriteFailureException;
-import ca.uqac.alterra.home.AlterraPoint;
-import ca.uqac.alterra.home.HomeListDataModel;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 

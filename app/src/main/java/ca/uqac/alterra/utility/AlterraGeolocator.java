@@ -17,7 +17,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.uqac.alterra.home.AlterraPoint;
+import ca.uqac.alterra.database.AlterraPoint;
 
 public class AlterraGeolocator {
 

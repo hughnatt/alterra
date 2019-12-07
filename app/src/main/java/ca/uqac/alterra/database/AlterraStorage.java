@@ -1,7 +1,5 @@
 package ca.uqac.alterra.database;
 
-import ca.uqac.alterra.home.AlterraPoint;
-
 public interface AlterraStorage {
 
     void uploadPhoto(String path, AlterraPoint alterraPoint, UploadListener uploadListener);

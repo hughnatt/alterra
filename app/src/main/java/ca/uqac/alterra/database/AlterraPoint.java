@@ -1,4 +1,4 @@
-package ca.uqac.alterra.home;
+package ca.uqac.alterra.database;
 
 import androidx.annotation.NonNull;
 
