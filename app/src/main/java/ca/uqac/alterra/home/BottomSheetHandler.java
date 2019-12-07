@@ -17,11 +17,10 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.adapters.BottomSheetAdapter;
+import ca.uqac.alterra.adapters.PicturesAdapter;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.types.AlterraPicture;
@@ -44,8 +43,8 @@ public class BottomSheetHandler  {
 
     private Activity mActivity;
 
-    private ArrayList<String> mImageUrls = new ArrayList<>();
     private RecyclerView mRecyclerView;
+    private PicturesAdapter mPicturesAdapter;
 
     private AlterraPoint mAlterraPoint;
 
@@ -110,6 +109,8 @@ public class BottomSheetHandler  {
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView = activity.findViewById(R.id.btmRecyclerView);
         mRecyclerView.setLayoutManager(layoutManager);
+        mPicturesAdapter = new PicturesAdapter(mActivity, alterraPicture -> ((HomeActivity) mActivity).displayPicture(alterraPicture), null, R.layout.bottom_sheet_image);
+        mRecyclerView.setAdapter(mPicturesAdapter);
     }
 
     protected BottomSheetHandler(Activity activity, @Nullable AlterraPoint alterraPoint){
@@ -168,14 +169,12 @@ public class BottomSheetHandler  {
             @Override
             public void onSuccess(@Nullable List<AlterraPicture> alterraPictures) {
                 if (alterraPictures != null){
-                    mImageUrls.clear();
+                    mPicturesAdapter.clear();
                     int i =0;
                     while(i<4 && alterraPictures.get(i)!=null) {
-                        mImageUrls.add(alterraPictures.get(i).getURL());
+                        mPicturesAdapter.addPicture(alterraPictures.get(i));
                         i++;
                     }
-                    BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
-                    mRecyclerView.setAdapter(adapter);
                     mRecyclerView.setVisibility(View.VISIBLE);
                 }
             }

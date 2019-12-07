@@ -20,7 +20,7 @@
             android:scaleType="centerCrop"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:id="@+id/image_view"
+            android:id="@+id/ivPlace"
             android:src="@drawable/ic_launcher_background"
             android:contentDescription="@string/content_description_unknown" />
 
