@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.adapters.BottomSheetAdapter;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.types.AlterraPicture;

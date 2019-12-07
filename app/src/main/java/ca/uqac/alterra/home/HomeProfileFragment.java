@@ -9,9 +9,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,12 +20,13 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.adapters.LocationAdapter;
+import ca.uqac.alterra.adapters.PicturesAdapter;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.types.AlterraPicture;
 import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.types.AlterraUser;
-import ca.uqac.alterra.utility.AlterraGeolocator;
 
 
 public class HomeProfileFragment extends Fragment {
@@ -45,7 +43,7 @@ public class HomeProfileFragment extends Fragment {
     private AlterraUser mCurrentUser;
     private RecyclerView mRecyclerView;
     private PicturesAdapter mAdapterPictures;
-    private HomeListAdapter mAdapterLocation;
+    private LocationAdapter mAdapterLocation;
     private GridLayoutManager mGridLayoutManager;
     private TextView mTotalLocation;
     private TextView mTotalPhotos;
@@ -100,7 +98,7 @@ public class HomeProfileFragment extends Fragment {
         mCurrentUser = AlterraCloud.getAuthInstance().getCurrentUser();
 
         mAdapterPictures = new PicturesAdapter(getContext(), this::switchContext, this::showDeleteAlertDialog);
-        mAdapterLocation = new HomeListAdapter(getContext(), this::takePicture);
+        mAdapterLocation = new LocationAdapter(getContext(), this::takePicture);
 
         if(mCurrentAdapter == Adapter.PICTURES){
             mRecyclerView.setAdapter(mAdapterPictures);
@@ -127,8 +125,7 @@ public class HomeProfileFragment extends Fragment {
             @Override
             public void onSuccess(@NonNull List<AlterraPoint> userLocations) {
                 for(AlterraPoint currentLocation : userLocations){
-                    double distance = AlterraGeolocator.distanceFrom(currentLocation);
-                    mAdapterLocation.addData(new HomeListDataModel(currentLocation,distance));
+                    mAdapterLocation.addPoint(currentLocation);
                 }
                 mTotalLocation.setText(String.valueOf(userLocations.size()));
             }
@@ -164,8 +161,7 @@ public class HomeProfileFragment extends Fragment {
                     @Override
                     public void onSuccess(@NonNull List<AlterraPoint> userLocations) {
                         for(AlterraPoint currentLocation : userLocations){
-                            double distance = AlterraGeolocator.distanceFrom(currentLocation);
-                            mAdapterLocation.addData(new HomeListDataModel(currentLocation,distance));
+                            mAdapterLocation.addPoint(currentLocation);
                         }
                         mTotalLocation.setText(String.valueOf(userLocations.size()));
                         mRefresher.setRefreshing(false);

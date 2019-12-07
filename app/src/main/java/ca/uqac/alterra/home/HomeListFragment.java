@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.adapters.LocationAdapter;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.types.AlterraPoint;
-import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeListFragment extends Fragment {
 
@@ -51,7 +51,7 @@ public class HomeListFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext(), point -> mActivity.takeAlterraPhoto(point));
+        LocationAdapter recyclerAdapter =  new LocationAdapter(this.getContext(), point -> mActivity.takeAlterraPhoto(point));
 
         mRecyclerView.setAdapter(recyclerAdapter);
         mRefresher.setOnRefreshListener(() -> {
@@ -62,11 +62,7 @@ public class HomeListFragment extends Fragment {
 
                 if(list != null) {
                     for (AlterraPoint p : list) {
-
-                        double distance = AlterraGeolocator.distanceFrom(p);
-
-                        recyclerAdapter.addData(new HomeListDataModel(p, distance));
-
+                        recyclerAdapter.addPoint(p);
                     }
                 }
             });
@@ -82,12 +78,7 @@ public class HomeListFragment extends Fragment {
 
             if(list != null) {
                 for (AlterraPoint p : list) {
-
-                    double distance = AlterraGeolocator.distanceFrom(p);
-
-                    recyclerAdapter.addData(new HomeListDataModel(p, distance));
-                    recyclerAdapter.notifyItemInserted(recyclerAdapter.getItemCount());
-
+                    recyclerAdapter.addPoint(p);
                 }
             }
         });

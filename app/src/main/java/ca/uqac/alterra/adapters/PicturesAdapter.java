@@ -1,4 +1,4 @@
-package ca.uqac.alterra.home;
+package ca.uqac.alterra.adapters;
 
 
 import android.content.Context;
