@@ -491,7 +491,7 @@ public class HomeActivity extends AppCompatActivity {
     public void displayPicture(String url){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.fragment_home, HomeProfilePhotoFragment.newInstance(url))
+                .replace(R.id.fragment_home, FullscreenPictureFragment.newInstance(url))
                 .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
                 .addToBackStack(null)
                 .commit();
@@ -509,7 +509,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_home);
-        if ((fragment instanceof HomeProfilePhotoFragment)){
+        if ((fragment instanceof FullscreenPictureFragment)){
             fragmentManager.popBackStack();
         } else if (fragment instanceof  HomeDetailsFragment){
             fragmentManager.popBackStack();

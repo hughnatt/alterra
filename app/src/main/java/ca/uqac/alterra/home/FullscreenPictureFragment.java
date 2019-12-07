@@ -1,14 +1,9 @@
 package ca.uqac.alterra.home;
 
-import android.graphics.Point;
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 
@@ -17,19 +12,19 @@ import com.ortiz.touchview.TouchImageView;
 
 import ca.uqac.alterra.R;
 
-public class HomeProfilePhotoFragment extends Fragment{
+public class FullscreenPictureFragment extends Fragment{
 
 
     private static String urlArgument = "url";
     private String mUrl;
     private TouchImageView imageToShow;
 
-    public static HomeProfilePhotoFragment newInstance(String imageUrl){
+    public static FullscreenPictureFragment newInstance(String imageUrl){
         Bundle args = new Bundle();
         args.putString(urlArgument, imageUrl);
-        HomeProfilePhotoFragment homeProfilePhotoFragment = new HomeProfilePhotoFragment();
-        homeProfilePhotoFragment.setArguments(args);
-        return homeProfilePhotoFragment;
+        FullscreenPictureFragment fullscreenPictureFragment = new FullscreenPictureFragment();
+        fullscreenPictureFragment.setArguments(args);
+        return fullscreenPictureFragment;
     }
 
     @Override
