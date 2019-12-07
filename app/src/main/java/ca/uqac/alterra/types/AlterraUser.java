@@ -9,7 +9,7 @@ public class AlterraUser {
     private AuthMethod mAuthMethod;
 
 
-    AlterraUser(String UID, String email, AuthMethod authMethod){
+    public AlterraUser(String UID, String email, AuthMethod authMethod){
         mUID = UID;
         mEmail = email;
         mAuthMethod = authMethod;

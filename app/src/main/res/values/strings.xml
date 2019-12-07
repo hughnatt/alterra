@@ -59,6 +59,8 @@
     <string name="details_loading_failed">Failed to load location details</string>
     <string name="details_users_loading_failed">Failed to load users</string>
 
+    <string name="moved_too_far">You moved too far from initial position</string>
+
     <string name="estelle">Estelle LANDI</string>
     <string name="quentin">Quentin SIBUÉ</string>
     <string name="mathieu">Mathieu VINCENT</string>

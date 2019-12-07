@@ -14,13 +14,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +30,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import ca.uqac.alterra.R;
@@ -41,7 +38,6 @@ import ca.uqac.alterra.about.AboutFragment;
 import ca.uqac.alterra.auth.AuthActivity;
 
 import ca.uqac.alterra.database.AlterraCloud;
-import ca.uqac.alterra.database.AlterraDatabase;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.types.AlterraUser;
@@ -49,9 +45,6 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 
 public class HomeActivity extends AppCompatActivity {
-
-
-
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE, FRAGMENT_ABOUT}
     private FRAGMENT_ID mCurrentFragment;
@@ -62,9 +55,6 @@ public class HomeActivity extends AppCompatActivity {
     private AlterraAuth mAuth;
     private NavigationView mNavigationView;
 
-    private boolean mGpsEnabled = false;
-    private boolean mLocationEnabled = false;
-
     /**
      * True if we already requested runtime permissions
      * but we are still waiting user response.
@@ -73,7 +63,6 @@ public class HomeActivity extends AppCompatActivity {
      */
     private boolean mPendingPermissionRequest = false;
 
-    private List<AlterraPoint> mAlterraLocations;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,18 +80,25 @@ public class HomeActivity extends AppCompatActivity {
         setNavigationViewListener();
         mAuth = AlterraCloud.getAuthInstance();
 
-
-        //Get all the alterra location from database
-        AlterraDatabase alterraDatabase = AlterraCloud.getDatabaseInstance();
-        alterraDatabase.getAllAlterraLocations(mAuth.getCurrentUser(),(list) -> mAlterraLocations = list);
-
         //Trigger an alert message when GPS is disabled
         AlterraGeolocator.addOnGPSStatusChangedListener(enabled -> {
-            mGpsEnabled = enabled;
-            /*if (!enabled) {
+            if (!enabled) {
                 requestGPSActivation();
-            }*/
+            }
         });
+
+
+        AlterraUser currentUser = mAuth.getCurrentUser();
+
+        //Make sure a user is logged in. If it's not the case, go back to login screen
+        if (currentUser != null) {
+            View headerView = mNavigationView.getHeaderView(0);
+            TextView navUsername = headerView.findViewById(R.id.navUsername);
+            navUsername.setText(currentUser.getEmail());
+        } else {
+            startActivity(new Intent(this, AuthActivity.class));
+            finish();
+        }
 
         mPhotoUploader = new PhotoUploader(this);
     }
@@ -111,17 +107,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        AlterraUser currentUser = mAuth.getCurrentUser();
-
-        //Make sure a user is logged in. If it's not the case, go back to login screen
-        if (currentUser != null) {
-            View headerView = mNavigationView.getHeaderView(0);
-            TextView navUsername = (TextView) headerView.findViewById(R.id.navUsername);
-            navUsername.setText(currentUser.getEmail());
-        } else {
-            startActivity(new Intent(this, AuthActivity.class));
-            finish();
-        }
 
         if (!checkLocationPermissions() ){
             if (!mPendingPermissionRequest){
@@ -229,7 +214,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public void takeAlterraPhoto(){
+    /*public void takeAlterraPhoto(){
         //Make sure GPS is enabled
         if (!mGpsEnabled) {
             requestGPSActivation();
@@ -276,7 +261,7 @@ public class HomeActivity extends AppCompatActivity {
                 .setTitle(R.string.alterrapointchoice_alert_title)
                 .setCancelable(true)
                 .show();
-    }
+    }*/
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -303,7 +288,7 @@ public class HomeActivity extends AppCompatActivity {
                     if (AlterraGeolocator.distanceFrom(mCurrentImagePoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE){
                         mPhotoUploader.uploadPhoto(mCurrentImagePath,mCurrentImagePoint);
                     } else {
-                        //TODO tell user he moved too far away from its initial position
+                        Toast.makeText(this,R.string.moved_too_far,Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
@@ -316,23 +301,17 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void setNavigationViewListener() {
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.navDrawer);
+        mNavigationView = findViewById(R.id.navigation_view);
+        DrawerLayout mDrawer = findViewById(R.id.navDrawer);
         mNavigationView.setNavigationItemSelectedListener((item) -> {
             switch (item.getItemId()){
                 case R.id.nav_item_profile :
-                    Toast toastProfile = Toast.makeText(getApplicationContext(), "Profile", Toast.LENGTH_LONG);
-                    toastProfile.show();
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
                     break;
                 case R.id.nav_item_list :
-                    Toast toastPictures = Toast.makeText(getApplicationContext(), "List", Toast.LENGTH_LONG);
-                    toastPictures.show();
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_LIST);
                     break;
                 case R.id.nav_item_map :
-                    Toast toastPlaces = Toast.makeText(getApplicationContext(), "Map", Toast.LENGTH_LONG);
-                    toastPlaces.show();
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
                     break;
                 case R.id.nav_item_settings :
@@ -340,8 +319,6 @@ public class HomeActivity extends AppCompatActivity {
                     toastSettings.show();
                     break;
                 case R.id.nav_item_about :
-                    Toast toastAbout = Toast.makeText(getApplicationContext(), "About", Toast.LENGTH_LONG);
-                    toastAbout.show();
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_ABOUT);
                     break;
                 case R.id.nav_item_logout :
@@ -403,35 +380,28 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSIONS_LOCATION: {
-                mPendingPermissionRequest = false;
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission was granted, yay!
-                    // Instantiates the geolocator
-                    locationPermissionGranted();
-                } else {
-                    boolean showRationale = true;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION);
-                        // if showRationale = false
-                        // user also CHECKED "never ask again"
-                        // We need to open settings screen
-                        // Permission denied,
-                        // Display a message and request permission again
-                        showLocationPermissionDeniedAlert(!showRationale);
-                    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSIONS_LOCATION) {
+            mPendingPermissionRequest = false;
+            // If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission was granted, yay!
+                // Instantiates the geolocator
+                locationPermissionGranted();
+            } else {
 
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    boolean showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION);
+                    // if showRationale = false
+                    // user also CHECKED "never ask again"
+                    // We need to open settings screen
+                    // Permission denied,
+                    // Display a message and request permission again
+                    showLocationPermissionDeniedAlert(!showRationale);
                 }
-                return;
-            }
 
-            // other 'case' lines to check for other
-            // permissions Alterra might request.
+            }
         }
     }
 
@@ -460,7 +430,6 @@ public class HomeActivity extends AppCompatActivity {
      * Callback when location permission is acquired
      */
     private void locationPermissionGranted(){
-        mLocationEnabled = true;
         AlterraGeolocator.initGeolocatorForContext(this);
     }
 
@@ -479,14 +448,14 @@ public class HomeActivity extends AppCompatActivity {
     /**
      * Show an alert fragment indicating that no alterra points were found nearby user location
      */
-    private void showNoAlterraPointFoundAlert(){
+    /*private void showNoAlterraPointFoundAlert(){
         new MaterialAlertDialogBuilder(this, R.style.DialogStyle)
                 .setTitle(R.string.pointnotfound_alert_title)
                 .setMessage(R.string.pointnotfound_alert_body)
                 .setPositiveButton(R.string.pointnotfound_alert_button_positive,null)
                 .setCancelable(true)
                 .show();
-    }
+    }*/
     
     public void displayPicture(String url){
         FragmentManager fragmentManager = getSupportFragmentManager();
