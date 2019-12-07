@@ -39,12 +39,17 @@ import ca.uqac.alterra.auth.AuthActivity;
 
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraAuth;
+import ca.uqac.alterra.types.AlterraPicture;
 import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.types.AlterraUser;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 
 
 public class HomeActivity extends AppCompatActivity {
+
+    private static final int PERMISSION_REQUEST_LOCATION = 0x01;
+    private static final int ACTIVITY_RESULT_TAKE_PHOTO = 0x02;
+    private static final int ACTIVITY_RESULT_PERMISSION_SETTING = 0x10;
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE, FRAGMENT_ABOUT}
     private FRAGMENT_ID mCurrentFragment;
@@ -177,8 +182,23 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    static final int REQUEST_TAKE_PHOTO = 1;
+    public void displayPicture(AlterraPicture alterraPicture){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_home, FullscreenPictureFragment.newInstance(alterraPicture))
+                .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                .addToBackStack(null)
+                .commit();
+    }
 
+    public void showPlaceDetails(AlterraPoint alterraPoint){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_home,HomeDetailsFragment.newInstance(alterraPoint))
+                .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
+                .addToBackStack(null)
+                .commit();
+    }
 
 
     public void dispatchTakePictureIntent() {
@@ -198,7 +218,7 @@ public class HomeActivity extends AppCompatActivity {
                         "ca.uqac.alterra.fileprovider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                startActivityForResult(takePictureIntent, ACTIVITY_RESULT_TAKE_PHOTO);
                 System.out.println("Photo saved as" + mCurrentImagePath);
             }
         }
@@ -282,7 +302,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode){
-            case REQUEST_TAKE_PHOTO:
+            case ACTIVITY_RESULT_TAKE_PHOTO:
                 if (resultCode == RESULT_OK){
                     //Check if user is still located near the selected point
                     if (AlterraGeolocator.distanceFrom(mCurrentImagePoint) < AlterraPoint.MINIMUM_UNLOCK_DISTANCE){
@@ -292,7 +312,7 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 }
                 break;
-            case REQUEST_PERMISSIONS_LOCATION:
+            case ACTIVITY_RESULT_PERMISSION_SETTING:
                 //Do nothing, if we are back from the settings screen, the onStart method will be called
                 //and the permission check will be done there
                 break;
@@ -342,7 +362,7 @@ public class HomeActivity extends AppCompatActivity {
         outState.putBoolean("mPendingPermissionRequest",mPendingPermissionRequest);
     }
 
-    private static final int REQUEST_PERMISSIONS_LOCATION = 0x10;
+
 
     private boolean checkLocationPermissions(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -354,7 +374,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private static final int REQUEST_PERMISSION_SETTING = 0x0a;
+
 
     /**
      * Ask for location permission
@@ -366,22 +386,21 @@ public class HomeActivity extends AppCompatActivity {
         if (!openSettings){ //in-app permission request message
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSIONS_LOCATION);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_LOCATION);
             mPendingPermissionRequest = true;
         } else { //request permission from settings
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             Uri uri = Uri.fromParts("package", getPackageName(), null);
             intent.setData(uri);
-            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+            startActivityForResult(intent, ACTIVITY_RESULT_PERMISSION_SETTING);
         }
 
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSIONS_LOCATION) {
+        if (requestCode == PERMISSION_REQUEST_LOCATION) {
             mPendingPermissionRequest = false;
             // If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0
@@ -456,24 +475,6 @@ public class HomeActivity extends AppCompatActivity {
                 .setCancelable(true)
                 .show();
     }*/
-    
-    public void displayPicture(String url){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_home, FullscreenPictureFragment.newInstance(url))
-                .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    public void showPlaceDetails(AlterraPoint alterraPoint){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_home,HomeDetailsFragment.newInstance(alterraPoint))
-                .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
-                .addToBackStack(null)
-                .commit();
-    }
 
     @Override public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();

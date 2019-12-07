@@ -11,17 +11,20 @@ import com.bumptech.glide.Glide;
 import com.ortiz.touchview.TouchImageView;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.types.AlterraPicture;
+
 
 public class FullscreenPictureFragment extends Fragment{
 
 
-    private static String urlArgument = "url";
-    private String mUrl;
-    private TouchImageView imageToShow;
+    private static final String ARGS_PICTURE = "ARGS_PICTURE";
 
-    public static FullscreenPictureFragment newInstance(String imageUrl){
+    private AlterraPicture mAlterraPicture;
+    private TouchImageView mImageView;
+
+    public static FullscreenPictureFragment newInstance(AlterraPicture alterraPicture){
         Bundle args = new Bundle();
-        args.putString(urlArgument, imageUrl);
+        args.putSerializable(ARGS_PICTURE, alterraPicture);
         FullscreenPictureFragment fullscreenPictureFragment = new FullscreenPictureFragment();
         fullscreenPictureFragment.setArguments(args);
         return fullscreenPictureFragment;
@@ -31,20 +34,23 @@ public class FullscreenPictureFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View fragmentView = inflater.inflate(R.layout.fragment_home_profile_photos,container,false);
+        mImageView = fragmentView.findViewById(R.id.imageToShow);
         return fragmentView ;
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        mUrl = getArguments().getString(urlArgument);
 
-        imageToShow = (TouchImageView) getView().findViewById(R.id.imageToShow);
+        assert getArguments() != null;
+        mAlterraPicture = (AlterraPicture) getArguments().getSerializable(ARGS_PICTURE);
 
+        assert(getView() != null);
+
+        assert (getContext() != null);
         Glide.with(getContext())
-                .load(mUrl)
+                .load(mAlterraPicture.getURL())
                 .fitCenter()
-                .into(imageToShow);
-
+                .into(mImageView);
     }
 }
