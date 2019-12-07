@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraPoint;
+import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
 public class HomeListAdapter extends RecyclerView.Adapter {

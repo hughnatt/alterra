@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPicture;
 
 public class PicturesAdapter extends RecyclerView.Adapter{
 

@@ -1,4 +1,4 @@
-package ca.uqac.alterra.database;
+package ca.uqac.alterra.types;
 
 import androidx.annotation.Nullable;
 

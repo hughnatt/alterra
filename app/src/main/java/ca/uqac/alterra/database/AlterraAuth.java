@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import ca.uqac.alterra.database.exceptions.AlterraAuthException;
+import ca.uqac.alterra.types.AlterraUser;
 
 
 /**

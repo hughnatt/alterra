@@ -27,9 +27,9 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
-import ca.uqac.alterra.database.AlterraPicture;
-import ca.uqac.alterra.database.AlterraPoint;
-import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.types.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPoint;
+import ca.uqac.alterra.types.AlterraUser;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 
 enum Adapter {

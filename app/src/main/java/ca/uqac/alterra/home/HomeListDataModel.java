@@ -1,6 +1,6 @@
 package ca.uqac.alterra.home;
 
-import ca.uqac.alterra.database.AlterraPoint;
+import ca.uqac.alterra.types.AlterraPoint;
 
 public class HomeListDataModel {
 

@@ -1,4 +1,6 @@
-package ca.uqac.alterra.database;
+package ca.uqac.alterra.types;
+
+import ca.uqac.alterra.database.AuthMethod;
 
 public class AlterraUser {
 

@@ -5,6 +5,10 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import ca.uqac.alterra.types.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPoint;
+import ca.uqac.alterra.types.AlterraUser;
+
 /**
  * Alterra interface for cloud interactions
  * (e.g database access, retrieving pictures, ...)

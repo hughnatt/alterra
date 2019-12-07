@@ -53,6 +53,9 @@ import ca.uqac.alterra.database.exceptions.AlterraAuthInvalidCredentialsExceptio
 import ca.uqac.alterra.database.exceptions.AlterraAuthUserCollisionException;
 import ca.uqac.alterra.database.exceptions.AlterraAuthWeakPasswordException;
 import ca.uqac.alterra.database.exceptions.AlterraWriteFailureException;
+import ca.uqac.alterra.types.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPoint;
+import ca.uqac.alterra.types.AlterraUser;
 
 public class AlterraFirebase implements AlterraDatabase, AlterraAuth, AlterraStorage {
 

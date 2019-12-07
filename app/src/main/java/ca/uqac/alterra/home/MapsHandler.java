@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraPoint;
+import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.JsonReader;
 
