@@ -13,17 +13,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/fragment_home">
-
-
     </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
+        android:layout_gravity="start|left"
+        android:fitsSystemWindows="false"
         app:headerLayout="@layout/nav_header_home"
+        android:background="#fafafb"
+        app:itemIconTint="@color/colorPrimaryDark"
+        app:itemTextColor="@color/colorPrimaryDark"
+        app:insetForeground="@color/colorPrimaryDark"
         app:menu="@menu/navigation_drawer_menu">
     </com.google.android.material.navigation.NavigationView>
 
