@@ -13,8 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/toolbar">
+        android:layout_centerHorizontal="true">
 
 
         <ImageView

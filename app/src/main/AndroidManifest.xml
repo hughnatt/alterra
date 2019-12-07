@@ -80,6 +80,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+        <activity android:name=".settings.SettingsActivity" />
     </application>
 
 </manifest>

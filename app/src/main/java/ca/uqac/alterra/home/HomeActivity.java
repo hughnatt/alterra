@@ -41,6 +41,7 @@ import ca.uqac.alterra.about.AboutFragment;
 import ca.uqac.alterra.auth.AuthActivity;
 
 import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.settings.SettingsActivity;
 import ca.uqac.alterra.types.AlterraPicture;
 import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.types.AlterraUser;
@@ -49,9 +50,10 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final int PERMISSION_REQUEST_LOCATION = 0x01;
-    private static final int ACTIVITY_RESULT_TAKE_PHOTO = 0x02;
-    private static final int ACTIVITY_RESULT_PERMISSION_SETTING = 0x10;
+    private static final int PERMISSION_REQUEST_LOCATION = 0x11;
+    private static final int ACTIVITY_RESULT_TAKE_PHOTO = 0x01;
+    private static final int ACTIVITY_RESULT_PERMISSION_SETTING = 0x02;
+    private static final int ACTIVITY_RESULT_SETTINGS = 0x03;
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE, FRAGMENT_ABOUT}
     private FRAGMENT_ID mCurrentFragment;
@@ -353,7 +355,8 @@ public class HomeActivity extends AppCompatActivity {
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
                     break;
                 case R.id.nav_item_settings :
-                    Toast.makeText(getApplicationContext(), "Settings [WIP]", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(this, SettingsActivity.class);
+                    startActivityForResult(intent,ACTIVITY_RESULT_SETTINGS);
                     break;
                 case R.id.nav_item_about :
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_ABOUT);
