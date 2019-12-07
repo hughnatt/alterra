@@ -2,7 +2,9 @@ package ca.uqac.alterra.home;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -20,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +41,6 @@ import ca.uqac.alterra.about.AboutFragment;
 import ca.uqac.alterra.auth.AuthActivity;
 
 import ca.uqac.alterra.database.AlterraCloud;
-import ca.uqac.alterra.database.AlterraAuth;
 import ca.uqac.alterra.types.AlterraPicture;
 import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.types.AlterraUser;
@@ -57,8 +59,8 @@ public class HomeActivity extends AppCompatActivity {
     private PhotoUploader mPhotoUploader;
     private String mCurrentImagePath;
     private AlterraPoint mCurrentImagePoint;
-    private AlterraAuth mAuth;
-    private NavigationView mNavigationView;
+    private AlterraUser mCurrentUser;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     /**
      * True if we already requested runtime permissions
@@ -74,6 +76,13 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mCurrentUser = AlterraCloud.getAuthInstance().getCurrentUser();
+        //Make sure a user is logged in. If it's not the case, go back to login screen
+        if (mCurrentUser == null) {
+            startActivity(new Intent(this, AuthActivity.class));
+            finish();
+        }
+
         if (savedInstanceState == null){
             //Not restoring from previous state, use default fragment
             updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
@@ -82,8 +91,7 @@ public class HomeActivity extends AppCompatActivity {
             mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
         }
 
-        setNavigationViewListener();
-        mAuth = AlterraCloud.getAuthInstance();
+        initDrawerView();
 
         //Trigger an alert message when GPS is disabled
         AlterraGeolocator.addOnGPSStatusChangedListener(enabled -> {
@@ -92,20 +100,20 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
-        AlterraUser currentUser = mAuth.getCurrentUser();
-
-        //Make sure a user is logged in. If it's not the case, go back to login screen
-        if (currentUser != null) {
-            View headerView = mNavigationView.getHeaderView(0);
-            TextView navUsername = headerView.findViewById(R.id.navUsername);
-            navUsername.setText(currentUser.getEmail());
-        } else {
-            startActivity(new Intent(this, AuthActivity.class));
-            finish();
-        }
-
         mPhotoUploader = new PhotoUploader(this);
+
+
+        DrawerLayout navDrawer = findViewById(R.id.nav_drawer);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mDrawerToggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        mDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
+        navDrawer.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+    }
+
+    public void setDrawerToggleColor(int color){
+        mDrawerToggle.getDrawerArrowDrawable().setColor(color);
     }
 
 
@@ -320,9 +328,19 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    private void setNavigationViewListener() {
-        mNavigationView = findViewById(R.id.navigation_view);
-        DrawerLayout mDrawer = findViewById(R.id.navDrawer);
+    private void initDrawerView() {
+        NavigationView mNavigationView = findViewById(R.id.navigation_view);
+        DrawerLayout mDrawer = findViewById(R.id.nav_drawer);
+        View headerView = mNavigationView.getHeaderView(0);
+        TextView navUsername = headerView.findViewById(R.id.nav_header_username);
+        navUsername.setText(mCurrentUser.getEmail());
+        ImageView navHeadPicture = headerView.findViewById(R.id.nav_header_picture);
+        navHeadPicture.setOnClickListener(v -> {
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_PROFILE);
+            mDrawer.closeDrawers();
+        });
+
+
         mNavigationView.setNavigationItemSelectedListener((item) -> {
             switch (item.getItemId()){
                 case R.id.nav_item_profile :
@@ -335,14 +353,13 @@ public class HomeActivity extends AppCompatActivity {
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
                     break;
                 case R.id.nav_item_settings :
-                    Toast toastSettings = Toast.makeText(getApplicationContext(), "Settings", Toast.LENGTH_LONG);
-                    toastSettings.show();
+                    Toast.makeText(getApplicationContext(), "Settings [WIP]", Toast.LENGTH_LONG).show();
                     break;
                 case R.id.nav_item_about :
                     updateWorkflow(FRAGMENT_ID.FRAGMENT_ABOUT);
                     break;
                 case R.id.nav_item_logout :
-                    mAuth.logOut();
+                    AlterraCloud.getAuthInstance().logOut();
                     startActivity(new Intent(this, AuthActivity.class));
                     finish();
                     break;

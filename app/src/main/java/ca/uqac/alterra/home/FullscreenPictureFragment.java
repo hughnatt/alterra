@@ -33,7 +33,7 @@ public class FullscreenPictureFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        View fragmentView = inflater.inflate(R.layout.fragment_home_profile_photos,container,false);
+        View fragmentView = inflater.inflate(R.layout.fragment_fullscreen_photo,container,false);
         mImageView = fragmentView.findViewById(R.id.imageToShow);
         return fragmentView ;
     }

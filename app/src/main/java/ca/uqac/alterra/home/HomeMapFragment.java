@@ -10,9 +10,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -26,6 +23,7 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLocationChangedListener {
 
+    private HomeActivity mActivity;
     private MapsHandler mMapsHandler;
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
@@ -41,6 +39,8 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mActivity = (HomeActivity) getActivity();
+
         if (savedInstanceState != null){
             mAlterraPoint = (AlterraPoint) savedInstanceState.getSerializable("POINT");
         }
@@ -57,22 +57,13 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
         assert(getActivity() != null);
         super.onStart();
 
+        mActivity.setDrawerToggleColor(getResources().getColor(R.color.colorPrimaryDark));
+
         //Never enable location subsystem at start, it can crash the app if location permission are not granted, wait for geolocator to provide location updates to enable button
         mEnableLocation = false;
         AlterraGeolocator.addOnLocationChangedListener(this);
-
         mBottomSheetHandler = new BottomSheetHandler(getActivity(),mAlterraPoint);
         mMapsHandler = new MapsHandler(getContext(),mEnableLocation, mBottomSheetHandler,mMapLat,mMapLng,mMapZoom);
-
-
-        //TODO, see if there is any way to simplify this block
-        DrawerLayout navDrawer =getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
-        navDrawer.addDrawerListener(toggle);
-        toggle.syncState();
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.

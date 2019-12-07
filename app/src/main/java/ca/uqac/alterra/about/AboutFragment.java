@@ -29,16 +29,4 @@ public class AboutFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_about, container, false);
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
-        ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
-        navDrawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-    }
 }

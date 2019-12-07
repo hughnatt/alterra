@@ -2,6 +2,7 @@ package ca.uqac.alterra.home;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.TypedValue;
 
 import androidx.annotation.Nullable;
 
@@ -79,7 +80,15 @@ public class MapsHandler implements OnMapReadyCallback, GoogleMap.OnMarkerClickL
             mMap.animateCamera(CameraUpdateFactory.newLatLng(mUserLocation), 200, null);
             return true;
         });*/
-        mMap.setPadding(0,100,0,0);
+
+        int topOffset;
+        TypedValue tv = new TypedValue();
+        if (mContext.getTheme().resolveAttribute(android.R.attr.actionBarSize,tv,true)){
+            topOffset = TypedValue.complexToDimensionPixelSize(tv.data,mContext.getResources().getDisplayMetrics());
+        } else {
+            topOffset = 100;
+        }
+        mMap.setPadding(0,topOffset,0,0);
 
         if (mEnableLocation){
             mMap.setMyLocationEnabled(true);

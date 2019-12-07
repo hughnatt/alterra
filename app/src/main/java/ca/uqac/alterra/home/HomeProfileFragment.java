@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -40,18 +41,19 @@ public class HomeProfileFragment extends Fragment {
         LOCATIONS
     }
 
+    private HomeActivity mActivity;
     private AlterraUser mCurrentUser;
-
     private RecyclerView mRecyclerView;
     private PicturesAdapter mAdapterPictures;
     private HomeListAdapter mAdapterLocation;
-
     private GridLayoutManager mGridLayoutManager;
     private TextView mTotalLocation;
     private TextView mTotalPhotos;
     private SwipeRefreshLayout mRefresher;
     private Adapter mCurrentAdapter;
     private int mCurrentSpanCount;
+
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -85,17 +87,16 @@ public class HomeProfileFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mActivity = (HomeActivity) getActivity();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
-        DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getView().findViewById(R.id.profileToolbar);
-        ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
-        navDrawer.addDrawerListener(toggle);
-        toggle.syncState();
-
+        mActivity.setDrawerToggleColor(getResources().getColor(R.color.colorPrimaryDark));
         mCurrentUser = AlterraCloud.getAuthInstance().getCurrentUser();
 
         mAdapterPictures = new PicturesAdapter(getContext(), this::switchContext, this::showDeleteAlertDialog);

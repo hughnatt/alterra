@@ -5,9 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +20,7 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeListFragment extends Fragment {
 
+    private HomeActivity mActivity;
     private RecyclerView mRecyclerView;
     private AlterraAuth mAuth;
     private SwipeRefreshLayout mRefresher;
@@ -31,35 +30,28 @@ public class HomeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View myview = inflater.inflate(R.layout.fragment_home_list,container,false);
-
         mRefresher = myview.findViewById(R.id.homeListRefresher);
-
+        mRecyclerView = myview.findViewById(R.id.recyclerview);
         return myview;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mActivity = (HomeActivity) getActivity();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        mActivity.setDrawerToggleColor(getResources().getColor(R.color.colorPrimary));
 
         mAuth = AlterraCloud.getAuthInstance();
 
-        DrawerLayout navDrawer = getActivity().findViewById(R.id.navDrawer);
-        Toolbar toolbar = getView().findViewById(R.id.toolbar);
-        ((HomeActivity) getActivity()).setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(),navDrawer,toolbar,R.string.app_name,R.string.app_name);
-        navDrawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        mRecyclerView = getView().findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext(), new HomeListAdapter.OnButtonClickListener() {
-            @Override
-            public void onClick(AlterraPoint point) {
-                takePicture(point);
-            }
-        });
+        HomeListAdapter recyclerAdapter =  new HomeListAdapter(this.getContext(), point -> mActivity.takeAlterraPhoto(point));
 
         mRecyclerView.setAdapter(recyclerAdapter);
         mRefresher.setOnRefreshListener(() -> {
@@ -99,10 +91,5 @@ public class HomeListFragment extends Fragment {
                 }
             }
         });
-    }
-
-    public void takePicture(AlterraPoint point){
-        HomeActivity mainActivity = (HomeActivity) getActivity();
-        mainActivity.takeAlterraPhoto(point);
     }
 }

@@ -62,7 +62,7 @@ public class HomeDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.fragment_home_details,container,false);
+        View v =  inflater.inflate(R.layout.fragment_details,container,false);
 
         mHeader = v.findViewById(R.id.detailsHeader);
 

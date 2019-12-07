@@ -7,22 +7,10 @@
     android:background="#fafafb"
     tools:context=".about.AboutFragment">
 
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
-        app:title="About">
-    </androidx.appcompat.widget.Toolbar>
-
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_below="@id/toolbar"
         android:gravity="center">
 
 
