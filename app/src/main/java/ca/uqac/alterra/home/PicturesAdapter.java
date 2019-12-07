@@ -51,7 +51,7 @@ public class PicturesAdapter extends RecyclerView.Adapter{
 
         Pholder.mPlace.setOnClickListener(view -> {
             if(mPictureClickListener != null){
-                mPictureClickListener.onClick(mPhotoList.get(position).getURL());
+                mPictureClickListener.onClick(mPhotoList.get(position));
             }
         });
         Pholder.mPlace.setOnLongClickListener(view -> {
@@ -60,7 +60,6 @@ public class PicturesAdapter extends RecyclerView.Adapter{
             }
             return true;
         });
-
     }
 
     @Override
@@ -99,7 +98,7 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     }
 
     public interface OnPictureClickListener{
-        void onClick(String url);
+        void onClick(AlterraPicture alterraPicture);
     }
 
     public interface OnPictureLongClickListener{
