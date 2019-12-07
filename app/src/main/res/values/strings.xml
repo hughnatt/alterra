@@ -41,6 +41,7 @@
     <string name="content_description_alterra_logo">Alterra Logo</string>
     <string name="content_description_thumbnail">Thumbnail</string>
     <string name="content_description_unknown">Undefined picture</string>
+    <string name="content_description_uqac_logo">UQAC Logo</string>
 
     <string name="maps_first_marker_click">Click on a marker to begin</string>
 
@@ -57,4 +58,9 @@
 
     <string name="details_loading_failed">Failed to load location details</string>
     <string name="details_users_loading_failed">Failed to load users</string>
+
+    <string name="estelle">Estelle LANDI</string>
+    <string name="quentin">Quentin SIBUÉ</string>
+    <string name="mathieu">Mathieu VINCENT</string>
+    <string name="tanguy">Tanguy SAUTON</string>
 </resources>

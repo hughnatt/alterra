@@ -138,4 +138,5 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     interface OnButtonClickListener{
         public void onClick(AlterraPoint point);
     }
+
 }

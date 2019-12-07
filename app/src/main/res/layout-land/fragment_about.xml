@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#fafafb"
+    tools:context=".about.AboutFragment">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        app:title="About">
+    </androidx.appcompat.widget.Toolbar>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_below="@id/toolbar"
+        android:gravity="center">
+
+
+        <LinearLayout
+            android:id="@+id/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginEnd="16dp"
+            >
+
+
+            <ImageView
+                android:id="@+id/btmThumbnail"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/alterra_logo_round"
+                android:layout_gravity="center"
+                android:contentDescription="@string/content_description_alterra_logo"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_title"
+                android:id="@+id/title"
+                android:textAlignment="center"
+                android:textColor="#242B2F"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                />
+
+        </LinearLayout>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rowCount="2"
+            android:columnCount="2"
+            android:padding="14dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="@string/estelle">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="@string/quentin">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="@string/tanguy">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#fafafb"
+                android:layout_margin="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:text="@string/mathieu">
+                </TextView>
+            </androidx.cardview.widget.CardView>
+
+        </GridLayout>
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/uqac_logo"
+            android:contentDescription="@string/content_description_uqac_logo">
+        </ImageView>
+    </LinearLayout>
+</RelativeLayout>
