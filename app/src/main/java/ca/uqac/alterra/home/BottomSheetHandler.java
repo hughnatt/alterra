@@ -147,7 +147,7 @@ public class BottomSheetHandler  {
 
                 if (alterraPoint.isUnlocked()){
                     mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
-                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimary));
+                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
                     mCameraButton.animate().scaleX(1).scaleY(1).setDuration(0).start();
                     getImages();
                 } else if (alterraPoint.isUnlockable()){

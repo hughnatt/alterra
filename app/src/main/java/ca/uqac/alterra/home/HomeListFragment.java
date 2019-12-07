@@ -44,7 +44,6 @@ public class HomeListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mActivity.setDrawerToggleColor(getResources().getColor(R.color.colorPrimary));
 
         mAuth = AlterraCloud.getAuthInstance();
 

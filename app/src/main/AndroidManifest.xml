@@ -81,6 +81,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".settings.SettingsActivity" />
+        <activity android:name=".about.AboutActivity" />
     </application>
 
 </manifest>

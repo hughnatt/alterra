@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +38,6 @@ public class HomeProfileFragment extends Fragment {
         LOCATIONS
     }
 
-    private HomeActivity mActivity;
     private AlterraUser mCurrentUser;
     private RecyclerView mRecyclerView;
     private PicturesAdapter mAdapterPictures;
@@ -85,16 +83,8 @@ public class HomeProfileFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mActivity = (HomeActivity) getActivity();
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
-
-        mActivity.setDrawerToggleColor(getResources().getColor(R.color.colorPrimaryDark));
         mCurrentUser = AlterraCloud.getAuthInstance().getCurrentUser();
 
         mAdapterPictures = new PicturesAdapter(getContext(), this::switchContext, this::showDeleteAlertDialog);

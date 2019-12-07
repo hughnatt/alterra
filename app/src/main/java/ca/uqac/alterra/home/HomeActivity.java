@@ -35,9 +35,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.about.AboutFragment;
+import ca.uqac.alterra.about.AboutActivity;
 import ca.uqac.alterra.auth.AuthActivity;
 
 import ca.uqac.alterra.database.AlterraCloud;
@@ -54,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
     private static final int ACTIVITY_RESULT_TAKE_PHOTO = 0x01;
     private static final int ACTIVITY_RESULT_PERMISSION_SETTING = 0x02;
     private static final int ACTIVITY_RESULT_SETTINGS = 0x03;
+    private static final int ACTIVITY_RESULT_ABOUT = 0x04;
 
     private enum FRAGMENT_ID {FRAGMENT_MAP, FRAGMENT_LIST, FRAGMENT_PROFILE, FRAGMENT_ABOUT}
     private FRAGMENT_ID mCurrentFragment;
@@ -62,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
     private String mCurrentImagePath;
     private AlterraPoint mCurrentImagePoint;
     private AlterraUser mCurrentUser;
+
     private ActionBarDrawerToggle mDrawerToggle;
 
     /**
@@ -85,13 +88,7 @@ public class HomeActivity extends AppCompatActivity {
             finish();
         }
 
-        if (savedInstanceState == null){
-            //Not restoring from previous state, use default fragment
-            updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
-        } else {
-            mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
-            mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
-        }
+
 
         initDrawerView();
 
@@ -105,19 +102,44 @@ public class HomeActivity extends AppCompatActivity {
         mPhotoUploader = new PhotoUploader(this);
 
 
-        DrawerLayout navDrawer = findViewById(R.id.nav_drawer);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        mDrawerToggle = new ActionBarDrawerToggle(this,navDrawer,toolbar,R.string.app_name,R.string.app_name);
+        DrawerLayout drawer = findViewById(R.id.nav_drawer);
+        Toolbar mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawer, mToolbar,R.string.app_name,R.string.app_name);
         mDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
-        navDrawer.addDrawerListener(mDrawerToggle);
+        drawer.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-    }
+        mDrawerToggle.setToolbarNavigationClickListener(v -> onBackPressed());
 
-    public void setDrawerToggleColor(int color){
-        mDrawerToggle.getDrawerArrowDrawable().setColor(color);
-    }
 
+        if (savedInstanceState == null){
+            //Not restoring from previous state, use default fragment
+            updateWorkflow(FRAGMENT_ID.FRAGMENT_MAP);
+        } else {
+            mCurrentImagePath = savedInstanceState.getString("mCurrentImagePath");
+            mPendingPermissionRequest = savedInstanceState.getBoolean("mPendingPermissionRequest",false);
+        }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_home);
+            if (fragment instanceof HomeFullPictureFragment){
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
+            } else if (fragment instanceof HomeMapFragment){
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                mDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
+            } else if (fragment instanceof HomeListFragment){
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                mDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimary));
+            } else if (fragment instanceof HomeProfileFragment){
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                mDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.colorPrimaryDark));
+            } else if (fragment instanceof HomeDetailsFragment){
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
+            }
+        });
+    }
 
     @Override
     public void onStart() {
@@ -156,7 +178,6 @@ public class HomeActivity extends AppCompatActivity {
                 if(homeListFragment == null){
                     homeListFragment = new HomeListFragment();
                 }
-
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_home, homeListFragment,"HomeListFragment")
                         .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
@@ -169,22 +190,8 @@ public class HomeActivity extends AppCompatActivity {
                 if(homeProfileFragment == null){
                     homeProfileFragment = new HomeProfileFragment();
                 }
-
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_home, homeProfileFragment,"HomeProfileFragment")
-                        .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
-                        .addToBackStack(null)
-                        .commit();
-                break;
-
-            case FRAGMENT_ABOUT:
-                AboutFragment aboutFragment = (AboutFragment) fragmentManager.findFragmentByTag("AboutFragment");
-                if(aboutFragment == null){
-                    aboutFragment = new AboutFragment();
-                }
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_home, aboutFragment,"AboutFragment")
                         .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
                         .addToBackStack(null)
                         .commit();
@@ -195,7 +202,7 @@ public class HomeActivity extends AppCompatActivity {
     public void displayPicture(AlterraPicture alterraPicture){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.fragment_home, FullscreenPictureFragment.newInstance(alterraPicture))
+                .replace(R.id.fragment_home, HomeFullPictureFragment.newInstance(alterraPicture))
                 .setCustomAnimations(R.anim.faded_in,R.anim.faded_out)
                 .addToBackStack(null)
                 .commit();
@@ -359,7 +366,8 @@ public class HomeActivity extends AppCompatActivity {
                     startActivityForResult(intent,ACTIVITY_RESULT_SETTINGS);
                     break;
                 case R.id.nav_item_about :
-                    updateWorkflow(FRAGMENT_ID.FRAGMENT_ABOUT);
+                    Intent startAboutActivityIntent = new Intent(this, AboutActivity.class);
+                    startActivityForResult(startAboutActivityIntent,ACTIVITY_RESULT_ABOUT);
                     break;
                 case R.id.nav_item_logout :
                     AlterraCloud.getAuthInstance().logOut();
@@ -496,10 +504,13 @@ public class HomeActivity extends AppCompatActivity {
                 .show();
     }*/
 
-    @Override public void onBackPressed() {
+
+
+    @Override
+    public void onBackPressed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_home);
-        if ((fragment instanceof FullscreenPictureFragment)){
+        if ((fragment instanceof HomeFullPictureFragment)){
             fragmentManager.popBackStack();
         } else if (fragment instanceof  HomeDetailsFragment){
             fragmentManager.popBackStack();

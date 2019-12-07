@@ -23,7 +23,6 @@ import ca.uqac.alterra.utility.AlterraGeolocator;
 
 public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLocationChangedListener {
 
-    private HomeActivity mActivity;
     private MapsHandler mMapsHandler;
     private boolean mEnableLocation;
     private BottomSheetHandler mBottomSheetHandler;
@@ -39,7 +38,6 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity = (HomeActivity) getActivity();
 
         if (savedInstanceState != null){
             mAlterraPoint = (AlterraPoint) savedInstanceState.getSerializable("POINT");
@@ -54,10 +52,7 @@ public class HomeMapFragment extends Fragment implements AlterraGeolocator.OnLoc
 
     @Override
     public void onStart(){
-        assert(getActivity() != null);
         super.onStart();
-
-        mActivity.setDrawerToggleColor(getResources().getColor(R.color.colorPrimaryDark));
 
         //Never enable location subsystem at start, it can crash the app if location permission are not granted, wait for geolocator to provide location updates to enable button
         mEnableLocation = false;

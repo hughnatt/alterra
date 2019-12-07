@@ -14,7 +14,7 @@ import ca.uqac.alterra.R;
 import ca.uqac.alterra.types.AlterraPicture;
 
 
-public class FullscreenPictureFragment extends Fragment{
+public class HomeFullPictureFragment extends Fragment{
 
 
     private static final String ARGS_PICTURE = "ARGS_PICTURE";
@@ -22,12 +22,12 @@ public class FullscreenPictureFragment extends Fragment{
     private AlterraPicture mAlterraPicture;
     private TouchImageView mImageView;
 
-    public static FullscreenPictureFragment newInstance(AlterraPicture alterraPicture){
+    public static HomeFullPictureFragment newInstance(AlterraPicture alterraPicture){
         Bundle args = new Bundle();
         args.putSerializable(ARGS_PICTURE, alterraPicture);
-        FullscreenPictureFragment fullscreenPictureFragment = new FullscreenPictureFragment();
-        fullscreenPictureFragment.setArguments(args);
-        return fullscreenPictureFragment;
+        HomeFullPictureFragment homeFullPictureFragment = new HomeFullPictureFragment();
+        homeFullPictureFragment.setArguments(args);
+        return homeFullPictureFragment;
     }
 
     @Override
