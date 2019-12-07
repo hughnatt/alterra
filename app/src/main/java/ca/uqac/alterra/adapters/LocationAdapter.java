@@ -101,7 +101,7 @@ public class LocationAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_home_list_layout,
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_locations_layout,
                 parent, false);
 
         return new MyViewHolder(view);
