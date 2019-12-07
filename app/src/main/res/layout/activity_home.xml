@@ -37,7 +37,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="false"
         app:headerLayout="@layout/nav_header_home"
-        android:background="#fafafa"
+        android:background="@color/colorPrimary"
         app:itemIconTint="@color/colorPrimaryDark"
         app:itemTextColor="@color/colorPrimaryDark"
         app:insetForeground="@color/colorPrimaryDark"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#fafafb"
+    android:background="@color/colorPrimary"
     tools:context=".about.AboutActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -67,7 +67,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:backgroundTint="#fafafb"
+                app:cardBackgroundColor="@color/colorPrimary"
                 android:layout_margin="16dp">
 
                 <TextView
@@ -86,7 +86,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:backgroundTint="#fafafb"
+                app:cardBackgroundColor="@color/colorPrimary"
                 android:layout_margin="16dp">
 
                 <TextView
@@ -106,7 +106,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:backgroundTint="#fafafb"
+                app:cardBackgroundColor="@color/colorPrimary"
                 android:layout_margin="16dp">
 
                 <TextView
@@ -125,7 +125,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center"
-                android:backgroundTint="#fafafb"
+                app:cardBackgroundColor="@color/colorPrimary"
                 android:layout_margin="16dp">
 
                 <TextView
