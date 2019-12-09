@@ -69,6 +69,10 @@ public class HomeProfileFragment extends Fragment {
     private Adapter mCurrentAdapter;
     private int mCurrentSpanCount;
 
+    /*
+    Get all the references to the layout elements
+    Verify if the savedInstanceState is != null to rebuild the state of the fragment before his reconstruction
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
