@@ -224,6 +224,10 @@ public class HomeProfileFragment extends Fragment {
         }
     }
 
+    /*
+    Save the current used adapter (Location or Pictures) & the current span count
+    Allow the recreation of the fragment without starting with the picture adapter every time
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle saveInstanceState) {
         super.onSaveInstanceState(saveInstanceState);
