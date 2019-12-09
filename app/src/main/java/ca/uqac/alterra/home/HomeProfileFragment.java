@@ -47,7 +47,7 @@ public class HomeProfileFragment extends Fragment {
     private TextView mTotalPhotos;
     private SwipeRefreshLayout mRefresher;
     private Adapter mCurrentAdapter;
-    private int mCurrentSpanCount;
+    private int mCurrentSpanCount = SPAN_COUNT_LOCATIONS;
 
 
     /*
