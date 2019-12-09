@@ -92,6 +92,11 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         notifyItemInserted(getItemCount());
     }
 
+    /*
+    Method used each time a deletion from Firebase & Firestore were successful
+    Delete the image at the "position" index & notify this action to remove it
+    from the recycler view
+     */
     public void deleteItem(int position) {
         mPhotoList.remove(position);
         notifyItemRemoved(position);
