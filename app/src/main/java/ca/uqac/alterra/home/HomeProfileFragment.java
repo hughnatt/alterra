@@ -214,6 +214,9 @@ public class HomeProfileFragment extends Fragment {
         }
     }
 
+    /*
+    Method used to use the picture method of the HomeActivity
+     */
     private void takePicture(AlterraPoint point){
         if(getActivity() instanceof HomeActivity){
             HomeActivity homeActivity =(HomeActivity) getActivity();
