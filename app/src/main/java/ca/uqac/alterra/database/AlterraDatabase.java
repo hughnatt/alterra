@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-import ca.uqac.alterra.home.AlterraPoint;
-import ca.uqac.alterra.home.HomeListAdapter;
-import ca.uqac.alterra.home.HomeListDataModel;
+import ca.uqac.alterra.types.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPoint;
+import ca.uqac.alterra.types.AlterraUser;
 
 /**
  * Alterra interface for cloud interactions

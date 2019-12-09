@@ -17,13 +17,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.adapters.PicturesAdapter;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
-import ca.uqac.alterra.database.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPoint;
 import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
@@ -42,8 +43,8 @@ public class BottomSheetHandler  {
 
     private Activity mActivity;
 
-    private ArrayList<String> mImageUrls = new ArrayList<>();
     private RecyclerView mRecyclerView;
+    private PicturesAdapter mPicturesAdapter;
 
     private AlterraPoint mAlterraPoint;
 
@@ -108,6 +109,8 @@ public class BottomSheetHandler  {
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView = activity.findViewById(R.id.btmRecyclerView);
         mRecyclerView.setLayoutManager(layoutManager);
+        mPicturesAdapter = new PicturesAdapter(mActivity, alterraPicture -> ((HomeActivity) mActivity).displayPicture(alterraPicture), null, R.layout.bottom_sheet_image);
+        mRecyclerView.setAdapter(mPicturesAdapter);
     }
 
     protected BottomSheetHandler(Activity activity, @Nullable AlterraPoint alterraPoint){
@@ -145,7 +148,7 @@ public class BottomSheetHandler  {
 
                 if (alterraPoint.isUnlocked()){
                     mSeeMore.setText(mActivity.getString(R.string.alterra_point_unlocked));
-                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimary));
+                    mSeeMore.setTextColor(mActivity.getResources().getColor(R.color.colorPrimaryDark));
                     mCameraButton.animate().scaleX(1).scaleY(1).setDuration(0).start();
                     getImages();
                 } else if (alterraPoint.isUnlockable()){
@@ -166,14 +169,12 @@ public class BottomSheetHandler  {
             @Override
             public void onSuccess(@Nullable List<AlterraPicture> alterraPictures) {
                 if (alterraPictures != null){
-                    mImageUrls.clear();
+                    mPicturesAdapter.clear();
                     int i =0;
                     while(i<4 && alterraPictures.get(i)!=null) {
-                        mImageUrls.add(alterraPictures.get(i).getURL());
+                        mPicturesAdapter.addPicture(alterraPictures.get(i));
                         i++;
                     }
-                    BottomSheetAdapter adapter = new BottomSheetAdapter(mActivity, mImageUrls);
-                    mRecyclerView.setAdapter(adapter);
                     mRecyclerView.setVisibility(View.VISIBLE);
                 }
             }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
 
-    android:background="#fafafb"
+    android:background="@color/colorPrimary"
     tools:context="ca.uqac.alterra.auth.LoginFragment">
 
     <LinearLayout

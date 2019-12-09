@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,10 +25,12 @@ import java.util.List;
 import java.util.Objects;
 
 import ca.uqac.alterra.R;
+import ca.uqac.alterra.adapters.PicturesAdapter;
 import ca.uqac.alterra.database.AlterraCloud;
 import ca.uqac.alterra.database.AlterraDatabase;
-import ca.uqac.alterra.database.AlterraPicture;
-import ca.uqac.alterra.database.AlterraUser;
+import ca.uqac.alterra.types.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPoint;
+import ca.uqac.alterra.types.AlterraUser;
 
 public class HomeDetailsFragment extends Fragment {
 
@@ -63,7 +63,7 @@ public class HomeDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.fragment_home_details,container,false);
+        View v =  inflater.inflate(R.layout.fragment_details,container,false);
 
         mHeader = v.findViewById(R.id.detailsHeader);
 

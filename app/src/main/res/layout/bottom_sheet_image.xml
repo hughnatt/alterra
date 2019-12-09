@@ -11,7 +11,7 @@
         android:layout_height="110dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="1dp"
-        android:backgroundTint="#fafafa"
+        app:cardBackgroundColor="@color/colorPrimary"
         android:layout_centerInParent="true">
 
         <ImageView
@@ -20,8 +20,9 @@
             android:scaleType="centerCrop"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:id="@+id/image_view"
-            android:src="@drawable/ic_launcher_background"/>
+            android:id="@+id/ivPlace"
+            android:src="@drawable/ic_launcher_background"
+            android:contentDescription="@string/content_description_unknown" />
 
 
     </com.google.android.material.card.MaterialCardView>

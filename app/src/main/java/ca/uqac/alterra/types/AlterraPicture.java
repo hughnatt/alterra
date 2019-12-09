@@ -1,8 +1,8 @@
-package ca.uqac.alterra.database;
+package ca.uqac.alterra.types;
 
-import androidx.annotation.Nullable;
+import java.io.Serializable;
 
-public class AlterraPicture {
+public class AlterraPicture implements Serializable {
 
     private String mId;
     private String mUrl;

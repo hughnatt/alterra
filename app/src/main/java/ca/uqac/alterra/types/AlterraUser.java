@@ -1,13 +1,17 @@
-package ca.uqac.alterra.database;
+package ca.uqac.alterra.types;
 
-public class AlterraUser {
+import java.io.Serializable;
+
+import ca.uqac.alterra.database.AuthMethod;
+
+public class AlterraUser implements Serializable {
 
     private String mUID;
     private String mEmail;
     private AuthMethod mAuthMethod;
 
 
-    AlterraUser(String UID, String email, AuthMethod authMethod){
+    public AlterraUser(String UID, String email, AuthMethod authMethod){
         mUID = UID;
         mEmail = email;
         mAuthMethod = authMethod;
