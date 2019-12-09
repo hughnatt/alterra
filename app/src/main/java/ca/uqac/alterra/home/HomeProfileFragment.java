@@ -109,6 +109,11 @@ public class HomeProfileFragment extends Fragment {
         return myView;
     }
 
+    /*
+    Apply to the fragment the shared navDrawer & a toolbar
+    Instanciation of the both adapter to allow the user switch between the 2 list (pictures or locations)
+    Add the behaviour to the refresher depending of the current used adapter
+     */
     @Override
     public void onStart() {
         super.onStart();
