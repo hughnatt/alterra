@@ -83,6 +83,10 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         return mPhotoList.size();
     }
 
+    /*
+    Method used to add a picture into the ArrayList to allow the futur display of this picture
+    notify that an item was inserted to triggered the autorefresh
+     */
     public void addPicture(AlterraPicture alterraPicture){
         mPhotoList.add(alterraPicture);
         notifyItemInserted(getItemCount());
