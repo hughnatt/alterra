@@ -27,6 +27,9 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
     private OnPictureClickListener mPictureClickListener;
     private OnPictureLongClickListener mPictureLongClickListener;
 
+    /*
+    Constructor used in the ProfileFragment & DetailsFragment
+     */
     public PicturesAdapter(Context mContext, @Nullable OnPictureClickListener pictureClickListener, @Nullable OnPictureLongClickListener pictureLongClickListener) {
         this.mContext = mContext;
         this.mPhotoList = new ArrayList<>();
@@ -34,6 +37,9 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         this.mPictureLongClickListener = pictureLongClickListener;
     }
 
+    /*
+    Constructor used in the bottom-sheet from HomeActivity
+     */
     public PicturesAdapter(Context context, @Nullable OnPictureClickListener pictureClickListener, @Nullable OnPictureLongClickListener pictureLongClickListener, int viewResId){
         this(context,pictureClickListener,pictureLongClickListener);
         mViewResId = viewResId;
@@ -48,6 +54,10 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         return new PictureViewHolder(view);
     }
 
+    /*
+    Put the picture from "position" index into the Holder of the recuyclerView
+    Set the listener on the image to handle both onClick & onLongClick
+     */
     @Override
     public void onBindViewHolder(PictureViewHolder holder, int position) {
         Glide.with(mContext)
@@ -73,11 +83,20 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         return mPhotoList.size();
     }
 
+    /*
+    Method used to add a picture into the ArrayList to allow the futur display of this picture
+    notify that an item was inserted to triggered the autorefresh
+     */
     public void addPicture(AlterraPicture alterraPicture){
         mPhotoList.add(alterraPicture);
         notifyItemInserted(getItemCount());
     }
 
+    /*
+    Method used each time a deletion from Firebase & Firestore were successful
+    Delete the image at the "position" index & notify this action to remove it
+    from the recycler view
+     */
     public void deleteItem(int position) {
         mPhotoList.remove(position);
         notifyItemRemoved(position);
@@ -98,6 +117,12 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         }
     }
 
+
+    /*
+    Method used to refresh the full content of the list
+    used each time the user refresh the list with the refresher
+    in the concerned fragment
+     */
     public void clear() {
         int size = mPhotoList.size();
         if (size > 0) {

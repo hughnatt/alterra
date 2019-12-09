@@ -47,10 +47,13 @@ public class HomeProfileFragment extends Fragment {
     private TextView mTotalPhotos;
     private SwipeRefreshLayout mRefresher;
     private Adapter mCurrentAdapter;
-    private int mCurrentSpanCount;
+    private int mCurrentSpanCount = SPAN_COUNT_LOCATIONS;
 
 
-
+    /*
+    Get all the references to the layout elements
+    Verify if the savedInstanceState is != null to rebuild the state of the fragment before his reconstruction
+     */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
@@ -82,6 +85,11 @@ public class HomeProfileFragment extends Fragment {
         return myView;
     }
 
+    /*
+    Apply to the fragment the shared navDrawer & a toolbar
+    Instanciation of the both adapter to allow the user switch between the 2 list (pictures or locations)
+    Add the behaviour to the refresher depending of the current used adapter
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -170,7 +178,11 @@ public class HomeProfileFragment extends Fragment {
     }
 
 
-    private void changeAdapter(Adapter adapter){
+
+    /*
+    Change the current adapter to use depending where the user clicked
+     */
+    public void changeAdapter(Adapter adapter){
         switch (adapter){
             case LOCATIONS:
                 if(mCurrentAdapter != Adapter.LOCATIONS) {
@@ -192,6 +204,9 @@ public class HomeProfileFragment extends Fragment {
     }
 
 
+    /*
+    Method used to launch the HomeFullPictureFragment via the activity
+     */
     private void switchContext(AlterraPicture alterraPicture){
         if(getActivity() instanceof HomeActivity){
             HomeActivity homeActivity =(HomeActivity) getActivity();
@@ -199,6 +214,9 @@ public class HomeProfileFragment extends Fragment {
         }
     }
 
+    /*
+    Method used to use the picture method of the HomeActivity
+     */
     private void takePicture(AlterraPoint point){
         if(getActivity() instanceof HomeActivity){
             HomeActivity homeActivity =(HomeActivity) getActivity();
@@ -206,6 +224,10 @@ public class HomeProfileFragment extends Fragment {
         }
     }
 
+    /*
+    Save the current used adapter (Location or Pictures) & the current span count
+    Allow the recreation of the fragment without starting with the picture adapter every time
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle saveInstanceState) {
         super.onSaveInstanceState(saveInstanceState);
@@ -213,6 +235,11 @@ public class HomeProfileFragment extends Fragment {
         saveInstanceState.putInt("currentSpanCount",mCurrentSpanCount);
     }
 
+    /*
+    Method used to create an AlertDialog each time the user long clicked a picture
+    Allow the user to accept the deletion (from Firebase,Firestore & the recyclerview)
+    or cancel the deletion and do nothing
+     */
     private void showDeleteAlertDialog(AlterraPicture picture,int position){
         new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()),R.style.DialogStyle)
                        .setTitle(R.string.profile_photos_dialog_box_title)
