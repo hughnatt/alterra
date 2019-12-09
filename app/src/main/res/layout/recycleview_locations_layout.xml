@@ -24,7 +24,8 @@
                 android:id="@+id/recyclerviewImage"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:background="@color/colorPrimaryDark">
+                android:background="@color/colorPrimaryDark"
+                android:contentDescription="@string/content_description_unknown">
 
             </ImageView>
 
@@ -52,28 +53,36 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
 
-                    <Button
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/listRecyclerviewButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                    </Button>
-
-                    <ImageButton
+                        style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@android:drawable/ic_menu_compass"
-                        android:contentDescription="@string/content_description_unknown">
-                    </ImageButton>
+                        android:layout_marginEnd="20dp">
+                    </androidx.appcompat.widget.AppCompatButton>
 
-                    <ImageButton
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="50dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:contentDescription="@string/content_description_unknown"
+                        android:src="@android:drawable/ic_menu_compass"/>
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        style="@style/Widget.MaterialComponents.Button"
                         android:id="@+id/homeListPhotoButton"
-                        android:layout_width="wrap_content"
+                        android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:src="@android:drawable/ic_menu_camera"
-                        android:contentDescription="@string/content_description_unknown">
-                    </ImageButton>
+                        android:contentDescription="@string/content_description_unknown"
+                        android:src="@android:drawable/ic_menu_camera" />
 
                 </LinearLayout>
             </LinearLayout>

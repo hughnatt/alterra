@@ -1,6 +1,6 @@
 package ca.uqac.alterra.database;
 
-import ca.uqac.alterra.home.AlterraPoint;
+import ca.uqac.alterra.types.AlterraPoint;
 
 public interface AlterraStorage {
 

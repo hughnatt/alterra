@@ -1,6 +1,8 @@
 package ca.uqac.alterra.database;
 
-public enum AuthMethod {
+import java.io.Serializable;
+
+public enum AuthMethod implements Serializable {
     PASSWORD,
     FACEBOOK,
     GOOGLE,

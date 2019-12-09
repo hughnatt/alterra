@@ -1,4 +1,4 @@
-package ca.uqac.alterra.home;
+package ca.uqac.alterra.adapters;
 
 
 import android.content.Context;
@@ -17,11 +17,12 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraPicture;
+import ca.uqac.alterra.types.AlterraPicture;
 
-public class PicturesAdapter extends RecyclerView.Adapter{
+public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.PictureViewHolder>{
 
     private Context mContext;
+    private int mViewResId = R.layout.recycleview_pictures_layout;
     private ArrayList<AlterraPicture> mPhotoList;
     private OnPictureClickListener mPictureClickListener;
     private OnPictureLongClickListener mPictureLongClickListener;
@@ -33,34 +34,38 @@ public class PicturesAdapter extends RecyclerView.Adapter{
         this.mPictureLongClickListener = pictureLongClickListener;
     }
 
+    public PicturesAdapter(Context context, @Nullable OnPictureClickListener pictureClickListener, @Nullable OnPictureLongClickListener pictureLongClickListener, int viewResId){
+        this(context,pictureClickListener,pictureLongClickListener);
+        mViewResId = viewResId;
+    }
+
+    @NonNull
     @Override
-    public PlaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_pictures_layout,
+    public PictureViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(mViewResId,
                 parent, false);
 
-        return new PlaceViewHolder(view);
+        return new PictureViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-       PlaceViewHolder Pholder =(PlaceViewHolder) holder;
-       Glide.with(mContext)
+    public void onBindViewHolder(PictureViewHolder holder, int position) {
+        Glide.with(mContext)
             .load(mPhotoList.get(position).getURL())
             .fitCenter()
-            .into(((PlaceViewHolder) holder).mPlace);
+            .into(holder.getImageView());
 
-        Pholder.mPlace.setOnClickListener(view -> {
+        holder.getImageView().setOnClickListener(view -> {
             if(mPictureClickListener != null){
-                mPictureClickListener.onClick(mPhotoList.get(position).getURL());
+                mPictureClickListener.onClick(mPhotoList.get(position));
             }
         });
-        Pholder.mPlace.setOnLongClickListener(view -> {
+        holder.getImageView().setOnLongClickListener(view -> {
             if(mPictureLongClickListener != null){
                 mPictureLongClickListener.onLongClick(mPhotoList.get(position),position);
             }
             return true;
         });
-
     }
 
     @Override
@@ -79,14 +84,17 @@ public class PicturesAdapter extends RecyclerView.Adapter{
         notifyItemRangeChanged(position, mPhotoList.size());
     }
 
-    class PlaceViewHolder extends RecyclerView.ViewHolder {
+    class PictureViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView mPlace;
+        private ImageView mImageView;
 
-        public PlaceViewHolder(View itemView) {
+        PictureViewHolder(View itemView) {
             super(itemView);
+            mImageView = itemView.findViewById(R.id.ivPlace);
+        }
 
-            mPlace = itemView.findViewById(R.id.ivPlace);
+        ImageView getImageView(){
+            return mImageView;
         }
     }
 
@@ -99,7 +107,7 @@ public class PicturesAdapter extends RecyclerView.Adapter{
     }
 
     public interface OnPictureClickListener{
-        void onClick(String url);
+        void onClick(AlterraPicture alterraPicture);
     }
 
     public interface OnPictureLongClickListener{

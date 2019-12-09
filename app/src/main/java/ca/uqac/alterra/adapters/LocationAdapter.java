@@ -1,14 +1,12 @@
-package ca.uqac.alterra.home;
+package ca.uqac.alterra.adapters;
 
 import android.content.Context;
-import android.net.sip.SipSession;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,15 +17,16 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import ca.uqac.alterra.R;
-import ca.uqac.alterra.database.AlterraCloud;
+import ca.uqac.alterra.home.HomeActivity;
+import ca.uqac.alterra.types.AlterraPoint;
+import ca.uqac.alterra.utility.AlterraGeolocator;
 import ca.uqac.alterra.utility.PrettyPrinter;
 
-public class HomeListAdapter extends RecyclerView.Adapter {
+public class LocationAdapter extends RecyclerView.Adapter {
 
-    private ArrayList<HomeListDataModel> mDataList;
+    private ArrayList<AlterraPoint> mDataList;
     private Context mContext;
     private OnButtonClickListener mOnButtonClickListener;
 
@@ -50,36 +49,36 @@ public class HomeListAdapter extends RecyclerView.Adapter {
             photoButton = v.findViewById(R.id.homeListPhotoButton);
         }
 
-        private void setData(HomeListDataModel dm){
-            this.titleView.setText(dm.getText());
+        private void setData(AlterraPoint alterraPoint){
+            this.titleView.setText(alterraPoint.getTitle());
 
             photoButton.setOnClickListener(view -> {
                 if(mOnButtonClickListener != null){
-                    mOnButtonClickListener.onClick(dm.getAlterraPoint());
+                    mOnButtonClickListener.onClick(alterraPoint);
                 }
             });
 
             Glide.with(mContext)
-                    .load(dm.getImage())
+                    .load(alterraPoint.getThumbnail())
                     .centerCrop()
                     .into(this.imgView);
 
-            this.distanceView.setText(PrettyPrinter.formatDistance(dm.getDistance()));
+            this.distanceView.setText(PrettyPrinter.formatDistance(AlterraGeolocator.distanceFrom(alterraPoint)));
 
-            if(dm.isUnlocked()){
+            if(alterraPoint.isUnlocked()){
                 button.setText(mContext.getString(R.string.alterra_point_unlocked));
                 button.setAlpha(1);
                 button.setClickable(true);
                 button.setOnClickListener(view -> {
-                    ((HomeActivity) mContext).showPlaceDetails(dm.getAlterraPoint());
+                    ((HomeActivity) mContext).showPlaceDetails(alterraPoint);
                 });
             }
-            else if(dm.isUnlockable()){
+            else if(alterraPoint.isUnlockable()){
                 button.setText(mContext.getString(R.string.alterra_point_unlockable));
                 button.setAlpha(1);
                 button.setClickable(true);
                 button.setOnClickListener(view -> {
-                    dm.getAlterraPoint().unlock();
+                    alterraPoint.unlock();
                     button.setAlpha(1);
                     notifyItemChanged(getAdapterPosition());
                 });
@@ -93,7 +92,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
 
     }
 
-    public  HomeListAdapter(Context context, @Nullable OnButtonClickListener onClickListener){
+    public LocationAdapter(Context context, @Nullable OnButtonClickListener onClickListener){
         mDataList = new ArrayList<>();
         mContext = context;
         mOnButtonClickListener = onClickListener;
@@ -102,7 +101,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_home_list_layout,
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycleview_locations_layout,
                 parent, false);
 
         return new MyViewHolder(view);
@@ -111,7 +110,7 @@ public class HomeListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder vh = (MyViewHolder) holder;
-        Collections.sort(mDataList, (homeListDataModel, t1) -> Double.compare(homeListDataModel.getDistance(), t1.getDistance()));
+        Collections.sort(mDataList, (pointA, pointB) -> Double.compare(AlterraGeolocator.distanceFrom(pointA), AlterraGeolocator.distanceFrom(pointB)));
         vh.setData(mDataList.get(position));
     }
 
@@ -120,8 +119,8 @@ public class HomeListAdapter extends RecyclerView.Adapter {
         return mDataList.size();
     }
 
-    public void addData(HomeListDataModel data){
-        mDataList.add(data);
+    public void addPoint(AlterraPoint alterraPoint){
+        mDataList.add(alterraPoint);
         notifyItemInserted(getItemCount());
     }
 
@@ -135,8 +134,8 @@ public class HomeListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    interface OnButtonClickListener{
-        public void onClick(AlterraPoint point);
+    public interface OnButtonClickListener{
+        void onClick(AlterraPoint point);
     }
 
 }
