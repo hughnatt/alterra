@@ -226,6 +226,9 @@ public class HomeProfileFragment extends Fragment {
     }
 
 
+    /*
+    Change the current adapter to use depending where the user clicked
+     */
     public void changeAdapter(Adapter adapter){
         switch (adapter){
             case LOCATIONS:
