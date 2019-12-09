@@ -235,6 +235,11 @@ public class HomeProfileFragment extends Fragment {
         saveInstanceState.putInt("currentSpanCount",mCurrentSpanCount);
     }
 
+    /*
+    Method used to create an AlertDialog each time the user long clicked a picture
+    Allow the user to accept the deletion (from Firebase,Firestore & the recyclerview)
+    or cancel the deletion and do nothing
+     */
     private void showDeleteAlertDialog(AlterraPicture picture,int position){
         new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()),R.style.DialogStyle)
                        .setTitle(R.string.profile_photos_dialog_box_title)
