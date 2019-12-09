@@ -63,16 +63,13 @@
                         android:id="@+id/listRecyclerviewButton"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="20dp">
+                        android:layout_height="wrap_content">
                     </androidx.appcompat.widget.AppCompatButton>
-
-
+                    
                     <androidx.appcompat.widget.AppCompatImageButton
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
                         android:contentDescription="@string/content_description_unknown"
                         android:src="@android:drawable/ic_menu_compass"/>
 
