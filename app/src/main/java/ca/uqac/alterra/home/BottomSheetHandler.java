@@ -135,6 +135,7 @@ public class BottomSheetHandler  {
                 Glide.with(mActivity)
                         .asBitmap()
                         .load(alterraPoint.getThumbnail())
+                        .centerCrop()
                         .into(mThumbnail);
 
                 mTitle.setText(alterraPoint.getTitle());
