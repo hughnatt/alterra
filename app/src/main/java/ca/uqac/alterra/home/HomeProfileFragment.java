@@ -46,8 +46,8 @@ public class HomeProfileFragment extends Fragment {
     private TextView mTotalLocation;
     private TextView mTotalPhotos;
     private SwipeRefreshLayout mRefresher;
-    private Adapter mCurrentAdapter;
-    private int mCurrentSpanCount = SPAN_COUNT_LOCATIONS;
+    private Adapter mCurrentAdapter = Adapter.PICTURES;
+    private int mCurrentSpanCount = SPAN_COUNT_PICTURES;
 
 
     /*
@@ -101,7 +101,7 @@ public class HomeProfileFragment extends Fragment {
         if(mCurrentAdapter == Adapter.PICTURES){
             mRecyclerView.setAdapter(mAdapterPictures);
         }
-        else{
+        else if (mCurrentAdapter == Adapter.LOCATIONS){
             mRecyclerView.setAdapter(mAdapterLocation);
         }
 
