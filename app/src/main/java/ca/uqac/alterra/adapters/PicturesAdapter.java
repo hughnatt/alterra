@@ -54,6 +54,10 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         return new PictureViewHolder(view);
     }
 
+    /*
+    Put the picture from "position" index into the Holder of the recuyclerView
+    Set the listener on the image to handle both onClick & onLongClick
+     */
     @Override
     public void onBindViewHolder(PictureViewHolder holder, int position) {
         Glide.with(mContext)
