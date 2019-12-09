@@ -27,6 +27,9 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
     private OnPictureClickListener mPictureClickListener;
     private OnPictureLongClickListener mPictureLongClickListener;
 
+    /*
+    Constructor used in the ProfileFragment & DetailsFragment
+     */
     public PicturesAdapter(Context mContext, @Nullable OnPictureClickListener pictureClickListener, @Nullable OnPictureLongClickListener pictureLongClickListener) {
         this.mContext = mContext;
         this.mPhotoList = new ArrayList<>();
@@ -34,6 +37,9 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         this.mPictureLongClickListener = pictureLongClickListener;
     }
 
+    /*
+    Constructor used in the bottom-sheet from HomeActivity
+     */
     public PicturesAdapter(Context context, @Nullable OnPictureClickListener pictureClickListener, @Nullable OnPictureLongClickListener pictureLongClickListener, int viewResId){
         this(context,pictureClickListener,pictureLongClickListener);
         mViewResId = viewResId;
