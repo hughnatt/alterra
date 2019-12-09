@@ -204,6 +204,9 @@ public class HomeProfileFragment extends Fragment {
     }
 
 
+    /*
+    Method used to launch the HomeFullPictureFragment via the activity
+     */
     private void switchContext(AlterraPicture alterraPicture){
         if(getActivity() instanceof HomeActivity){
             HomeActivity homeActivity =(HomeActivity) getActivity();
