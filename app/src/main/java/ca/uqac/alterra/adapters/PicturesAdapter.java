@@ -117,6 +117,12 @@ public class PicturesAdapter extends RecyclerView.Adapter<PicturesAdapter.Pictur
         }
     }
 
+
+    /*
+    Method used to refresh the full content of the list
+    used each time the user refresh the list with the refresher
+    in the concerned fragment
+     */
     public void clear() {
         int size = mPhotoList.size();
         if (size > 0) {
